@@ -5,33 +5,15 @@
 #include "Defines.h"
 #include "CAN.h"
 #include "Data.h"
-#include "lcd.h"
-
-uint16_t gas1val = 0;
-char buffer[4][21];
 
 ISR(TIMER0_OVF_vect)
 {
-	
+	TCNT0 = _TM0;
 }
 
 ISR(TIMER2_OVF_vect) //8 Hz
 {
 	TCNT2 = _TM2;
-	
-	//test stuff
-	data_request(NODEID2, GAS_1, &gas1val, TRUE);
-	
-	//test print to lcd
-	snprintf(buffer[0], sizeof buffer[0], "gas:%5d           ", gas1val);
-	snprintf(buffer[1], sizeof buffer[1], "                    ");
-	snprintf(buffer[2], sizeof buffer[2], "                    ");
-	snprintf(buffer[3], sizeof buffer[3], "                    ");
-	for(uint8_t y = 0; y < 4; y++)
-	{
-		lcd_gotoxy(0, y);
-		lcd_puts(buffer[y]);
-	}
 }
 
 int main()
