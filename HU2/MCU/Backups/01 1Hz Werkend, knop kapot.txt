@@ -1,0 +1,190 @@
+/*************************************************************************
+Title:    Main Control Unit HU-2
+Author:   Jeroen Mostert, LCD Library by peterfleury
+File:     main.c
+Software: AVR-GCC 4.x
+Hardware: Main Control Unit V1.0
+**************************************************************************/
+
+#include <stdlib.h>
+#include <avr/io.h>
+#include <avr/pgmspace.h>
+#include <util/delay.h>
+#include <avr/interrupt.h>
+#include "lcd.h"
+
+uint8_t  i = 0;
+volatile int lcd_status = 0;			// 0 = Motorcontroller, 1 = Watercooling loop, 2 = Batteries
+
+volatile char Linebuffer1[20];
+volatile char Linebuffer2[20];
+volatile char Linebuffer3[20];
+volatile char Linebuffer4[20];
+/*
+ISR(ADC_vect)
+{
+	lcd_gotoxy(20 ,1);	//set display tot Line 3, char 0
+	snprintf (Linebuffer4, 20 , "%d", ADC);
+	lcd_puts(Linebuffer4);
+}
+*/
+ISR(INT5_vect)							// LCD Switch External Interrupt
+{
+	_delay_ms(5);						// Delay for key debounce
+	if (PINE & (1<<PE5)){
+			if (lcd_status == 2){		
+ 					lcd_status = 0;		// Reset lcd status
+			}
+			else lcd_status++;		
+	}
+}
+/*
+ISR(TIMER2_OVF_vect)					// Real Time Clock Interrupt
+{
+//		if (lcd_status == 2){
+//			lcd_status = 0;				// reset lcd status
+//		}
+//		else 
+//		lcd_status++;	
+		ADCSRA = (1 << ADSC);
+//		lcd_refresh();
+
+}
+
+void lcd_fast_refresh(void)
+{
+	lcd_gotoxy(0 ,0);					// Set display to Line 0, Character 0
+	lcd_puts(Linebuffer1);
+}
+
+void lcd_refresh(void)
+{
+	lcd_gotoxy(0 ,0);					// Set display to Line 0, Character 0
+	lcd_puts(Linebuffer1);
+	
+	lcd_gotoxy(40 ,0);					// Set display to Line 1, Character 0
+	lcd_puts(Linebuffer2);
+	
+	lcd_gotoxy(20 ,0);					// Set display to Line 2, Character 0
+	lcd_puts(Linebuffer3);
+	
+	lcd_gotoxy(20 ,1);					// Set display to Line 3, Character 0
+	lcd_puts(Linebuffer4);
+}
+*/
+void lcd_motor_screen(void)				// LCD Motor Control Screen
+{
+	lcd_gotoxy(40 ,0);					// Set display to Line 1, Character 0
+	lcd_puts("     C MOTOR       C");
+	
+	lcd_gotoxy(20 ,0);					// Set display to Line 2, Character 0
+	lcd_puts("     C CONTR       C");
+}
+
+void lcd_water_screen(void)				// LCD Watercooling Screen
+{
+	lcd_gotoxy(40 ,0);					// Set display to Line 1, Character 0
+	lcd_puts("     C  WATER      C");
+
+	lcd_gotoxy(20 ,0);					// Set display to Line 2, Character 0
+	lcd_puts("    L/m FLOW     L/m");
+}
+
+void lcd_batteries_screen(void)			// LCD Batteries Screen
+{
+		lcd_gotoxy(40 ,0);				// Set display to Line 1, Character 0
+		lcd_puts(" yeeeeyyy           ");
+
+		lcd_gotoxy(20 ,0);				// Set display to Line 2, Character 0
+		lcd_puts("   batterijen       ");
+}
+
+void lcd_blue_screen(void)				// LCD Press Blue Button Screen
+{
+	lcd_gotoxy(0 ,0);					// Set display to Line 0, Character 0
+	lcd_puts(" Press Blue Button  ");
+}
+
+void lcd_green_screen(void)				// LCD Press Blue Button Screen
+{
+	lcd_gotoxy(0 ,0);					// Set display tot Line 0, Character 0
+	lcd_puts(" Press Green Button ");
+}
+
+void lcd_race_screen(void)				// LCD Race Screen/Home Screen
+{
+	lcd_gotoxy(0 ,0);					// Set display to Line 0, Character 0
+	lcd_puts("  Speed:      KM/H   ");
+	
+	lcd_gotoxy(40 ,0);					// Set display to Line 1, Character 0
+	lcd_puts("     C MOTOR       C");
+	
+	lcd_gotoxy(20 ,0);					// Set display to Line 2, Character 0
+	lcd_puts("     C CONTR       C");
+	
+	lcd_gotoxy(20 ,1);					// Set display to Line 3, Character 0
+	lcd_puts("H:   V/    A L:    V");
+}
+/*
+void init_RTC(void)
+{
+		ASSR  = (1<< AS2);						// Enable asynchronous mode
+		TCNT2 = 0;								// Set initial counter value
+		TCCR2A |= (1 << CS02)|(1 << CS00);		// 128 Prescaler ((255*128)/32.786 = 1Hz)
+		TIFR2   = (1 << TOV2);					// Clear interrupt flags
+		TIMSK2  = (1 << TOIE2);					// Enable TOV2 interrupt
+}
+*/
+int main()
+{
+	/*
+		ADCSRA |= (1 << ADEN)|(1 << ADIE);
+		ADCSRA |= (1 << ADPS2) | (1 << ADPS0);
+		ADMUX = 0;
+		
+		init_RTC();
+	*/
+		char buffer[20];			// Character Buffer for LCD Screen and Values
+
+	
+	    DDRE &=~ (1 << PE5);        // Pin PE5 input              
+	    PORTE |= (1 << PE5);        // Pin PE5 pull-up enabled    
+
+		EIMSK |= (1 << INT5);		// Enable Interrupt 5
+		EICRB  |= (1 << ISC51)| (0 << ISC50);		// Falling edge creates interrupt
+	
+		lcd_init(LCD_DISP_ON);		// Initialize display, cursor off
+        lcd_clrscr();				// Clear display, set display to Line 0, char 0
+		
+		sei();						// Enable Global Interrupts
+		
+		lcd_race_screen();
+		lcd_blue_screen();
+				
+		while(1){
+			if (lcd_status == 0){
+				lcd_motor_screen();
+				lcd_gotoxy(20 ,1);	//set display tot Line 3, char 0
+				snprintf (buffer, sizeof buffer, "%d", lcd_status);
+				lcd_puts(buffer);
+			}
+			if (lcd_status == 1){
+				lcd_water_screen();
+				lcd_gotoxy(20 ,1);	//set display tot Line 3, char 0
+				snprintf (buffer, sizeof buffer, "%d", lcd_status);
+				lcd_puts(buffer);
+			}
+			if (lcd_status == 2){
+				lcd_batteries_screen();
+				lcd_gotoxy(20 ,1);	//set display tot Line 3, char 0
+				snprintf (buffer, sizeof buffer, "%d", lcd_status);
+				lcd_puts(buffer);
+			}
+/*			
+			else {snprintf (buffer, sizeof buffer, "%d", lcd_status);
+				lcd_gotoxy(20 ,1);	//set display tot Line 3, char 0
+			lcd_puts(buffer);
+			} */
+		}
+		
+}

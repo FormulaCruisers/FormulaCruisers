@@ -1,0 +1,2656 @@
+
+Can_Node_Module_v5.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .data         0000000a  00800100  00000eba  00000f4e  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  1 .text         00000eba  00000000  00000000  00000094  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  2 .bss          0000001e  0080010a  0080010a  00000f58  2**0
+                  ALLOC
+  3 .comment      00000030  00000000  00000000  00000f58  2**0
+                  CONTENTS, READONLY
+  4 .note.gnu.avr.deviceinfo 00000040  00000000  00000000  00000f88  2**2
+                  CONTENTS, READONLY
+  5 .debug_aranges 00000100  00000000  00000000  00000fc8  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  6 .debug_info   00001518  00000000  00000000  000010c8  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_abbrev 00000ddc  00000000  00000000  000025e0  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_line   00000c2c  00000000  00000000  000033bc  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_frame  000004a0  00000000  00000000  00003fe8  2**2
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_str    000006cf  00000000  00000000  00004488  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 11 .debug_loc    00001161  00000000  00000000  00004b57  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 12 .debug_ranges 000000c0  00000000  00000000  00005cb8  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	49 c0       	rjmp	.+146    	; 0x94 <__ctors_end>
+   2:	00 00       	nop
+   4:	58 c4       	rjmp	.+2224   	; 0x8b6 <__vector_1>
+   6:	00 00       	nop
+   8:	60 c4       	rjmp	.+2240   	; 0x8ca <__vector_2>
+   a:	00 00       	nop
+   c:	a0 c4       	rjmp	.+2368   	; 0x94e <__vector_3>
+   e:	00 00       	nop
+  10:	e0 c4       	rjmp	.+2496   	; 0x9d2 <__vector_4>
+  12:	00 00       	nop
+  14:	49 c5       	rjmp	.+2706   	; 0xaa8 <__vector_5>
+  16:	00 00       	nop
+  18:	5a c0       	rjmp	.+180    	; 0xce <__bad_interrupt>
+  1a:	00 00       	nop
+  1c:	ae c5       	rjmp	.+2908   	; 0xb7a <__vector_7>
+  1e:	00 00       	nop
+  20:	18 c6       	rjmp	.+3120   	; 0xc52 <__vector_8>
+  22:	00 00       	nop
+  24:	54 c0       	rjmp	.+168    	; 0xce <__bad_interrupt>
+  26:	00 00       	nop
+  28:	52 c0       	rjmp	.+164    	; 0xce <__bad_interrupt>
+  2a:	00 00       	nop
+  2c:	50 c0       	rjmp	.+160    	; 0xce <__bad_interrupt>
+  2e:	00 00       	nop
+  30:	4e c0       	rjmp	.+156    	; 0xce <__bad_interrupt>
+  32:	00 00       	nop
+  34:	4c c0       	rjmp	.+152    	; 0xce <__bad_interrupt>
+  36:	00 00       	nop
+  38:	4a c0       	rjmp	.+148    	; 0xce <__bad_interrupt>
+  3a:	00 00       	nop
+  3c:	74 c6       	rjmp	.+3304   	; 0xd26 <__vector_15>
+  3e:	00 00       	nop
+  40:	bd c6       	rjmp	.+3450   	; 0xdbc <__vector_16>
+  42:	00 00       	nop
+  44:	44 c0       	rjmp	.+136    	; 0xce <__bad_interrupt>
+  46:	00 00       	nop
+  48:	30 c1       	rjmp	.+608    	; 0x2aa <__vector_18>
+  4a:	00 00       	nop
+  4c:	40 c0       	rjmp	.+128    	; 0xce <__bad_interrupt>
+  4e:	00 00       	nop
+  50:	3e c0       	rjmp	.+124    	; 0xce <__bad_interrupt>
+  52:	00 00       	nop
+  54:	3c c0       	rjmp	.+120    	; 0xce <__bad_interrupt>
+  56:	00 00       	nop
+  58:	3a c0       	rjmp	.+116    	; 0xce <__bad_interrupt>
+  5a:	00 00       	nop
+  5c:	38 c0       	rjmp	.+112    	; 0xce <__bad_interrupt>
+  5e:	00 00       	nop
+  60:	36 c0       	rjmp	.+108    	; 0xce <__bad_interrupt>
+  62:	00 00       	nop
+  64:	66 c0       	rjmp	.+204    	; 0x132 <__vector_25>
+  66:	00 00       	nop
+  68:	32 c0       	rjmp	.+100    	; 0xce <__bad_interrupt>
+  6a:	00 00       	nop
+  6c:	30 c0       	rjmp	.+96     	; 0xce <__bad_interrupt>
+  6e:	00 00       	nop
+  70:	2e c0       	rjmp	.+92     	; 0xce <__bad_interrupt>
+  72:	00 00       	nop
+  74:	2c c0       	rjmp	.+88     	; 0xce <__bad_interrupt>
+  76:	00 00       	nop
+  78:	2a c0       	rjmp	.+84     	; 0xce <__bad_interrupt>
+  7a:	00 00       	nop
+  7c:	71 c6       	rjmp	.+3298   	; 0xd60 <__vector_31>
+  7e:	00 00       	nop
+  80:	26 c0       	rjmp	.+76     	; 0xce <__bad_interrupt>
+  82:	00 00       	nop
+  84:	24 c0       	rjmp	.+72     	; 0xce <__bad_interrupt>
+  86:	00 00       	nop
+  88:	22 c0       	rjmp	.+68     	; 0xce <__bad_interrupt>
+  8a:	00 00       	nop
+  8c:	20 c0       	rjmp	.+64     	; 0xce <__bad_interrupt>
+  8e:	00 00       	nop
+  90:	1e c0       	rjmp	.+60     	; 0xce <__bad_interrupt>
+	...
+
+00000094 <__ctors_end>:
+  94:	11 24       	eor	r1, r1
+  96:	1f be       	out	0x3f, r1	; 63
+  98:	cf ef       	ldi	r28, 0xFF	; 255
+  9a:	d0 e1       	ldi	r29, 0x10	; 16
+  9c:	de bf       	out	0x3e, r29	; 62
+  9e:	cd bf       	out	0x3d, r28	; 61
+
+000000a0 <__do_copy_data>:
+  a0:	11 e0       	ldi	r17, 0x01	; 1
+  a2:	a0 e0       	ldi	r26, 0x00	; 0
+  a4:	b1 e0       	ldi	r27, 0x01	; 1
+  a6:	ea eb       	ldi	r30, 0xBA	; 186
+  a8:	fe e0       	ldi	r31, 0x0E	; 14
+  aa:	00 e0       	ldi	r16, 0x00	; 0
+  ac:	0b bf       	out	0x3b, r16	; 59
+  ae:	02 c0       	rjmp	.+4      	; 0xb4 <__do_copy_data+0x14>
+  b0:	07 90       	elpm	r0, Z+
+  b2:	0d 92       	st	X+, r0
+  b4:	aa 30       	cpi	r26, 0x0A	; 10
+  b6:	b1 07       	cpc	r27, r17
+  b8:	d9 f7       	brne	.-10     	; 0xb0 <__do_copy_data+0x10>
+
+000000ba <__do_clear_bss>:
+  ba:	21 e0       	ldi	r18, 0x01	; 1
+  bc:	aa e0       	ldi	r26, 0x0A	; 10
+  be:	b1 e0       	ldi	r27, 0x01	; 1
+  c0:	01 c0       	rjmp	.+2      	; 0xc4 <.do_clear_bss_start>
+
+000000c2 <.do_clear_bss_loop>:
+  c2:	1d 92       	st	X+, r1
+
+000000c4 <.do_clear_bss_start>:
+  c4:	a8 32       	cpi	r26, 0x28	; 40
+  c6:	b2 07       	cpc	r27, r18
+  c8:	e1 f7       	brne	.-8      	; 0xc2 <.do_clear_bss_loop>
+  ca:	6d d6       	rcall	.+3290   	; 0xda6 <main>
+  cc:	f4 c6       	rjmp	.+3560   	; 0xeb6 <_exit>
+
+000000ce <__bad_interrupt>:
+  ce:	98 cf       	rjmp	.-208    	; 0x0 <__vectors>
+
+000000d0 <int_ADC>:
+#include "ExternalInterrupt.h"
+
+uint16_t ADCValue[4] = {0x10,0x20,0x30,0x40};
+//***** ADC CODE ***********************************************
+void int_ADC(void){
+	DDRC	= 0x0F;
+  d0:	8f e0       	ldi	r24, 0x0F	; 15
+  d2:	87 b9       	out	0x07, r24	; 7
+	PORTC	= 0x0F;
+  d4:	88 b9       	out	0x08, r24	; 8
+	
+	DDRF	= 0x00;
+  d6:	10 ba       	out	0x10, r1	; 16
+	PORTF	= 0x00;
+  d8:	11 ba       	out	0x11, r1	; 17
+			
+	ADCSRA	= ( 1 << ADPS2 )
+  da:	87 e0       	ldi	r24, 0x07	; 7
+  dc:	80 93 7a 00 	sts	0x007A, r24	; 0x80007a <__TEXT_REGION_LENGTH__+0x7e007a>
+  e0:	08 95       	ret
+
+000000e2 <getADC>:
+
+void getADC(uint8_t ADC_pin){
+	
+	//PORTC	= 0x0F;
+	
+	ADMUX	= (ADMUX & 0b11111100) | ((ADC_pin + 1 - 4 * (ADC_pin == 3)) & 0b00000011);
+  e2:	90 91 7c 00 	lds	r25, 0x007C	; 0x80007c <__TEXT_REGION_LENGTH__+0x7e007c>
+  e6:	29 2f       	mov	r18, r25
+  e8:	2c 7f       	andi	r18, 0xFC	; 252
+  ea:	91 e0       	ldi	r25, 0x01	; 1
+  ec:	98 0f       	add	r25, r24
+  ee:	93 70       	andi	r25, 0x03	; 3
+  f0:	92 2b       	or	r25, r18
+  f2:	90 93 7c 00 	sts	0x007C, r25	; 0x80007c <__TEXT_REGION_LENGTH__+0x7e007c>
+	
+	ADCSRA |= ( 1 << ADSC) | ( 1 << ADEN );// start ADC
+  f6:	ea e7       	ldi	r30, 0x7A	; 122
+  f8:	f0 e0       	ldi	r31, 0x00	; 0
+  fa:	90 81       	ld	r25, Z
+  fc:	90 6c       	ori	r25, 0xC0	; 192
+  fe:	90 83       	st	Z, r25
+	
+	while(!(ADCSRA & (1 << ADIF))){
+ 100:	90 81       	ld	r25, Z
+ 102:	94 ff       	sbrs	r25, 4
+ 104:	fd cf       	rjmp	.-6      	; 0x100 <getADC+0x1e>
+	}
+	
+	ADCSRA &= ~((1 << ADIF) | ( 1 << ADSC) | ( 1 << ADEN )); // disable ADC
+ 106:	ea e7       	ldi	r30, 0x7A	; 122
+ 108:	f0 e0       	ldi	r31, 0x00	; 0
+ 10a:	90 81       	ld	r25, Z
+ 10c:	9f 72       	andi	r25, 0x2F	; 47
+ 10e:	90 83       	st	Z, r25
+	//PORTC	= 0x00;
+	
+	uint16_t ReadValue = 0;
+	ReadValue = ADCL;
+ 110:	90 91 78 00 	lds	r25, 0x0078	; 0x800078 <__TEXT_REGION_LENGTH__+0x7e0078>
+	ReadValue = ReadValue | (ADCH << 8);
+ 114:	20 91 79 00 	lds	r18, 0x0079	; 0x800079 <__TEXT_REGION_LENGTH__+0x7e0079>
+	
+	ADCValue[ADC_pin & 0b00000011] = ReadValue;
+ 118:	83 70       	andi	r24, 0x03	; 3
+ 11a:	e8 2f       	mov	r30, r24
+ 11c:	f0 e0       	ldi	r31, 0x00	; 0
+ 11e:	ee 0f       	add	r30, r30
+ 120:	ff 1f       	adc	r31, r31
+ 122:	e0 50       	subi	r30, 0x00	; 0
+ 124:	ff 4f       	sbci	r31, 0xFF	; 255
+	ADCSRA &= ~((1 << ADIF) | ( 1 << ADSC) | ( 1 << ADEN )); // disable ADC
+	//PORTC	= 0x00;
+	
+	uint16_t ReadValue = 0;
+	ReadValue = ADCL;
+	ReadValue = ReadValue | (ADCH << 8);
+ 126:	89 2f       	mov	r24, r25
+ 128:	90 e0       	ldi	r25, 0x00	; 0
+ 12a:	92 2b       	or	r25, r18
+	
+	ADCValue[ADC_pin & 0b00000011] = ReadValue;
+ 12c:	91 83       	std	Z+1, r25	; 0x01
+ 12e:	80 83       	st	Z, r24
+ 130:	08 95       	ret
+
+00000132 <__vector_25>:
+	
+	
+}
+
+
+ISR(ADC_vect){
+ 132:	1f 92       	push	r1
+ 134:	0f 92       	push	r0
+ 136:	0f b6       	in	r0, 0x3f	; 63
+ 138:	0f 92       	push	r0
+ 13a:	11 24       	eor	r1, r1
+	//ReadValue = ADCL;
+	//ReadValue = ReadValue | (ADCH << 8);
+	
+	//ADCValue[ADMUX & 0b00000011] = ReadValue;
+	
+}
+ 13c:	0f 90       	pop	r0
+ 13e:	0f be       	out	0x3f, r0	; 63
+ 140:	0f 90       	pop	r0
+ 142:	1f 90       	pop	r1
+ 144:	18 95       	reti
+
+00000146 <can_init>:
+}
+
+
+
+//***** CAN ialization *****************************************************
+void can_init(uint16_t Baud){
+ 146:	cf 93       	push	r28
+ 148:	df 93       	push	r29
+	
+	DDRD = 0x80;
+ 14a:	20 e8       	ldi	r18, 0x80	; 128
+ 14c:	2a b9       	out	0x0a, r18	; 10
+	PORTD &= ~(1<<PORTD7); // Enable Can-chip
+ 14e:	5f 98       	cbi	0x0b, 7	; 11
+	//PORTD |= (1<<PORTD7); // Disable Can-chip
+
+	CANGCON = ( 1 << SWRES );   // Software reset
+ 150:	21 e0       	ldi	r18, 0x01	; 1
+ 152:	20 93 d8 00 	sts	0x00D8, r18	; 0x8000d8 <__TEXT_REGION_LENGTH__+0x7e00d8>
+	
+	CANTCON = 0x00;       // CAN timing prescaler set to 0;
+ 156:	10 92 e5 00 	sts	0x00E5, r1	; 0x8000e5 <__TEXT_REGION_LENGTH__+0x7e00e5>
+	
+	if (Baud == 1000){
+ 15a:	88 3e       	cpi	r24, 0xE8	; 232
+ 15c:	23 e0       	ldi	r18, 0x03	; 3
+ 15e:	92 07       	cpc	r25, r18
+ 160:	49 f4       	brne	.+18     	; 0x174 <can_init+0x2e>
+		CANBT1 = 0x00;    // Set baud rate to 500kb (assuming 16Mhz IOclk)
+ 162:	10 92 e2 00 	sts	0x00E2, r1	; 0x8000e2 <__TEXT_REGION_LENGTH__+0x7e00e2>
+		CANBT2 = 0x0C;    // "
+ 166:	2c e0       	ldi	r18, 0x0C	; 12
+ 168:	20 93 e3 00 	sts	0x00E3, r18	; 0x8000e3 <__TEXT_REGION_LENGTH__+0x7e00e3>
+		CANBT3 = 0x36; 	  // ""
+ 16c:	26 e3       	ldi	r18, 0x36	; 54
+ 16e:	20 93 e4 00 	sts	0x00E4, r18	; 0x8000e4 <__TEXT_REGION_LENGTH__+0x7e00e4>
+ 172:	1b c0       	rjmp	.+54     	; 0x1aa <can_init+0x64>
+	}
+	if (Baud == 500){
+ 174:	84 3f       	cpi	r24, 0xF4	; 244
+ 176:	21 e0       	ldi	r18, 0x01	; 1
+ 178:	92 07       	cpc	r25, r18
+ 17a:	51 f4       	brne	.+20     	; 0x190 <can_init+0x4a>
+		CANBT1 = 0x02;    // Set baud rate to 500kb (assuming 16Mhz IOclk)
+ 17c:	82 e0       	ldi	r24, 0x02	; 2
+ 17e:	80 93 e2 00 	sts	0x00E2, r24	; 0x8000e2 <__TEXT_REGION_LENGTH__+0x7e00e2>
+		CANBT2 = 0x0C;    // "
+ 182:	8c e0       	ldi	r24, 0x0C	; 12
+ 184:	80 93 e3 00 	sts	0x00E3, r24	; 0x8000e3 <__TEXT_REGION_LENGTH__+0x7e00e3>
+		CANBT3 = 0x37; 	  // ""
+ 188:	87 e3       	ldi	r24, 0x37	; 55
+ 18a:	80 93 e4 00 	sts	0x00E4, r24	; 0x8000e4 <__TEXT_REGION_LENGTH__+0x7e00e4>
+ 18e:	19 c0       	rjmp	.+50     	; 0x1c2 <can_init+0x7c>
+	}
+	if (Baud == 250){
+ 190:	8a 3f       	cpi	r24, 0xFA	; 250
+ 192:	91 05       	cpc	r25, r1
+ 194:	51 f4       	brne	.+20     	; 0x1aa <can_init+0x64>
+		CANBT1 = 0x0E;   // Set baud rate to 250kb (assuming 16Mhz IOclk)
+ 196:	8e e0       	ldi	r24, 0x0E	; 14
+ 198:	80 93 e2 00 	sts	0x00E2, r24	; 0x8000e2 <__TEXT_REGION_LENGTH__+0x7e00e2>
+		CANBT2 = 0x04;   // "
+ 19c:	84 e0       	ldi	r24, 0x04	; 4
+ 19e:	80 93 e3 00 	sts	0x00E3, r24	; 0x8000e3 <__TEXT_REGION_LENGTH__+0x7e00e3>
+		CANBT3 = 0x13; 	 // ""
+ 1a2:	83 e1       	ldi	r24, 0x13	; 19
+ 1a4:	80 93 e4 00 	sts	0x00E4, r24	; 0x8000e4 <__TEXT_REGION_LENGTH__+0x7e00e4>
+ 1a8:	0c c0       	rjmp	.+24     	; 0x1c2 <can_init+0x7c>
+	}
+	if ( Baud == 125){
+ 1aa:	8d 37       	cpi	r24, 0x7D	; 125
+ 1ac:	91 05       	cpc	r25, r1
+ 1ae:	49 f4       	brne	.+18     	; 0x1c2 <can_init+0x7c>
+		CANBT1 = 0x06;  // Set baud rate to 125kb (assuming 16Mhz IOclk)
+ 1b0:	86 e0       	ldi	r24, 0x06	; 6
+ 1b2:	80 93 e2 00 	sts	0x00E2, r24	; 0x8000e2 <__TEXT_REGION_LENGTH__+0x7e00e2>
+		CANBT2 = 0x0C;  // "
+ 1b6:	8c e0       	ldi	r24, 0x0C	; 12
+ 1b8:	80 93 e3 00 	sts	0x00E3, r24	; 0x8000e3 <__TEXT_REGION_LENGTH__+0x7e00e3>
+		CANBT3 = 0x37;	// ""
+ 1bc:	87 e3       	ldi	r24, 0x37	; 55
+ 1be:	80 93 e4 00 	sts	0x00E4, r24	; 0x8000e4 <__TEXT_REGION_LENGTH__+0x7e00e4>
+}
+
+
+
+//***** CAN ialization *****************************************************
+void can_init(uint16_t Baud){
+ 1c2:	80 e0       	ldi	r24, 0x00	; 0
+	}
+	
+
+	for ( int8_t mob=0; mob<14; mob++ ) {
+
+		CANPAGE = ( mob << 4 );  // Selects Message Object 0-14
+ 1c4:	cd ee       	ldi	r28, 0xED	; 237
+ 1c6:	d0 e0       	ldi	r29, 0x00	; 0
+		CANCDMOB = 0x00;    // Disable mob
+ 1c8:	af ee       	ldi	r26, 0xEF	; 239
+ 1ca:	b0 e0       	ldi	r27, 0x00	; 0
+		CANSTMOB = 0x00;    // Clear mob status register;
+ 1cc:	ee ee       	ldi	r30, 0xEE	; 238
+ 1ce:	f0 e0       	ldi	r31, 0x00	; 0
+	}
+	
+
+	for ( int8_t mob=0; mob<14; mob++ ) {
+
+		CANPAGE = ( mob << 4 );  // Selects Message Object 0-14
+ 1d0:	98 2f       	mov	r25, r24
+ 1d2:	92 95       	swap	r25
+ 1d4:	90 7f       	andi	r25, 0xF0	; 240
+ 1d6:	98 83       	st	Y, r25
+		CANCDMOB = 0x00;    // Disable mob
+ 1d8:	1c 92       	st	X, r1
+		CANSTMOB = 0x00;    // Clear mob status register;
+ 1da:	10 82       	st	Z, r1
+ 1dc:	8f 5f       	subi	r24, 0xFF	; 255
+		CANBT2 = 0x0C;  // "
+		CANBT3 = 0x37;	// ""
+	}
+	
+
+	for ( int8_t mob=0; mob<14; mob++ ) {
+ 1de:	8e 30       	cpi	r24, 0x0E	; 14
+ 1e0:	b9 f7       	brne	.-18     	; 0x1d0 <can_init+0x8a>
+		CANPAGE = ( mob << 4 );  // Selects Message Object 0-14
+		CANCDMOB = 0x00;    // Disable mob
+		CANSTMOB = 0x00;    // Clear mob status register;
+	}
+	
+	CANIE2 = (( 1 << IEMOB1 ) | ( 0 << IEMOB0 ));  // IEMOB1 = MOB1 Enable interrupts on mob1 for reception and transmission
+ 1e2:	82 e0       	ldi	r24, 0x02	; 2
+ 1e4:	80 93 de 00 	sts	0x00DE, r24	; 0x8000de <__TEXT_REGION_LENGTH__+0x7e00de>
+	CANGIE = ( 1 << ENIT ) | ( 1 << ENRX ) | ( 0 << ENTX );   // Enable interrupts on receive
+ 1e8:	80 ea       	ldi	r24, 0xA0	; 160
+ 1ea:	80 93 db 00 	sts	0x00DB, r24	; 0x8000db <__TEXT_REGION_LENGTH__+0x7e00db>
+	CANGCON |= ( 1 << 1 );	// Enable mode. CAN channel enters in enable mode once 11 recessive bits have been read
+ 1ee:	e8 ed       	ldi	r30, 0xD8	; 216
+ 1f0:	f0 e0       	ldi	r31, 0x00	; 0
+ 1f2:	80 81       	ld	r24, Z
+ 1f4:	82 60       	ori	r24, 0x02	; 2
+ 1f6:	80 83       	st	Z, r24
+	
+}
+ 1f8:	df 91       	pop	r29
+ 1fa:	cf 91       	pop	r28
+ 1fc:	08 95       	ret
+
+000001fe <can_rx>:
+
+//***** CAN Creating RX *****************************************************
+void can_rx(uint16_t NODE_ID){
+	
+	CANPAGE = ( 0 << MOBNB3 ) | ( 0 << MOBNB2 ) | ( 0 << MOBNB1 ) | ( 1 << MOBNB0 ); // select 0001 = CANMOB1
+ 1fe:	20 e1       	ldi	r18, 0x10	; 16
+ 200:	20 93 ed 00 	sts	0x00ED, r18	; 0x8000ed <__TEXT_REGION_LENGTH__+0x7e00ed>
+	
+	CANIDT1 = NODE_ID >> 3; // Receive Address
+ 204:	9c 01       	movw	r18, r24
+ 206:	36 95       	lsr	r19
+ 208:	27 95       	ror	r18
+ 20a:	36 95       	lsr	r19
+ 20c:	27 95       	ror	r18
+ 20e:	36 95       	lsr	r19
+ 210:	27 95       	ror	r18
+ 212:	20 93 f3 00 	sts	0x00F3, r18	; 0x8000f3 <__TEXT_REGION_LENGTH__+0x7e00f3>
+	CANIDT2 = NODE_ID << 5; //
+ 216:	82 95       	swap	r24
+ 218:	88 0f       	add	r24, r24
+ 21a:	80 7e       	andi	r24, 0xE0	; 224
+ 21c:	80 93 f2 00 	sts	0x00F2, r24	; 0x8000f2 <__TEXT_REGION_LENGTH__+0x7e00f2>
+	CANIDT3 = 0x00; 		// ""
+ 220:	10 92 f1 00 	sts	0x00F1, r1	; 0x8000f1 <__TEXT_REGION_LENGTH__+0x7e00f1>
+	CANIDT4 = 0x00; 		// ""
+ 224:	10 92 f0 00 	sts	0x00F0, r1	; 0x8000f0 <__TEXT_REGION_LENGTH__+0x7e00f0>
+	
+	CANIDM1 = 0b11111111;   // Receive Address
+ 228:	8f ef       	ldi	r24, 0xFF	; 255
+ 22a:	80 93 f7 00 	sts	0x00F7, r24	; 0x8000f7 <__TEXT_REGION_LENGTH__+0x7e00f7>
+	CANIDM2 = 0b11100000;	//
+ 22e:	80 ee       	ldi	r24, 0xE0	; 224
+ 230:	80 93 f6 00 	sts	0x00F6, r24	; 0x8000f6 <__TEXT_REGION_LENGTH__+0x7e00f6>
+
+	CANCDMOB = (( 1 << CONMOB1 ) | ( 0 << IDE ) | ( 3 << DLC0));  // Enable Reception | 11 bit | IDE DLC8
+ 234:	83 e8       	ldi	r24, 0x83	; 131
+ 236:	80 93 ef 00 	sts	0x00EF, r24	; 0x8000ef <__TEXT_REGION_LENGTH__+0x7e00ef>
+ 23a:	08 95       	ret
+
+0000023c <can_tx>:
+}
+
+//***** CAN Creating TX *****************************************************
+void can_tx(uint16_t Address, uint8_t DLC) {
+ 23c:	9c 01       	movw	r18, r24
+	
+	CANPAGE = ( 0 << MOBNB3 ) | ( 0 << MOBNB2 ) | ( 0 << MOBNB1 ) | ( 0 << MOBNB0 ); // select 0000 = CANMOB0
+ 23e:	10 92 ed 00 	sts	0x00ED, r1	; 0x8000ed <__TEXT_REGION_LENGTH__+0x7e00ed>
+
+	while ( CANEN2 & ( 1 << ENMOB0 ) ); // Wait for MOb 0 to be free
+ 242:	ec ed       	ldi	r30, 0xDC	; 220
+ 244:	f0 e0       	ldi	r31, 0x00	; 0
+ 246:	90 81       	ld	r25, Z
+ 248:	90 fd       	sbrc	r25, 0
+ 24a:	fd cf       	rjmp	.-6      	; 0x246 <can_tx+0xa>
+	
+	CANSTMOB = 0x00;   // Clear mob status register
+ 24c:	10 92 ee 00 	sts	0x00EE, r1	; 0x8000ee <__TEXT_REGION_LENGTH__+0x7e00ee>
+	
+	CANIDT4 = 0x00;     		//
+ 250:	10 92 f0 00 	sts	0x00F0, r1	; 0x8000f0 <__TEXT_REGION_LENGTH__+0x7e00f0>
+	CANIDT3 = 0x00;				//
+ 254:	10 92 f1 00 	sts	0x00F1, r1	; 0x8000f1 <__TEXT_REGION_LENGTH__+0x7e00f1>
+	CANIDT2 = Address << 5;		//
+ 258:	82 2f       	mov	r24, r18
+ 25a:	82 95       	swap	r24
+ 25c:	88 0f       	add	r24, r24
+ 25e:	80 7e       	andi	r24, 0xE0	; 224
+ 260:	80 93 f2 00 	sts	0x00F2, r24	; 0x8000f2 <__TEXT_REGION_LENGTH__+0x7e00f2>
+	CANIDT1 = Address >> 3;		//
+ 264:	36 95       	lsr	r19
+ 266:	27 95       	ror	r18
+ 268:	36 95       	lsr	r19
+ 26a:	27 95       	ror	r18
+ 26c:	36 95       	lsr	r19
+ 26e:	27 95       	ror	r18
+ 270:	20 93 f3 00 	sts	0x00F3, r18	; 0x8000f3 <__TEXT_REGION_LENGTH__+0x7e00f3>
+ 274:	e8 e1       	ldi	r30, 0x18	; 24
+ 276:	f1 e0       	ldi	r31, 0x01	; 1
+ 278:	20 e2       	ldi	r18, 0x20	; 32
+ 27a:	31 e0       	ldi	r19, 0x01	; 1
+	
+	for ( int8_t i = 0; i < 8; i++ ){
+		CANMSG = TransmitData[i]; //CAN Data Message Register: setting the data in the message register
+ 27c:	aa ef       	ldi	r26, 0xFA	; 250
+ 27e:	b0 e0       	ldi	r27, 0x00	; 0
+ 280:	81 91       	ld	r24, Z+
+ 282:	8c 93       	st	X, r24
+	CANIDT4 = 0x00;     		//
+	CANIDT3 = 0x00;				//
+	CANIDT2 = Address << 5;		//
+	CANIDT1 = Address >> 3;		//
+	
+	for ( int8_t i = 0; i < 8; i++ ){
+ 284:	e2 17       	cp	r30, r18
+ 286:	f3 07       	cpc	r31, r19
+ 288:	d9 f7       	brne	.-10     	; 0x280 <can_tx+0x44>
+		CANMSG = TransmitData[i]; //CAN Data Message Register: setting the data in the message register
+	}
+	
+	CANCDMOB = (( 1 << CONMOB0 ) | ( 0 << IDE ) | ( DLC << DLC0)); //CAN MOb Control and DLC Register: (1<<CONMOB1) = enable reception. (0<<IDE) = can standard rev 2.0A ( id length = 11 bits), (DLC << DLC0) Set *DLC* Bytes in the data field of the message.
+ 28a:	60 64       	ori	r22, 0x40	; 64
+ 28c:	60 93 ef 00 	sts	0x00EF, r22	; 0x8000ef <__TEXT_REGION_LENGTH__+0x7e00ef>
+
+	while ( ! ( CANSTMOB & ( 1 << TXOK ) ) );	// wait for TXOK flag set
+ 290:	ee ee       	ldi	r30, 0xEE	; 238
+ 292:	f0 e0       	ldi	r31, 0x00	; 0
+ 294:	80 81       	ld	r24, Z
+ 296:	86 ff       	sbrs	r24, 6
+ 298:	fd cf       	rjmp	.-6      	; 0x294 <can_tx+0x58>
+	
+	CANCDMOB = 0x00; //Clear CAN Mob Control and DLC Register
+ 29a:	10 92 ef 00 	sts	0x00EF, r1	; 0x8000ef <__TEXT_REGION_LENGTH__+0x7e00ef>
+
+	CANSTMOB = 0x00; // Clear TXOK flag
+ 29e:	10 92 ee 00 	sts	0x00EE, r1	; 0x8000ee <__TEXT_REGION_LENGTH__+0x7e00ee>
+	
+	CANPAGE = ( 0 << MOBNB3 ) | ( 0 << MOBNB2 ) | ( 0 << MOBNB1 ) | ( 1 << MOBNB0 ); // select 0001 = MOB1
+ 2a2:	80 e1       	ldi	r24, 0x10	; 16
+ 2a4:	80 93 ed 00 	sts	0x00ED, r24	; 0x8000ed <__TEXT_REGION_LENGTH__+0x7e00ed>
+ 2a8:	08 95       	ret
+
+000002aa <__vector_18>:
+
+uint8_t ReceiveData[8];
+uint8_t TransmitData[8];
+
+//***** Reception ISR **********************************
+ISR(CANIT_vect){  	// use interrupts
+ 2aa:	1f 92       	push	r1
+ 2ac:	0f 92       	push	r0
+ 2ae:	0f b6       	in	r0, 0x3f	; 63
+ 2b0:	0f 92       	push	r0
+ 2b2:	11 24       	eor	r1, r1
+ 2b4:	0b b6       	in	r0, 0x3b	; 59
+ 2b6:	0f 92       	push	r0
+ 2b8:	5f 92       	push	r5
+ 2ba:	6f 92       	push	r6
+ 2bc:	7f 92       	push	r7
+ 2be:	8f 92       	push	r8
+ 2c0:	9f 92       	push	r9
+ 2c2:	af 92       	push	r10
+ 2c4:	bf 92       	push	r11
+ 2c6:	cf 92       	push	r12
+ 2c8:	df 92       	push	r13
+ 2ca:	ef 92       	push	r14
+ 2cc:	ff 92       	push	r15
+ 2ce:	0f 93       	push	r16
+ 2d0:	1f 93       	push	r17
+ 2d2:	2f 93       	push	r18
+ 2d4:	3f 93       	push	r19
+ 2d6:	4f 93       	push	r20
+ 2d8:	5f 93       	push	r21
+ 2da:	6f 93       	push	r22
+ 2dc:	7f 93       	push	r23
+ 2de:	8f 93       	push	r24
+ 2e0:	9f 93       	push	r25
+ 2e2:	af 93       	push	r26
+ 2e4:	bf 93       	push	r27
+ 2e6:	cf 93       	push	r28
+ 2e8:	df 93       	push	r29
+ 2ea:	ef 93       	push	r30
+ 2ec:	ff 93       	push	r31
+	int8_t length;
+	
+	CANPAGE = ( 0 << MOBNB3 ) | ( 0 << MOBNB2 ) | ( 0 << MOBNB1 ) | ( 1 << MOBNB0 ); // select CANMOB 0001 = MOB1
+ 2ee:	80 e1       	ldi	r24, 0x10	; 16
+ 2f0:	80 93 ed 00 	sts	0x00ED, r24	; 0x8000ed <__TEXT_REGION_LENGTH__+0x7e00ed>
+
+	length = ( CANCDMOB & 0x0F );	// DLC, number of bytes to be received
+ 2f4:	10 91 ef 00 	lds	r17, 0x00EF	; 0x8000ef <__TEXT_REGION_LENGTH__+0x7e00ef>
+ 2f8:	1f 70       	andi	r17, 0x0F	; 15
+	for ( int8_t i = 0; i < length; i++ ){
+ 2fa:	11 16       	cp	r1, r17
+ 2fc:	74 f4       	brge	.+28     	; 0x31a <__vector_18+0x70>
+ 2fe:	e0 e2       	ldi	r30, 0x20	; 32
+ 300:	f1 e0       	ldi	r31, 0x01	; 1
+ 302:	2f ef       	ldi	r18, 0xFF	; 255
+ 304:	21 0f       	add	r18, r17
+ 306:	30 e0       	ldi	r19, 0x00	; 0
+ 308:	2f 5d       	subi	r18, 0xDF	; 223
+ 30a:	3e 4f       	sbci	r19, 0xFE	; 254
+		ReceiveData[i] = CANMSG; // Get data, INDX auto increments CANMSG
+ 30c:	aa ef       	ldi	r26, 0xFA	; 250
+ 30e:	b0 e0       	ldi	r27, 0x00	; 0
+ 310:	8c 91       	ld	r24, X
+ 312:	81 93       	st	Z+, r24
+	int8_t length;
+	
+	CANPAGE = ( 0 << MOBNB3 ) | ( 0 << MOBNB2 ) | ( 0 << MOBNB1 ) | ( 1 << MOBNB0 ); // select CANMOB 0001 = MOB1
+
+	length = ( CANCDMOB & 0x0F );	// DLC, number of bytes to be received
+	for ( int8_t i = 0; i < length; i++ ){
+ 314:	e2 17       	cp	r30, r18
+ 316:	f3 07       	cpc	r31, r19
+ 318:	d9 f7       	brne	.-10     	; 0x310 <__vector_18+0x66>
+		ReceiveData[i] = CANMSG; // Get data, INDX auto increments CANMSG
+	}
+	
+	uint16_t ReceiveAddress = (CANIDT1 << 3) | ((CANIDT2 & 0b11100000) >> 5);
+ 31a:	c0 91 f3 00 	lds	r28, 0x00F3	; 0x8000f3 <__TEXT_REGION_LENGTH__+0x7e00f3>
+ 31e:	80 91 f2 00 	lds	r24, 0x00F2	; 0x8000f2 <__TEXT_REGION_LENGTH__+0x7e00f2>
+ 322:	82 95       	swap	r24
+ 324:	86 95       	lsr	r24
+ 326:	87 70       	andi	r24, 0x07	; 7
+ 328:	d0 e0       	ldi	r29, 0x00	; 0
+ 32a:	cc 0f       	add	r28, r28
+ 32c:	dd 1f       	adc	r29, r29
+ 32e:	cc 0f       	add	r28, r28
+ 330:	dd 1f       	adc	r29, r29
+ 332:	cc 0f       	add	r28, r28
+ 334:	dd 1f       	adc	r29, r29
+ 336:	c8 2b       	or	r28, r24
+	
+	if(ReceiveAddress == NODEID1){ //Only receive if address is NODEID1
+ 338:	c1 30       	cpi	r28, 0x01	; 1
+ 33a:	82 e0       	ldi	r24, 0x02	; 2
+ 33c:	d8 07       	cpc	r29, r24
+ 33e:	09 f0       	breq	.+2      	; 0x342 <__vector_18+0x98>
+ 340:	8a c0       	rjmp	.+276    	; 0x456 <__LOCK_REGION_LENGTH__+0x56>
+		if (ReceiveData[0] == 0x3D) { //if first data received is 3D = General data request
+ 342:	80 91 20 01 	lds	r24, 0x0120	; 0x800120 <ReceiveData>
+ 346:	8d 33       	cpi	r24, 0x3D	; 61
+ 348:	09 f0       	breq	.+2      	; 0x34c <__vector_18+0xa2>
+ 34a:	87 c1       	rjmp	.+782    	; 0x65a <__LOCK_REGION_LENGTH__+0x25a>
+			uint8_t j = 0;
+			for(uint8_t i = 1; i < length; i++){
+ 34c:	c1 2e       	mov	r12, r17
+ 34e:	01 2e       	mov	r0, r17
+ 350:	00 0c       	add	r0, r0
+ 352:	dd 08       	sbc	r13, r13
+ 354:	e2 e0       	ldi	r30, 0x02	; 2
+ 356:	ce 16       	cp	r12, r30
+ 358:	d1 04       	cpc	r13, r1
+ 35a:	0c f4       	brge	.+2      	; 0x35e <__vector_18+0xb4>
+ 35c:	76 c0       	rjmp	.+236    	; 0x44a <__LOCK_REGION_LENGTH__+0x4a>
+ 35e:	ee 24       	eor	r14, r14
+ 360:	e3 94       	inc	r14
+ 362:	f1 2c       	mov	r15, r1
+ 364:	77 24       	eor	r7, r7
+ 366:	73 94       	inc	r7
+ 368:	00 e0       	ldi	r16, 0x00	; 0
+				if (ReceiveData[i] == STUURPOSITIE){ //if Receive data 0x01, Transmit the following data:
+					getADC(3);
+					TransmitData[j++] = ReceiveData[i] | ((ADCValue[3] >> 2) & 0b11000000 ) ;
+ 36a:	0f 2e       	mov	r0, r31
+ 36c:	f0 e0       	ldi	r31, 0x00	; 0
+ 36e:	af 2e       	mov	r10, r31
+ 370:	f1 e0       	ldi	r31, 0x01	; 1
+ 372:	bf 2e       	mov	r11, r31
+ 374:	f0 2d       	mov	r31, r0
+					TransmitData[j++] = ReceiveData[i];
+					TransmitData[j++] = PulsePerSec[2];
+					TransmitData[j++] = (PulsePerSec[2] >> 8);
+				}
+				if (ReceiveData[i] == RPM_VOOR_RECHTS){
+					TransmitData[j++] = ReceiveData[i];
+ 376:	0f 2e       	mov	r0, r31
+ 378:	f1 e1       	ldi	r31, 0x11	; 17
+ 37a:	5f 2e       	mov	r5, r31
+ 37c:	f0 2d       	mov	r31, r0
+					TransmitData[j++] = PulsePerSec[3];
+ 37e:	0f 2e       	mov	r0, r31
+ 380:	fa e0       	ldi	r31, 0x0A	; 10
+ 382:	8f 2e       	mov	r8, r31
+ 384:	f1 e0       	ldi	r31, 0x01	; 1
+ 386:	9f 2e       	mov	r9, r31
+ 388:	f0 2d       	mov	r31, r0
+					getADC(3);
+					TransmitData[j++] = ReceiveData[i] | ((ADCValue[3] >> 2) & 0b11000000 ) ;
+					TransmitData[j++] = ADCValue[3];
+				}
+				if (ReceiveData[i] == RPM_VOOR_LINKS){
+					TransmitData[j++] = ReceiveData[i];
+ 38a:	68 94       	set
+ 38c:	66 24       	eor	r6, r6
+ 38e:	64 f8       	bld	r6, 4
+	
+	if(ReceiveAddress == NODEID1){ //Only receive if address is NODEID1
+		if (ReceiveData[0] == 0x3D) { //if first data received is 3D = General data request
+			uint8_t j = 0;
+			for(uint8_t i = 1; i < length; i++){
+				if (ReceiveData[i] == STUURPOSITIE){ //if Receive data 0x01, Transmit the following data:
+ 390:	f7 01       	movw	r30, r14
+ 392:	e0 5e       	subi	r30, 0xE0	; 224
+ 394:	fe 4f       	sbci	r31, 0xFE	; 254
+ 396:	80 81       	ld	r24, Z
+ 398:	89 30       	cpi	r24, 0x09	; 9
+ 39a:	e1 f4       	brne	.+56     	; 0x3d4 <__vector_18+0x12a>
+					getADC(3);
+ 39c:	83 e0       	ldi	r24, 0x03	; 3
+ 39e:	a1 de       	rcall	.-702    	; 0xe2 <getADC>
+					TransmitData[j++] = ReceiveData[i] | ((ADCValue[3] >> 2) & 0b11000000 ) ;
+ 3a0:	f5 01       	movw	r30, r10
+ 3a2:	26 81       	ldd	r18, Z+6	; 0x06
+ 3a4:	37 81       	ldd	r19, Z+7	; 0x07
+ 3a6:	e0 2f       	mov	r30, r16
+ 3a8:	f0 e0       	ldi	r31, 0x00	; 0
+ 3aa:	e8 5e       	subi	r30, 0xE8	; 232
+ 3ac:	fe 4f       	sbci	r31, 0xFE	; 254
+ 3ae:	c9 01       	movw	r24, r18
+ 3b0:	96 95       	lsr	r25
+ 3b2:	87 95       	ror	r24
+ 3b4:	96 95       	lsr	r25
+ 3b6:	87 95       	ror	r24
+ 3b8:	80 7c       	andi	r24, 0xC0	; 192
+ 3ba:	d7 01       	movw	r26, r14
+ 3bc:	a0 5e       	subi	r26, 0xE0	; 224
+ 3be:	be 4f       	sbci	r27, 0xFE	; 254
+ 3c0:	9c 91       	ld	r25, X
+ 3c2:	89 2b       	or	r24, r25
+ 3c4:	80 83       	st	Z, r24
+					TransmitData[j++] = ADCValue[3];
+ 3c6:	e1 e0       	ldi	r30, 0x01	; 1
+ 3c8:	e0 0f       	add	r30, r16
+ 3ca:	f0 e0       	ldi	r31, 0x00	; 0
+ 3cc:	0e 5f       	subi	r16, 0xFE	; 254
+ 3ce:	e8 5e       	subi	r30, 0xE8	; 232
+ 3d0:	fe 4f       	sbci	r31, 0xFE	; 254
+ 3d2:	20 83       	st	Z, r18
+				}
+				if (ReceiveData[i] == RPM_VOOR_LINKS){
+ 3d4:	f7 01       	movw	r30, r14
+ 3d6:	e0 5e       	subi	r30, 0xE0	; 224
+ 3d8:	fe 4f       	sbci	r31, 0xFE	; 254
+ 3da:	80 81       	ld	r24, Z
+ 3dc:	80 31       	cpi	r24, 0x10	; 16
+ 3de:	b1 f4       	brne	.+44     	; 0x40c <__LOCK_REGION_LENGTH__+0xc>
+					TransmitData[j++] = ReceiveData[i];
+ 3e0:	e0 2f       	mov	r30, r16
+ 3e2:	f0 e0       	ldi	r31, 0x00	; 0
+ 3e4:	e8 5e       	subi	r30, 0xE8	; 232
+ 3e6:	fe 4f       	sbci	r31, 0xFE	; 254
+ 3e8:	60 82       	st	Z, r6
+					TransmitData[j++] = PulsePerSec[2];
+ 3ea:	f4 01       	movw	r30, r8
+ 3ec:	94 81       	ldd	r25, Z+4	; 0x04
+ 3ee:	85 81       	ldd	r24, Z+5	; 0x05
+					getADC(3);
+					TransmitData[j++] = ReceiveData[i] | ((ADCValue[3] >> 2) & 0b11000000 ) ;
+					TransmitData[j++] = ADCValue[3];
+				}
+				if (ReceiveData[i] == RPM_VOOR_LINKS){
+					TransmitData[j++] = ReceiveData[i];
+ 3f0:	e1 e0       	ldi	r30, 0x01	; 1
+ 3f2:	e0 0f       	add	r30, r16
+					TransmitData[j++] = PulsePerSec[2];
+ 3f4:	f0 e0       	ldi	r31, 0x00	; 0
+ 3f6:	e8 5e       	subi	r30, 0xE8	; 232
+ 3f8:	fe 4f       	sbci	r31, 0xFE	; 254
+ 3fa:	90 83       	st	Z, r25
+					TransmitData[j++] = (PulsePerSec[2] >> 8);
+ 3fc:	e2 e0       	ldi	r30, 0x02	; 2
+ 3fe:	e0 0f       	add	r30, r16
+ 400:	f0 e0       	ldi	r31, 0x00	; 0
+ 402:	0d 5f       	subi	r16, 0xFD	; 253
+ 404:	e8 5e       	subi	r30, 0xE8	; 232
+ 406:	fe 4f       	sbci	r31, 0xFE	; 254
+ 408:	80 83       	st	Z, r24
+ 40a:	17 c0       	rjmp	.+46     	; 0x43a <__LOCK_REGION_LENGTH__+0x3a>
+				}
+				if (ReceiveData[i] == RPM_VOOR_RECHTS){
+ 40c:	81 31       	cpi	r24, 0x11	; 17
+ 40e:	a9 f4       	brne	.+42     	; 0x43a <__LOCK_REGION_LENGTH__+0x3a>
+					TransmitData[j++] = ReceiveData[i];
+ 410:	e0 2f       	mov	r30, r16
+ 412:	f0 e0       	ldi	r31, 0x00	; 0
+ 414:	e8 5e       	subi	r30, 0xE8	; 232
+ 416:	fe 4f       	sbci	r31, 0xFE	; 254
+ 418:	50 82       	st	Z, r5
+					TransmitData[j++] = PulsePerSec[3];
+ 41a:	f4 01       	movw	r30, r8
+ 41c:	96 81       	ldd	r25, Z+6	; 0x06
+ 41e:	87 81       	ldd	r24, Z+7	; 0x07
+					TransmitData[j++] = ReceiveData[i];
+					TransmitData[j++] = PulsePerSec[2];
+					TransmitData[j++] = (PulsePerSec[2] >> 8);
+				}
+				if (ReceiveData[i] == RPM_VOOR_RECHTS){
+					TransmitData[j++] = ReceiveData[i];
+ 420:	e1 e0       	ldi	r30, 0x01	; 1
+ 422:	e0 0f       	add	r30, r16
+					TransmitData[j++] = PulsePerSec[3];
+ 424:	f0 e0       	ldi	r31, 0x00	; 0
+ 426:	e8 5e       	subi	r30, 0xE8	; 232
+ 428:	fe 4f       	sbci	r31, 0xFE	; 254
+ 42a:	90 83       	st	Z, r25
+					TransmitData[j++] = (PulsePerSec[3] >> 8);
+ 42c:	e2 e0       	ldi	r30, 0x02	; 2
+ 42e:	e0 0f       	add	r30, r16
+ 430:	f0 e0       	ldi	r31, 0x00	; 0
+ 432:	0d 5f       	subi	r16, 0xFD	; 253
+ 434:	e8 5e       	subi	r30, 0xE8	; 232
+ 436:	fe 4f       	sbci	r31, 0xFE	; 254
+ 438:	80 83       	st	Z, r24
+	uint16_t ReceiveAddress = (CANIDT1 << 3) | ((CANIDT2 & 0b11100000) >> 5);
+	
+	if(ReceiveAddress == NODEID1){ //Only receive if address is NODEID1
+		if (ReceiveData[0] == 0x3D) { //if first data received is 3D = General data request
+			uint8_t j = 0;
+			for(uint8_t i = 1; i < length; i++){
+ 43a:	73 94       	inc	r7
+ 43c:	e7 2c       	mov	r14, r7
+ 43e:	f1 2c       	mov	r15, r1
+ 440:	ec 14       	cp	r14, r12
+ 442:	fd 04       	cpc	r15, r13
+ 444:	0c f4       	brge	.+2      	; 0x448 <__LOCK_REGION_LENGTH__+0x48>
+ 446:	a4 cf       	rjmp	.-184    	; 0x390 <__vector_18+0xe6>
+ 448:	01 c0       	rjmp	.+2      	; 0x44c <__LOCK_REGION_LENGTH__+0x4c>
+ 44a:	00 e0       	ldi	r16, 0x00	; 0
+					TransmitData[j++] = ReceiveData[i];
+					TransmitData[j++] = PulsePerSec[3];
+					TransmitData[j++] = (PulsePerSec[3] >> 8);
+				}
+			}
+			can_tx(MASTERID, j); //Transmit data depending on the number of message received
+ 44c:	60 2f       	mov	r22, r16
+ 44e:	87 e1       	ldi	r24, 0x17	; 23
+ 450:	93 e0       	ldi	r25, 0x03	; 3
+ 452:	f4 de       	rcall	.-536    	; 0x23c <can_tx>
+ 454:	02 c1       	rjmp	.+516    	; 0x65a <__LOCK_REGION_LENGTH__+0x25a>
+		}
+	}
+	
+
+	if(ReceiveAddress == NODEID2){ //Only receive if Address is NODEID2
+ 456:	c2 30       	cpi	r28, 0x02	; 2
+ 458:	f2 e0       	ldi	r31, 0x02	; 2
+ 45a:	df 07       	cpc	r29, r31
+ 45c:	09 f0       	breq	.+2      	; 0x460 <__LOCK_REGION_LENGTH__+0x60>
+ 45e:	90 c0       	rjmp	.+288    	; 0x580 <__LOCK_REGION_LENGTH__+0x180>
+		if (ReceiveData[0] == 0x3D) { //if first data received is 3D = General data request
+ 460:	80 91 20 01 	lds	r24, 0x0120	; 0x800120 <ReceiveData>
+ 464:	8d 33       	cpi	r24, 0x3D	; 61
+ 466:	09 f0       	breq	.+2      	; 0x46a <__LOCK_REGION_LENGTH__+0x6a>
+ 468:	65 c1       	rjmp	.+714    	; 0x734 <__LOCK_REGION_LENGTH__+0x334>
+			uint8_t j = 0;
+			for(uint8_t i = 1; i < length; i++){
+ 46a:	a1 2e       	mov	r10, r17
+ 46c:	01 2e       	mov	r0, r17
+ 46e:	00 0c       	add	r0, r0
+ 470:	bb 08       	sbc	r11, r11
+ 472:	82 e0       	ldi	r24, 0x02	; 2
+ 474:	a8 16       	cp	r10, r24
+ 476:	b1 04       	cpc	r11, r1
+ 478:	0c f4       	brge	.+2      	; 0x47c <__LOCK_REGION_LENGTH__+0x7c>
+ 47a:	7c c0       	rjmp	.+248    	; 0x574 <__LOCK_REGION_LENGTH__+0x174>
+ 47c:	ee 24       	eor	r14, r14
+ 47e:	e3 94       	inc	r14
+ 480:	f1 2c       	mov	r15, r1
+ 482:	01 e0       	ldi	r16, 0x01	; 1
+ 484:	91 2c       	mov	r9, r1
+				if (ReceiveData[i] == GAS_1){
+					getADC(0);
+					TransmitData[j++] = ReceiveData[i] | ((ADCValue[0] >> 2) & 0b11000000 ) ;
+ 486:	0f 2e       	mov	r0, r31
+ 488:	f0 e0       	ldi	r31, 0x00	; 0
+ 48a:	cf 2e       	mov	r12, r31
+ 48c:	f1 e0       	ldi	r31, 0x01	; 1
+ 48e:	df 2e       	mov	r13, r31
+ 490:	f0 2d       	mov	r31, r0
+
+	if(ReceiveAddress == NODEID2){ //Only receive if Address is NODEID2
+		if (ReceiveData[0] == 0x3D) { //if first data received is 3D = General data request
+			uint8_t j = 0;
+			for(uint8_t i = 1; i < length; i++){
+				if (ReceiveData[i] == GAS_1){
+ 492:	f7 01       	movw	r30, r14
+ 494:	e0 5e       	subi	r30, 0xE0	; 224
+ 496:	fe 4f       	sbci	r31, 0xFE	; 254
+ 498:	80 81       	ld	r24, Z
+ 49a:	84 31       	cpi	r24, 0x14	; 20
+ 49c:	e9 f4       	brne	.+58     	; 0x4d8 <__LOCK_REGION_LENGTH__+0xd8>
+					getADC(0);
+ 49e:	80 e0       	ldi	r24, 0x00	; 0
+ 4a0:	20 de       	rcall	.-960    	; 0xe2 <getADC>
+					TransmitData[j++] = ReceiveData[i] | ((ADCValue[0] >> 2) & 0b11000000 ) ;
+ 4a2:	f6 01       	movw	r30, r12
+ 4a4:	20 81       	ld	r18, Z
+ 4a6:	31 81       	ldd	r19, Z+1	; 0x01
+ 4a8:	e9 2d       	mov	r30, r9
+ 4aa:	f0 e0       	ldi	r31, 0x00	; 0
+ 4ac:	e8 5e       	subi	r30, 0xE8	; 232
+ 4ae:	fe 4f       	sbci	r31, 0xFE	; 254
+ 4b0:	c9 01       	movw	r24, r18
+ 4b2:	96 95       	lsr	r25
+ 4b4:	87 95       	ror	r24
+ 4b6:	96 95       	lsr	r25
+ 4b8:	87 95       	ror	r24
+ 4ba:	80 7c       	andi	r24, 0xC0	; 192
+ 4bc:	d7 01       	movw	r26, r14
+ 4be:	a0 5e       	subi	r26, 0xE0	; 224
+ 4c0:	be 4f       	sbci	r27, 0xFE	; 254
+ 4c2:	9c 91       	ld	r25, X
+ 4c4:	89 2b       	or	r24, r25
+ 4c6:	80 83       	st	Z, r24
+					TransmitData[j++] = ADCValue[0];
+ 4c8:	e1 e0       	ldi	r30, 0x01	; 1
+ 4ca:	e9 0d       	add	r30, r9
+ 4cc:	f0 e0       	ldi	r31, 0x00	; 0
+ 4ce:	93 94       	inc	r9
+ 4d0:	93 94       	inc	r9
+ 4d2:	e8 5e       	subi	r30, 0xE8	; 232
+ 4d4:	fe 4f       	sbci	r31, 0xFE	; 254
+ 4d6:	20 83       	st	Z, r18
+				}
+				if (ReceiveData[i] == GAS_2){
+ 4d8:	f7 01       	movw	r30, r14
+ 4da:	e0 5e       	subi	r30, 0xE0	; 224
+ 4dc:	fe 4f       	sbci	r31, 0xFE	; 254
+ 4de:	80 81       	ld	r24, Z
+ 4e0:	85 31       	cpi	r24, 0x15	; 21
+ 4e2:	e9 f4       	brne	.+58     	; 0x51e <__LOCK_REGION_LENGTH__+0x11e>
+					getADC(1);
+ 4e4:	81 e0       	ldi	r24, 0x01	; 1
+ 4e6:	fd dd       	rcall	.-1030   	; 0xe2 <getADC>
+					TransmitData[j++] = ReceiveData[i] | ((ADCValue[1] >> 2) & 0b11000000 ) ;
+ 4e8:	f6 01       	movw	r30, r12
+ 4ea:	22 81       	ldd	r18, Z+2	; 0x02
+ 4ec:	33 81       	ldd	r19, Z+3	; 0x03
+ 4ee:	e9 2d       	mov	r30, r9
+ 4f0:	f0 e0       	ldi	r31, 0x00	; 0
+ 4f2:	e8 5e       	subi	r30, 0xE8	; 232
+ 4f4:	fe 4f       	sbci	r31, 0xFE	; 254
+ 4f6:	c9 01       	movw	r24, r18
+ 4f8:	96 95       	lsr	r25
+ 4fa:	87 95       	ror	r24
+ 4fc:	96 95       	lsr	r25
+ 4fe:	87 95       	ror	r24
+ 500:	80 7c       	andi	r24, 0xC0	; 192
+ 502:	d7 01       	movw	r26, r14
+ 504:	a0 5e       	subi	r26, 0xE0	; 224
+ 506:	be 4f       	sbci	r27, 0xFE	; 254
+ 508:	9c 91       	ld	r25, X
+ 50a:	89 2b       	or	r24, r25
+ 50c:	80 83       	st	Z, r24
+					TransmitData[j++] = ADCValue[1];
+ 50e:	e1 e0       	ldi	r30, 0x01	; 1
+ 510:	e9 0d       	add	r30, r9
+ 512:	f0 e0       	ldi	r31, 0x00	; 0
+ 514:	93 94       	inc	r9
+ 516:	93 94       	inc	r9
+ 518:	e8 5e       	subi	r30, 0xE8	; 232
+ 51a:	fe 4f       	sbci	r31, 0xFE	; 254
+ 51c:	20 83       	st	Z, r18
+				}
+				if (ReceiveData[i] == REM){
+ 51e:	f7 01       	movw	r30, r14
+ 520:	e0 5e       	subi	r30, 0xE0	; 224
+ 522:	fe 4f       	sbci	r31, 0xFE	; 254
+ 524:	80 81       	ld	r24, Z
+ 526:	86 31       	cpi	r24, 0x16	; 22
+ 528:	e9 f4       	brne	.+58     	; 0x564 <__LOCK_REGION_LENGTH__+0x164>
+					getADC(2);
+ 52a:	82 e0       	ldi	r24, 0x02	; 2
+ 52c:	da dd       	rcall	.-1100   	; 0xe2 <getADC>
+					TransmitData[j++] = ReceiveData[i] | ((ADCValue[2] >> 2) & 0b11000000 ) ;
+ 52e:	f6 01       	movw	r30, r12
+ 530:	24 81       	ldd	r18, Z+4	; 0x04
+ 532:	35 81       	ldd	r19, Z+5	; 0x05
+ 534:	e9 2d       	mov	r30, r9
+ 536:	f0 e0       	ldi	r31, 0x00	; 0
+ 538:	e8 5e       	subi	r30, 0xE8	; 232
+ 53a:	fe 4f       	sbci	r31, 0xFE	; 254
+ 53c:	d7 01       	movw	r26, r14
+ 53e:	a0 5e       	subi	r26, 0xE0	; 224
+ 540:	be 4f       	sbci	r27, 0xFE	; 254
+ 542:	c9 01       	movw	r24, r18
+ 544:	96 95       	lsr	r25
+ 546:	87 95       	ror	r24
+ 548:	96 95       	lsr	r25
+ 54a:	87 95       	ror	r24
+ 54c:	80 7c       	andi	r24, 0xC0	; 192
+ 54e:	9c 91       	ld	r25, X
+ 550:	89 2b       	or	r24, r25
+ 552:	80 83       	st	Z, r24
+					TransmitData[j++] = ADCValue[2];
+ 554:	e1 e0       	ldi	r30, 0x01	; 1
+ 556:	e9 0d       	add	r30, r9
+ 558:	f0 e0       	ldi	r31, 0x00	; 0
+ 55a:	93 94       	inc	r9
+ 55c:	93 94       	inc	r9
+ 55e:	e8 5e       	subi	r30, 0xE8	; 232
+ 560:	fe 4f       	sbci	r31, 0xFE	; 254
+ 562:	20 83       	st	Z, r18
+	
+
+	if(ReceiveAddress == NODEID2){ //Only receive if Address is NODEID2
+		if (ReceiveData[0] == 0x3D) { //if first data received is 3D = General data request
+			uint8_t j = 0;
+			for(uint8_t i = 1; i < length; i++){
+ 564:	0f 5f       	subi	r16, 0xFF	; 255
+ 566:	e0 2e       	mov	r14, r16
+ 568:	f1 2c       	mov	r15, r1
+ 56a:	ea 14       	cp	r14, r10
+ 56c:	fb 04       	cpc	r15, r11
+ 56e:	0c f4       	brge	.+2      	; 0x572 <__LOCK_REGION_LENGTH__+0x172>
+ 570:	90 cf       	rjmp	.-224    	; 0x492 <__LOCK_REGION_LENGTH__+0x92>
+ 572:	01 c0       	rjmp	.+2      	; 0x576 <__LOCK_REGION_LENGTH__+0x176>
+ 574:	91 2c       	mov	r9, r1
+					getADC(2);
+					TransmitData[j++] = ReceiveData[i] | ((ADCValue[2] >> 2) & 0b11000000 ) ;
+					TransmitData[j++] = ADCValue[2];
+				}
+			}
+			can_tx(MASTERID, j); //Transmit data depending on the number of message received
+ 576:	69 2d       	mov	r22, r9
+ 578:	87 e1       	ldi	r24, 0x17	; 23
+ 57a:	93 e0       	ldi	r25, 0x03	; 3
+ 57c:	5f de       	rcall	.-834    	; 0x23c <can_tx>
+ 57e:	da c0       	rjmp	.+436    	; 0x734 <__LOCK_REGION_LENGTH__+0x334>
+		}
+	}
+	
+	if(ReceiveAddress == NODEID3){ //Only receive if Address is NODEID3
+ 580:	c3 30       	cpi	r28, 0x03	; 3
+ 582:	f2 e0       	ldi	r31, 0x02	; 2
+ 584:	df 07       	cpc	r29, r31
+ 586:	09 f0       	breq	.+2      	; 0x58a <__LOCK_REGION_LENGTH__+0x18a>
+ 588:	68 c0       	rjmp	.+208    	; 0x65a <__LOCK_REGION_LENGTH__+0x25a>
+		if (ReceiveData[0] == 0x3D) { //if first data received is 3D = General data request
+ 58a:	80 91 20 01 	lds	r24, 0x0120	; 0x800120 <ReceiveData>
+ 58e:	8d 33       	cpi	r24, 0x3D	; 61
+ 590:	09 f0       	breq	.+2      	; 0x594 <__LOCK_REGION_LENGTH__+0x194>
+ 592:	4c c1       	rjmp	.+664    	; 0x82c <__LOCK_REGION_LENGTH__+0x42c>
+			uint8_t j = 0;
+			for(uint8_t i = 1; i < length; i++){
+ 594:	a1 2e       	mov	r10, r17
+ 596:	11 0f       	add	r17, r17
+ 598:	bb 08       	sbc	r11, r11
+ 59a:	82 e0       	ldi	r24, 0x02	; 2
+ 59c:	a8 16       	cp	r10, r24
+ 59e:	b1 04       	cpc	r11, r1
+ 5a0:	0c f4       	brge	.+2      	; 0x5a4 <__LOCK_REGION_LENGTH__+0x1a4>
+ 5a2:	55 c0       	rjmp	.+170    	; 0x64e <__LOCK_REGION_LENGTH__+0x24e>
+ 5a4:	c1 e0       	ldi	r28, 0x01	; 1
+ 5a6:	d0 e0       	ldi	r29, 0x00	; 0
+ 5a8:	01 e0       	ldi	r16, 0x01	; 1
+ 5aa:	10 e0       	ldi	r17, 0x00	; 0
+					TransmitData[j++] = PulsePerSec[2];
+					TransmitData[j++] = (PulsePerSec[2] >> 8);
+				}
+				if (ReceiveData[i] == TEMP_LINKS){
+					getADC(0);
+					TransmitData[j++] = ReceiveData[i] | ((ADCValue[0] >> 2) & 0b11000000 ) ;
+ 5ac:	0f 2e       	mov	r0, r31
+ 5ae:	f0 e0       	ldi	r31, 0x00	; 0
+ 5b0:	cf 2e       	mov	r12, r31
+ 5b2:	f1 e0       	ldi	r31, 0x01	; 1
+ 5b4:	df 2e       	mov	r13, r31
+ 5b6:	f0 2d       	mov	r31, r0
+	if(ReceiveAddress == NODEID3){ //Only receive if Address is NODEID3
+		if (ReceiveData[0] == 0x3D) { //if first data received is 3D = General data request
+			uint8_t j = 0;
+			for(uint8_t i = 1; i < length; i++){
+				if (ReceiveData[i] == FLOW_RICHTING_LINKS){ //if Receive data 0x01, Transmit the following data:
+					TransmitData[j++] = ReceiveData[i];
+ 5b8:	0f 2e       	mov	r0, r31
+ 5ba:	f5 e0       	ldi	r31, 0x05	; 5
+ 5bc:	9f 2e       	mov	r9, r31
+ 5be:	f0 2d       	mov	r31, r0
+					TransmitData[j++] = PulsePerSec[2];
+ 5c0:	0f 2e       	mov	r0, r31
+ 5c2:	fa e0       	ldi	r31, 0x0A	; 10
+ 5c4:	ef 2e       	mov	r14, r31
+ 5c6:	f1 e0       	ldi	r31, 0x01	; 1
+ 5c8:	ff 2e       	mov	r15, r31
+ 5ca:	f0 2d       	mov	r31, r0
+	
+	if(ReceiveAddress == NODEID3){ //Only receive if Address is NODEID3
+		if (ReceiveData[0] == 0x3D) { //if first data received is 3D = General data request
+			uint8_t j = 0;
+			for(uint8_t i = 1; i < length; i++){
+				if (ReceiveData[i] == FLOW_RICHTING_LINKS){ //if Receive data 0x01, Transmit the following data:
+ 5cc:	fe 01       	movw	r30, r28
+ 5ce:	e0 5e       	subi	r30, 0xE0	; 224
+ 5d0:	fe 4f       	sbci	r31, 0xFE	; 254
+ 5d2:	80 81       	ld	r24, Z
+ 5d4:	85 30       	cpi	r24, 0x05	; 5
+ 5d6:	b1 f4       	brne	.+44     	; 0x604 <__LOCK_REGION_LENGTH__+0x204>
+					TransmitData[j++] = ReceiveData[i];
+ 5d8:	e1 2f       	mov	r30, r17
+ 5da:	f0 e0       	ldi	r31, 0x00	; 0
+ 5dc:	e8 5e       	subi	r30, 0xE8	; 232
+ 5de:	fe 4f       	sbci	r31, 0xFE	; 254
+ 5e0:	90 82       	st	Z, r9
+					TransmitData[j++] = PulsePerSec[2];
+ 5e2:	f7 01       	movw	r30, r14
+ 5e4:	94 81       	ldd	r25, Z+4	; 0x04
+ 5e6:	85 81       	ldd	r24, Z+5	; 0x05
+	if(ReceiveAddress == NODEID3){ //Only receive if Address is NODEID3
+		if (ReceiveData[0] == 0x3D) { //if first data received is 3D = General data request
+			uint8_t j = 0;
+			for(uint8_t i = 1; i < length; i++){
+				if (ReceiveData[i] == FLOW_RICHTING_LINKS){ //if Receive data 0x01, Transmit the following data:
+					TransmitData[j++] = ReceiveData[i];
+ 5e8:	e1 e0       	ldi	r30, 0x01	; 1
+ 5ea:	e1 0f       	add	r30, r17
+					TransmitData[j++] = PulsePerSec[2];
+ 5ec:	f0 e0       	ldi	r31, 0x00	; 0
+ 5ee:	e8 5e       	subi	r30, 0xE8	; 232
+ 5f0:	fe 4f       	sbci	r31, 0xFE	; 254
+ 5f2:	90 83       	st	Z, r25
+					TransmitData[j++] = (PulsePerSec[2] >> 8);
+ 5f4:	e2 e0       	ldi	r30, 0x02	; 2
+ 5f6:	e1 0f       	add	r30, r17
+ 5f8:	f0 e0       	ldi	r31, 0x00	; 0
+ 5fa:	1d 5f       	subi	r17, 0xFD	; 253
+ 5fc:	e8 5e       	subi	r30, 0xE8	; 232
+ 5fe:	fe 4f       	sbci	r31, 0xFE	; 254
+ 600:	80 83       	st	Z, r24
+ 602:	1d c0       	rjmp	.+58     	; 0x63e <__LOCK_REGION_LENGTH__+0x23e>
+				}
+				if (ReceiveData[i] == TEMP_LINKS){
+ 604:	87 30       	cpi	r24, 0x07	; 7
+ 606:	d9 f4       	brne	.+54     	; 0x63e <__LOCK_REGION_LENGTH__+0x23e>
+					getADC(0);
+ 608:	80 e0       	ldi	r24, 0x00	; 0
+ 60a:	6b dd       	rcall	.-1322   	; 0xe2 <getADC>
+					TransmitData[j++] = ReceiveData[i] | ((ADCValue[0] >> 2) & 0b11000000 ) ;
+ 60c:	f6 01       	movw	r30, r12
+ 60e:	20 81       	ld	r18, Z
+ 610:	31 81       	ldd	r19, Z+1	; 0x01
+ 612:	e1 2f       	mov	r30, r17
+ 614:	f0 e0       	ldi	r31, 0x00	; 0
+ 616:	e8 5e       	subi	r30, 0xE8	; 232
+ 618:	fe 4f       	sbci	r31, 0xFE	; 254
+ 61a:	c0 5e       	subi	r28, 0xE0	; 224
+ 61c:	de 4f       	sbci	r29, 0xFE	; 254
+ 61e:	c9 01       	movw	r24, r18
+ 620:	96 95       	lsr	r25
+ 622:	87 95       	ror	r24
+ 624:	96 95       	lsr	r25
+ 626:	87 95       	ror	r24
+ 628:	80 7c       	andi	r24, 0xC0	; 192
+ 62a:	98 81       	ld	r25, Y
+ 62c:	89 2b       	or	r24, r25
+ 62e:	80 83       	st	Z, r24
+					TransmitData[j++] = ADCValue[0];
+ 630:	e1 e0       	ldi	r30, 0x01	; 1
+ 632:	e1 0f       	add	r30, r17
+ 634:	f0 e0       	ldi	r31, 0x00	; 0
+ 636:	1e 5f       	subi	r17, 0xFE	; 254
+ 638:	e8 5e       	subi	r30, 0xE8	; 232
+ 63a:	fe 4f       	sbci	r31, 0xFE	; 254
+ 63c:	20 83       	st	Z, r18
+	}
+	
+	if(ReceiveAddress == NODEID3){ //Only receive if Address is NODEID3
+		if (ReceiveData[0] == 0x3D) { //if first data received is 3D = General data request
+			uint8_t j = 0;
+			for(uint8_t i = 1; i < length; i++){
+ 63e:	0f 5f       	subi	r16, 0xFF	; 255
+ 640:	c0 2f       	mov	r28, r16
+ 642:	d0 e0       	ldi	r29, 0x00	; 0
+ 644:	ca 15       	cp	r28, r10
+ 646:	db 05       	cpc	r29, r11
+ 648:	0c f4       	brge	.+2      	; 0x64c <__LOCK_REGION_LENGTH__+0x24c>
+ 64a:	c0 cf       	rjmp	.-128    	; 0x5cc <__LOCK_REGION_LENGTH__+0x1cc>
+ 64c:	01 c0       	rjmp	.+2      	; 0x650 <__LOCK_REGION_LENGTH__+0x250>
+ 64e:	10 e0       	ldi	r17, 0x00	; 0
+					getADC(0);
+					TransmitData[j++] = ReceiveData[i] | ((ADCValue[0] >> 2) & 0b11000000 ) ;
+					TransmitData[j++] = ADCValue[0];
+				}
+			}
+			can_tx(MASTERID, j); //Transmit data depending on the number of message received
+ 650:	61 2f       	mov	r22, r17
+ 652:	87 e1       	ldi	r24, 0x17	; 23
+ 654:	93 e0       	ldi	r25, 0x03	; 3
+ 656:	f2 dd       	rcall	.-1052   	; 0x23c <can_tx>
+ 658:	e9 c0       	rjmp	.+466    	; 0x82c <__LOCK_REGION_LENGTH__+0x42c>
+		}
+	}
+
+	if(ReceiveAddress == NODEID4){ //Only receive if Address is NODEID4
+ 65a:	c4 30       	cpi	r28, 0x04	; 4
+ 65c:	f2 e0       	ldi	r31, 0x02	; 2
+ 65e:	df 07       	cpc	r29, r31
+ 660:	09 f0       	breq	.+2      	; 0x664 <__LOCK_REGION_LENGTH__+0x264>
+ 662:	68 c0       	rjmp	.+208    	; 0x734 <__LOCK_REGION_LENGTH__+0x334>
+		if (ReceiveData[0] == 0x3D) { //if first data received is 3D = General data request
+ 664:	80 91 20 01 	lds	r24, 0x0120	; 0x800120 <ReceiveData>
+ 668:	8d 33       	cpi	r24, 0x3D	; 61
+ 66a:	09 f0       	breq	.+2      	; 0x66e <__LOCK_REGION_LENGTH__+0x26e>
+ 66c:	df c0       	rjmp	.+446    	; 0x82c <__LOCK_REGION_LENGTH__+0x42c>
+			uint8_t j = 0;
+			for(uint8_t i = 1; i < length; i++){
+ 66e:	a1 2e       	mov	r10, r17
+ 670:	11 0f       	add	r17, r17
+ 672:	bb 08       	sbc	r11, r11
+ 674:	82 e0       	ldi	r24, 0x02	; 2
+ 676:	a8 16       	cp	r10, r24
+ 678:	b1 04       	cpc	r11, r1
+ 67a:	0c f4       	brge	.+2      	; 0x67e <__LOCK_REGION_LENGTH__+0x27e>
+ 67c:	55 c0       	rjmp	.+170    	; 0x728 <__LOCK_REGION_LENGTH__+0x328>
+ 67e:	c1 e0       	ldi	r28, 0x01	; 1
+ 680:	d0 e0       	ldi	r29, 0x00	; 0
+ 682:	01 e0       	ldi	r16, 0x01	; 1
+ 684:	10 e0       	ldi	r17, 0x00	; 0
+					TransmitData[j++] = PulsePerSec[2];
+					TransmitData[j++] = (PulsePerSec[2] >> 8);
+				}
+				if (ReceiveData[i] == TEMP_RECHTS){
+					getADC(0);
+					TransmitData[j++] = ReceiveData[i] | ((ADCValue[0] >> 2) & 0b11000000 ) ;
+ 686:	0f 2e       	mov	r0, r31
+ 688:	f0 e0       	ldi	r31, 0x00	; 0
+ 68a:	cf 2e       	mov	r12, r31
+ 68c:	f1 e0       	ldi	r31, 0x01	; 1
+ 68e:	df 2e       	mov	r13, r31
+ 690:	f0 2d       	mov	r31, r0
+	if(ReceiveAddress == NODEID4){ //Only receive if Address is NODEID4
+		if (ReceiveData[0] == 0x3D) { //if first data received is 3D = General data request
+			uint8_t j = 0;
+			for(uint8_t i = 1; i < length; i++){
+				if (ReceiveData[i] == FLOW_RICHTING_RECHTS){ //if Receive data 0x01, Transmit the following data:
+					TransmitData[j++] = ReceiveData[i];
+ 692:	0f 2e       	mov	r0, r31
+ 694:	f6 e0       	ldi	r31, 0x06	; 6
+ 696:	9f 2e       	mov	r9, r31
+ 698:	f0 2d       	mov	r31, r0
+					TransmitData[j++] = PulsePerSec[2];
+ 69a:	0f 2e       	mov	r0, r31
+ 69c:	fa e0       	ldi	r31, 0x0A	; 10
+ 69e:	ef 2e       	mov	r14, r31
+ 6a0:	f1 e0       	ldi	r31, 0x01	; 1
+ 6a2:	ff 2e       	mov	r15, r31
+ 6a4:	f0 2d       	mov	r31, r0
+
+	if(ReceiveAddress == NODEID4){ //Only receive if Address is NODEID4
+		if (ReceiveData[0] == 0x3D) { //if first data received is 3D = General data request
+			uint8_t j = 0;
+			for(uint8_t i = 1; i < length; i++){
+				if (ReceiveData[i] == FLOW_RICHTING_RECHTS){ //if Receive data 0x01, Transmit the following data:
+ 6a6:	fe 01       	movw	r30, r28
+ 6a8:	e0 5e       	subi	r30, 0xE0	; 224
+ 6aa:	fe 4f       	sbci	r31, 0xFE	; 254
+ 6ac:	80 81       	ld	r24, Z
+ 6ae:	86 30       	cpi	r24, 0x06	; 6
+ 6b0:	b1 f4       	brne	.+44     	; 0x6de <__LOCK_REGION_LENGTH__+0x2de>
+					TransmitData[j++] = ReceiveData[i];
+ 6b2:	e1 2f       	mov	r30, r17
+ 6b4:	f0 e0       	ldi	r31, 0x00	; 0
+ 6b6:	e8 5e       	subi	r30, 0xE8	; 232
+ 6b8:	fe 4f       	sbci	r31, 0xFE	; 254
+ 6ba:	90 82       	st	Z, r9
+					TransmitData[j++] = PulsePerSec[2];
+ 6bc:	f7 01       	movw	r30, r14
+ 6be:	94 81       	ldd	r25, Z+4	; 0x04
+ 6c0:	85 81       	ldd	r24, Z+5	; 0x05
+	if(ReceiveAddress == NODEID4){ //Only receive if Address is NODEID4
+		if (ReceiveData[0] == 0x3D) { //if first data received is 3D = General data request
+			uint8_t j = 0;
+			for(uint8_t i = 1; i < length; i++){
+				if (ReceiveData[i] == FLOW_RICHTING_RECHTS){ //if Receive data 0x01, Transmit the following data:
+					TransmitData[j++] = ReceiveData[i];
+ 6c2:	e1 e0       	ldi	r30, 0x01	; 1
+ 6c4:	e1 0f       	add	r30, r17
+					TransmitData[j++] = PulsePerSec[2];
+ 6c6:	f0 e0       	ldi	r31, 0x00	; 0
+ 6c8:	e8 5e       	subi	r30, 0xE8	; 232
+ 6ca:	fe 4f       	sbci	r31, 0xFE	; 254
+ 6cc:	90 83       	st	Z, r25
+					TransmitData[j++] = (PulsePerSec[2] >> 8);
+ 6ce:	e2 e0       	ldi	r30, 0x02	; 2
+ 6d0:	e1 0f       	add	r30, r17
+ 6d2:	f0 e0       	ldi	r31, 0x00	; 0
+ 6d4:	1d 5f       	subi	r17, 0xFD	; 253
+ 6d6:	e8 5e       	subi	r30, 0xE8	; 232
+ 6d8:	fe 4f       	sbci	r31, 0xFE	; 254
+ 6da:	80 83       	st	Z, r24
+ 6dc:	1d c0       	rjmp	.+58     	; 0x718 <__LOCK_REGION_LENGTH__+0x318>
+				}
+				if (ReceiveData[i] == TEMP_RECHTS){
+ 6de:	88 30       	cpi	r24, 0x08	; 8
+ 6e0:	d9 f4       	brne	.+54     	; 0x718 <__LOCK_REGION_LENGTH__+0x318>
+					getADC(0);
+ 6e2:	80 e0       	ldi	r24, 0x00	; 0
+ 6e4:	fe dc       	rcall	.-1540   	; 0xe2 <getADC>
+					TransmitData[j++] = ReceiveData[i] | ((ADCValue[0] >> 2) & 0b11000000 ) ;
+ 6e6:	f6 01       	movw	r30, r12
+ 6e8:	20 81       	ld	r18, Z
+ 6ea:	31 81       	ldd	r19, Z+1	; 0x01
+ 6ec:	e1 2f       	mov	r30, r17
+ 6ee:	f0 e0       	ldi	r31, 0x00	; 0
+ 6f0:	e8 5e       	subi	r30, 0xE8	; 232
+ 6f2:	fe 4f       	sbci	r31, 0xFE	; 254
+ 6f4:	c0 5e       	subi	r28, 0xE0	; 224
+ 6f6:	de 4f       	sbci	r29, 0xFE	; 254
+ 6f8:	c9 01       	movw	r24, r18
+ 6fa:	96 95       	lsr	r25
+ 6fc:	87 95       	ror	r24
+ 6fe:	96 95       	lsr	r25
+ 700:	87 95       	ror	r24
+ 702:	80 7c       	andi	r24, 0xC0	; 192
+ 704:	98 81       	ld	r25, Y
+ 706:	89 2b       	or	r24, r25
+ 708:	80 83       	st	Z, r24
+					TransmitData[j++] = ADCValue[0];
+ 70a:	e1 e0       	ldi	r30, 0x01	; 1
+ 70c:	e1 0f       	add	r30, r17
+ 70e:	f0 e0       	ldi	r31, 0x00	; 0
+ 710:	1e 5f       	subi	r17, 0xFE	; 254
+ 712:	e8 5e       	subi	r30, 0xE8	; 232
+ 714:	fe 4f       	sbci	r31, 0xFE	; 254
+ 716:	20 83       	st	Z, r18
+	}
+
+	if(ReceiveAddress == NODEID4){ //Only receive if Address is NODEID4
+		if (ReceiveData[0] == 0x3D) { //if first data received is 3D = General data request
+			uint8_t j = 0;
+			for(uint8_t i = 1; i < length; i++){
+ 718:	0f 5f       	subi	r16, 0xFF	; 255
+ 71a:	c0 2f       	mov	r28, r16
+ 71c:	d0 e0       	ldi	r29, 0x00	; 0
+ 71e:	ca 15       	cp	r28, r10
+ 720:	db 05       	cpc	r29, r11
+ 722:	0c f4       	brge	.+2      	; 0x726 <__LOCK_REGION_LENGTH__+0x326>
+ 724:	c0 cf       	rjmp	.-128    	; 0x6a6 <__LOCK_REGION_LENGTH__+0x2a6>
+ 726:	01 c0       	rjmp	.+2      	; 0x72a <__LOCK_REGION_LENGTH__+0x32a>
+ 728:	10 e0       	ldi	r17, 0x00	; 0
+					getADC(0);
+					TransmitData[j++] = ReceiveData[i] | ((ADCValue[0] >> 2) & 0b11000000 ) ;
+					TransmitData[j++] = ADCValue[0];
+				}
+			}
+			can_tx(MASTERID, j); //Transmit data depending on the number of message received
+ 72a:	61 2f       	mov	r22, r17
+ 72c:	87 e1       	ldi	r24, 0x17	; 23
+ 72e:	93 e0       	ldi	r25, 0x03	; 3
+ 730:	85 dd       	rcall	.-1270   	; 0x23c <can_tx>
+ 732:	7c c0       	rjmp	.+248    	; 0x82c <__LOCK_REGION_LENGTH__+0x42c>
+		}
+	}
+
+	if(ReceiveAddress == NODEID5){ //Only receive if Address is NODEID5
+ 734:	c5 30       	cpi	r28, 0x05	; 5
+ 736:	d2 40       	sbci	r29, 0x02	; 2
+ 738:	09 f0       	breq	.+2      	; 0x73c <__LOCK_REGION_LENGTH__+0x33c>
+ 73a:	78 c0       	rjmp	.+240    	; 0x82c <__LOCK_REGION_LENGTH__+0x42c>
+		if (ReceiveData[0] == 0x3D) { //if first data received is 3D = General data request
+ 73c:	80 91 20 01 	lds	r24, 0x0120	; 0x800120 <ReceiveData>
+ 740:	8d 33       	cpi	r24, 0x3D	; 61
+ 742:	09 f0       	breq	.+2      	; 0x746 <__LOCK_REGION_LENGTH__+0x346>
+ 744:	73 c0       	rjmp	.+230    	; 0x82c <__LOCK_REGION_LENGTH__+0x42c>
+			uint8_t j = 0;
+			for(uint8_t i = 1; i < length; i++){
+ 746:	41 2f       	mov	r20, r17
+ 748:	11 0f       	add	r17, r17
+ 74a:	55 0b       	sbc	r21, r21
+ 74c:	42 30       	cpi	r20, 0x02	; 2
+ 74e:	51 05       	cpc	r21, r1
+ 750:	0c f4       	brge	.+2      	; 0x754 <__LOCK_REGION_LENGTH__+0x354>
+ 752:	68 c0       	rjmp	.+208    	; 0x824 <__LOCK_REGION_LENGTH__+0x424>
+					TransmitData[j++] = PulsePerSec[2];
+					TransmitData[j++] = (PulsePerSec[2] >> 8);
+				}
+				if (ReceiveData[i] == RPM_RECHTS_ACHTER){ //if Receive data 0x01, Transmit the following data:
+					TransmitData[j++] = ReceiveData[i];
+					TransmitData[j++] = PulsePerSec[1];
+ 754:	ea e0       	ldi	r30, 0x0A	; 10
+ 756:	f1 e0       	ldi	r31, 0x01	; 1
+ 758:	d2 80       	ldd	r13, Z+2	; 0x02
+					TransmitData[j++] = (PulsePerSec[1] >> 8);
+ 75a:	03 81       	ldd	r16, Z+3	; 0x03
+		if (ReceiveData[0] == 0x3D) { //if first data received is 3D = General data request
+			uint8_t j = 0;
+			for(uint8_t i = 1; i < length; i++){
+				if (ReceiveData[i] == RPM_LINKS_ACHTER){ //if Receive data 0x01, Transmit the following data:
+					TransmitData[j++] = ReceiveData[i];
+					TransmitData[j++] = PulsePerSec[2];
+ 75c:	e4 80       	ldd	r14, Z+4	; 0x04
+					TransmitData[j++] = (PulsePerSec[2] >> 8);
+ 75e:	f5 80       	ldd	r15, Z+5	; 0x05
+					TransmitData[j++] = ReceiveData[i];
+					TransmitData[j++] = Direction[2];
+				}
+				if (ReceiveData[i] == DRAAIRICHTING_RECHTS_ACHTER){
+					TransmitData[j++] = ReceiveData[i];
+					TransmitData[j++] = Direction[1];
+ 760:	10 91 09 01 	lds	r17, 0x0109	; 0x800109 <Direction+0x1>
+ 764:	81 e0       	ldi	r24, 0x01	; 1
+ 766:	90 e0       	ldi	r25, 0x00	; 0
+ 768:	21 e0       	ldi	r18, 0x01	; 1
+ 76a:	60 e0       	ldi	r22, 0x00	; 0
+				if (ReceiveData[i] == DRAAIRICHTING_LINKS_ACHTER){
+					TransmitData[j++] = ReceiveData[i];
+					TransmitData[j++] = Direction[2];
+				}
+				if (ReceiveData[i] == DRAAIRICHTING_RECHTS_ACHTER){
+					TransmitData[j++] = ReceiveData[i];
+ 76c:	d4 e0       	ldi	r29, 0x04	; 4
+					TransmitData[j++] = ReceiveData[i];
+					TransmitData[j++] = PulsePerSec[1];
+					TransmitData[j++] = (PulsePerSec[1] >> 8);
+				}
+				if (ReceiveData[i] == DRAAIRICHTING_LINKS_ACHTER){
+					TransmitData[j++] = ReceiveData[i];
+ 76e:	c3 e0       	ldi	r28, 0x03	; 3
+					TransmitData[j++] = Direction[2];
+ 770:	a8 e0       	ldi	r26, 0x08	; 8
+ 772:	b1 e0       	ldi	r27, 0x01	; 1
+					TransmitData[j++] = ReceiveData[i];
+					TransmitData[j++] = PulsePerSec[2];
+					TransmitData[j++] = (PulsePerSec[2] >> 8);
+				}
+				if (ReceiveData[i] == RPM_RECHTS_ACHTER){ //if Receive data 0x01, Transmit the following data:
+					TransmitData[j++] = ReceiveData[i];
+ 774:	72 e0       	ldi	r23, 0x02	; 2
+	if(ReceiveAddress == NODEID5){ //Only receive if Address is NODEID5
+		if (ReceiveData[0] == 0x3D) { //if first data received is 3D = General data request
+			uint8_t j = 0;
+			for(uint8_t i = 1; i < length; i++){
+				if (ReceiveData[i] == RPM_LINKS_ACHTER){ //if Receive data 0x01, Transmit the following data:
+					TransmitData[j++] = ReceiveData[i];
+ 776:	31 e0       	ldi	r19, 0x01	; 1
+
+	if(ReceiveAddress == NODEID5){ //Only receive if Address is NODEID5
+		if (ReceiveData[0] == 0x3D) { //if first data received is 3D = General data request
+			uint8_t j = 0;
+			for(uint8_t i = 1; i < length; i++){
+				if (ReceiveData[i] == RPM_LINKS_ACHTER){ //if Receive data 0x01, Transmit the following data:
+ 778:	fc 01       	movw	r30, r24
+ 77a:	e0 5e       	subi	r30, 0xE0	; 224
+ 77c:	fe 4f       	sbci	r31, 0xFE	; 254
+ 77e:	80 81       	ld	r24, Z
+ 780:	81 30       	cpi	r24, 0x01	; 1
+ 782:	99 f4       	brne	.+38     	; 0x7aa <__LOCK_REGION_LENGTH__+0x3aa>
+					TransmitData[j++] = ReceiveData[i];
+ 784:	e6 2f       	mov	r30, r22
+ 786:	f0 e0       	ldi	r31, 0x00	; 0
+ 788:	e8 5e       	subi	r30, 0xE8	; 232
+ 78a:	fe 4f       	sbci	r31, 0xFE	; 254
+ 78c:	30 83       	st	Z, r19
+ 78e:	e1 e0       	ldi	r30, 0x01	; 1
+ 790:	e6 0f       	add	r30, r22
+					TransmitData[j++] = PulsePerSec[2];
+ 792:	f0 e0       	ldi	r31, 0x00	; 0
+ 794:	e8 5e       	subi	r30, 0xE8	; 232
+ 796:	fe 4f       	sbci	r31, 0xFE	; 254
+ 798:	e0 82       	st	Z, r14
+					TransmitData[j++] = (PulsePerSec[2] >> 8);
+ 79a:	e2 e0       	ldi	r30, 0x02	; 2
+ 79c:	e6 0f       	add	r30, r22
+ 79e:	f0 e0       	ldi	r31, 0x00	; 0
+ 7a0:	6d 5f       	subi	r22, 0xFD	; 253
+ 7a2:	e8 5e       	subi	r30, 0xE8	; 232
+ 7a4:	fe 4f       	sbci	r31, 0xFE	; 254
+ 7a6:	f0 82       	st	Z, r15
+ 7a8:	27 c0       	rjmp	.+78     	; 0x7f8 <__LOCK_REGION_LENGTH__+0x3f8>
+				}
+				if (ReceiveData[i] == RPM_RECHTS_ACHTER){ //if Receive data 0x01, Transmit the following data:
+ 7aa:	82 30       	cpi	r24, 0x02	; 2
+ 7ac:	99 f4       	brne	.+38     	; 0x7d4 <__LOCK_REGION_LENGTH__+0x3d4>
+					TransmitData[j++] = ReceiveData[i];
+ 7ae:	e6 2f       	mov	r30, r22
+ 7b0:	f0 e0       	ldi	r31, 0x00	; 0
+ 7b2:	e8 5e       	subi	r30, 0xE8	; 232
+ 7b4:	fe 4f       	sbci	r31, 0xFE	; 254
+ 7b6:	70 83       	st	Z, r23
+ 7b8:	e1 e0       	ldi	r30, 0x01	; 1
+ 7ba:	e6 0f       	add	r30, r22
+					TransmitData[j++] = PulsePerSec[1];
+ 7bc:	f0 e0       	ldi	r31, 0x00	; 0
+ 7be:	e8 5e       	subi	r30, 0xE8	; 232
+ 7c0:	fe 4f       	sbci	r31, 0xFE	; 254
+ 7c2:	d0 82       	st	Z, r13
+					TransmitData[j++] = (PulsePerSec[1] >> 8);
+ 7c4:	e2 e0       	ldi	r30, 0x02	; 2
+ 7c6:	e6 0f       	add	r30, r22
+ 7c8:	f0 e0       	ldi	r31, 0x00	; 0
+ 7ca:	6d 5f       	subi	r22, 0xFD	; 253
+ 7cc:	e8 5e       	subi	r30, 0xE8	; 232
+ 7ce:	fe 4f       	sbci	r31, 0xFE	; 254
+ 7d0:	00 83       	st	Z, r16
+ 7d2:	20 c0       	rjmp	.+64     	; 0x814 <__LOCK_REGION_LENGTH__+0x414>
+				}
+				if (ReceiveData[i] == DRAAIRICHTING_LINKS_ACHTER){
+ 7d4:	83 30       	cpi	r24, 0x03	; 3
+ 7d6:	81 f4       	brne	.+32     	; 0x7f8 <__LOCK_REGION_LENGTH__+0x3f8>
+					TransmitData[j++] = ReceiveData[i];
+ 7d8:	e6 2f       	mov	r30, r22
+ 7da:	f0 e0       	ldi	r31, 0x00	; 0
+ 7dc:	e8 5e       	subi	r30, 0xE8	; 232
+ 7de:	fe 4f       	sbci	r31, 0xFE	; 254
+ 7e0:	c0 83       	st	Z, r28
+					TransmitData[j++] = Direction[2];
+ 7e2:	e1 e0       	ldi	r30, 0x01	; 1
+ 7e4:	e6 0f       	add	r30, r22
+ 7e6:	f0 e0       	ldi	r31, 0x00	; 0
+ 7e8:	6e 5f       	subi	r22, 0xFE	; 254
+ 7ea:	e8 5e       	subi	r30, 0xE8	; 232
+ 7ec:	fe 4f       	sbci	r31, 0xFE	; 254
+ 7ee:	12 96       	adiw	r26, 0x02	; 2
+ 7f0:	8c 91       	ld	r24, X
+ 7f2:	12 97       	sbiw	r26, 0x02	; 2
+ 7f4:	80 83       	st	Z, r24
+ 7f6:	0e c0       	rjmp	.+28     	; 0x814 <__LOCK_REGION_LENGTH__+0x414>
+				}
+				if (ReceiveData[i] == DRAAIRICHTING_RECHTS_ACHTER){
+ 7f8:	84 30       	cpi	r24, 0x04	; 4
+ 7fa:	61 f4       	brne	.+24     	; 0x814 <__LOCK_REGION_LENGTH__+0x414>
+					TransmitData[j++] = ReceiveData[i];
+ 7fc:	e6 2f       	mov	r30, r22
+ 7fe:	f0 e0       	ldi	r31, 0x00	; 0
+ 800:	e8 5e       	subi	r30, 0xE8	; 232
+ 802:	fe 4f       	sbci	r31, 0xFE	; 254
+ 804:	d0 83       	st	Z, r29
+					TransmitData[j++] = Direction[1];
+ 806:	e1 e0       	ldi	r30, 0x01	; 1
+ 808:	e6 0f       	add	r30, r22
+ 80a:	f0 e0       	ldi	r31, 0x00	; 0
+ 80c:	6e 5f       	subi	r22, 0xFE	; 254
+ 80e:	e8 5e       	subi	r30, 0xE8	; 232
+ 810:	fe 4f       	sbci	r31, 0xFE	; 254
+ 812:	10 83       	st	Z, r17
+	}
+
+	if(ReceiveAddress == NODEID5){ //Only receive if Address is NODEID5
+		if (ReceiveData[0] == 0x3D) { //if first data received is 3D = General data request
+			uint8_t j = 0;
+			for(uint8_t i = 1; i < length; i++){
+ 814:	2f 5f       	subi	r18, 0xFF	; 255
+ 816:	82 2f       	mov	r24, r18
+ 818:	90 e0       	ldi	r25, 0x00	; 0
+ 81a:	84 17       	cp	r24, r20
+ 81c:	95 07       	cpc	r25, r21
+ 81e:	0c f4       	brge	.+2      	; 0x822 <__LOCK_REGION_LENGTH__+0x422>
+ 820:	ab cf       	rjmp	.-170    	; 0x778 <__LOCK_REGION_LENGTH__+0x378>
+ 822:	01 c0       	rjmp	.+2      	; 0x826 <__LOCK_REGION_LENGTH__+0x426>
+ 824:	60 e0       	ldi	r22, 0x00	; 0
+				if (ReceiveData[i] == DRAAIRICHTING_RECHTS_ACHTER){
+					TransmitData[j++] = ReceiveData[i];
+					TransmitData[j++] = Direction[1];
+				}
+			}
+			can_tx(MASTERID, j); //Transmit data depending on the number of message received
+ 826:	87 e1       	ldi	r24, 0x17	; 23
+ 828:	93 e0       	ldi	r25, 0x03	; 3
+ 82a:	08 dd       	rcall	.-1520   	; 0x23c <can_tx>
+ 82c:	e0 e2       	ldi	r30, 0x20	; 32
+ 82e:	f1 e0       	ldi	r31, 0x01	; 1
+ 830:	a8 e1       	ldi	r26, 0x18	; 24
+ 832:	b1 e0       	ldi	r27, 0x01	; 1
+ 834:	88 e2       	ldi	r24, 0x28	; 40
+ 836:	91 e0       	ldi	r25, 0x01	; 1
+		}
+	}
+
+	for (int8_t i = 0; i < 8; i++){
+		ReceiveData[i] = 0; //Resetting Receive Data
+ 838:	11 92       	st	Z+, r1
+		TransmitData[i] = 0; //Resetting Transmit Data
+ 83a:	1d 92       	st	X+, r1
+			}
+			can_tx(MASTERID, j); //Transmit data depending on the number of message received
+		}
+	}
+
+	for (int8_t i = 0; i < 8; i++){
+ 83c:	e8 17       	cp	r30, r24
+ 83e:	f9 07       	cpc	r31, r25
+ 840:	d9 f7       	brne	.-10     	; 0x838 <__LOCK_REGION_LENGTH__+0x438>
+		ReceiveData[i] = 0; //Resetting Receive Data
+		TransmitData[i] = 0; //Resetting Transmit Data
+	}
+
+
+	CANSTMOB = 0x00; // Clear RXOK flag
+ 842:	10 92 ee 00 	sts	0x00EE, r1	; 0x8000ee <__TEXT_REGION_LENGTH__+0x7e00ee>
+	CANCDMOB = (( 1 << CONMOB1 ) | ( 0 << IDE ) | ( 3 << DLC0)); //CAN MOb Control and DLC Register: (1<<CONMOB1) = enable reception. (0<<IDE) = can standard rev 2.0A ( id length = 11 bits), (3 << DLC0) 3 Bytes in the data field of the message.
+ 846:	83 e8       	ldi	r24, 0x83	; 131
+ 848:	80 93 ef 00 	sts	0x00EF, r24	; 0x8000ef <__TEXT_REGION_LENGTH__+0x7e00ef>
+
+	CANPAGE = ( 0 << MOBNB3 ) | ( 0 << MOBNB2 ) | ( 0 << MOBNB1 ) | ( 0 << MOBNB0 ); // select 0000 = CANMOB0
+ 84c:	10 92 ed 00 	sts	0x00ED, r1	; 0x8000ed <__TEXT_REGION_LENGTH__+0x7e00ed>
+}
+ 850:	ff 91       	pop	r31
+ 852:	ef 91       	pop	r30
+ 854:	df 91       	pop	r29
+ 856:	cf 91       	pop	r28
+ 858:	bf 91       	pop	r27
+ 85a:	af 91       	pop	r26
+ 85c:	9f 91       	pop	r25
+ 85e:	8f 91       	pop	r24
+ 860:	7f 91       	pop	r23
+ 862:	6f 91       	pop	r22
+ 864:	5f 91       	pop	r21
+ 866:	4f 91       	pop	r20
+ 868:	3f 91       	pop	r19
+ 86a:	2f 91       	pop	r18
+ 86c:	1f 91       	pop	r17
+ 86e:	0f 91       	pop	r16
+ 870:	ff 90       	pop	r15
+ 872:	ef 90       	pop	r14
+ 874:	df 90       	pop	r13
+ 876:	cf 90       	pop	r12
+ 878:	bf 90       	pop	r11
+ 87a:	af 90       	pop	r10
+ 87c:	9f 90       	pop	r9
+ 87e:	8f 90       	pop	r8
+ 880:	7f 90       	pop	r7
+ 882:	6f 90       	pop	r6
+ 884:	5f 90       	pop	r5
+ 886:	0f 90       	pop	r0
+ 888:	0b be       	out	0x3b, r0	; 59
+ 88a:	0f 90       	pop	r0
+ 88c:	0f be       	out	0x3f, r0	; 63
+ 88e:	0f 90       	pop	r0
+ 890:	1f 90       	pop	r1
+ 892:	18 95       	reti
+
+00000894 <int_ExternalInterrupt>:
+	//PORTE	|= 0b01000000; // Input 6   INT6   PullUp
+	
+	//TCCR1B |= ( 1 << CS12 ); // 16000000 / 1024 = 15625 counts/second
+	//TCCR3B |= ( 1 << CS32 ); // 16000000 / 1024 = 15625 counts/second
+	
+	TIMSK1 |= ( 1 << TOIE1);
+ 894:	ef e6       	ldi	r30, 0x6F	; 111
+ 896:	f0 e0       	ldi	r31, 0x00	; 0
+ 898:	80 81       	ld	r24, Z
+ 89a:	81 60       	ori	r24, 0x01	; 1
+ 89c:	80 83       	st	Z, r24
+	TIMSK3 |= ( 1 << TOIE3);
+ 89e:	e1 e7       	ldi	r30, 0x71	; 113
+ 8a0:	f0 e0       	ldi	r31, 0x00	; 0
+ 8a2:	80 81       	ld	r24, Z
+ 8a4:	81 60       	ori	r24, 0x01	; 1
+ 8a6:	80 83       	st	Z, r24
+	
+	EICRA =	  (1 << ISC31)
+ 8a8:	8a ea       	ldi	r24, 0xAA	; 170
+ 8aa:	80 93 69 00 	sts	0x0069, r24	; 0x800069 <__TEXT_REGION_LENGTH__+0x7e0069>
+			| (1 << ISC11)
+			| (0 << ISC10)
+			| (1 << ISC01)
+			| (0 << ISC00);
+	
+	EICRB =	  (1 << ISC71)
+ 8ae:	82 ea       	ldi	r24, 0xA2	; 162
+ 8b0:	80 93 6a 00 	sts	0x006A, r24	; 0x80006a <__TEXT_REGION_LENGTH__+0x7e006a>
+ 8b4:	08 95       	ret
+
+000008b6 <__vector_1>:
+			| (0 << ISC50)
+			| (1 << ISC41)
+			| (0 << ISC40);
+}
+
+ISR(INT0_vect){
+ 8b6:	1f 92       	push	r1
+ 8b8:	0f 92       	push	r0
+ 8ba:	0f b6       	in	r0, 0x3f	; 63
+ 8bc:	0f 92       	push	r0
+ 8be:	11 24       	eor	r1, r1
+	
+}
+ 8c0:	0f 90       	pop	r0
+ 8c2:	0f be       	out	0x3f, r0	; 63
+ 8c4:	0f 90       	pop	r0
+ 8c6:	1f 90       	pop	r1
+ 8c8:	18 95       	reti
+
+000008ca <__vector_2>:
+
+ISR(INT1_vect){
+ 8ca:	1f 92       	push	r1
+ 8cc:	0f 92       	push	r0
+ 8ce:	0f b6       	in	r0, 0x3f	; 63
+ 8d0:	0f 92       	push	r0
+ 8d2:	11 24       	eor	r1, r1
+ 8d4:	0b b6       	in	r0, 0x3b	; 59
+ 8d6:	0f 92       	push	r0
+ 8d8:	2f 93       	push	r18
+ 8da:	3f 93       	push	r19
+ 8dc:	4f 93       	push	r20
+ 8de:	5f 93       	push	r21
+ 8e0:	6f 93       	push	r22
+ 8e2:	7f 93       	push	r23
+ 8e4:	8f 93       	push	r24
+ 8e6:	9f 93       	push	r25
+ 8e8:	af 93       	push	r26
+ 8ea:	bf 93       	push	r27
+ 8ec:	ef 93       	push	r30
+ 8ee:	ff 93       	push	r31
+	
+	
+	uint16_t InterruptPairTimerTemp;
+	
+	InterruptPairTimerTemp = TCNT1L;
+ 8f0:	80 91 84 00 	lds	r24, 0x0084	; 0x800084 <__TEXT_REGION_LENGTH__+0x7e0084>
+	InterruptPairTimerTemp += (TCNT1H << 8);
+ 8f4:	60 91 85 00 	lds	r22, 0x0085	; 0x800085 <__TEXT_REGION_LENGTH__+0x7e0085>
+	
+	TCNT3H = 0x00;
+ 8f8:	10 92 95 00 	sts	0x0095, r1	; 0x800095 <__TEXT_REGION_LENGTH__+0x7e0095>
+	TCNT3L = 0x00;
+ 8fc:	10 92 94 00 	sts	0x0094, r1	; 0x800094 <__TEXT_REGION_LENGTH__+0x7e0094>
+	
+	
+	uint16_t InterruptPairTimerTemp;
+	
+	InterruptPairTimerTemp = TCNT1L;
+	InterruptPairTimerTemp += (TCNT1H << 8);
+ 900:	70 e0       	ldi	r23, 0x00	; 0
+ 902:	76 2f       	mov	r23, r22
+ 904:	66 27       	eor	r22, r22
+ 906:	68 0f       	add	r22, r24
+ 908:	71 1d       	adc	r23, r1
+	
+	TCNT3H = 0x00;
+	TCNT3L = 0x00;
+	
+	PulsePerSec[3] = 15625 / InterruptPairTimerTemp;
+ 90a:	89 e0       	ldi	r24, 0x09	; 9
+ 90c:	9d e3       	ldi	r25, 0x3D	; 61
+ 90e:	bf d2       	rcall	.+1406   	; 0xe8e <__udivmodhi4>
+ 910:	ea e0       	ldi	r30, 0x0A	; 10
+ 912:	f1 e0       	ldi	r31, 0x01	; 1
+ 914:	66 83       	std	Z+6, r22	; 0x06
+ 916:	77 83       	std	Z+7, r23	; 0x07
+	
+	TransmitData[0] = (PulsePerSec[3] << 8);
+ 918:	e8 e1       	ldi	r30, 0x18	; 24
+ 91a:	f1 e0       	ldi	r31, 0x01	; 1
+ 91c:	10 82       	st	Z, r1
+	TransmitData[1] = PulsePerSec[3];
+ 91e:	61 83       	std	Z+1, r22	; 0x01
+	can_tx(MASTERID, 2);
+ 920:	62 e0       	ldi	r22, 0x02	; 2
+ 922:	87 e1       	ldi	r24, 0x17	; 23
+ 924:	93 e0       	ldi	r25, 0x03	; 3
+ 926:	8a dc       	rcall	.-1772   	; 0x23c <can_tx>
+}
+ 928:	ff 91       	pop	r31
+ 92a:	ef 91       	pop	r30
+ 92c:	bf 91       	pop	r27
+ 92e:	af 91       	pop	r26
+ 930:	9f 91       	pop	r25
+ 932:	8f 91       	pop	r24
+ 934:	7f 91       	pop	r23
+ 936:	6f 91       	pop	r22
+ 938:	5f 91       	pop	r21
+ 93a:	4f 91       	pop	r20
+ 93c:	3f 91       	pop	r19
+ 93e:	2f 91       	pop	r18
+ 940:	0f 90       	pop	r0
+ 942:	0b be       	out	0x3b, r0	; 59
+ 944:	0f 90       	pop	r0
+ 946:	0f be       	out	0x3f, r0	; 63
+ 948:	0f 90       	pop	r0
+ 94a:	1f 90       	pop	r1
+ 94c:	18 95       	reti
+
+0000094e <__vector_3>:
+
+ISR(INT2_vect){
+ 94e:	1f 92       	push	r1
+ 950:	0f 92       	push	r0
+ 952:	0f b6       	in	r0, 0x3f	; 63
+ 954:	0f 92       	push	r0
+ 956:	11 24       	eor	r1, r1
+ 958:	0b b6       	in	r0, 0x3b	; 59
+ 95a:	0f 92       	push	r0
+ 95c:	2f 93       	push	r18
+ 95e:	3f 93       	push	r19
+ 960:	4f 93       	push	r20
+ 962:	5f 93       	push	r21
+ 964:	6f 93       	push	r22
+ 966:	7f 93       	push	r23
+ 968:	8f 93       	push	r24
+ 96a:	9f 93       	push	r25
+ 96c:	af 93       	push	r26
+ 96e:	bf 93       	push	r27
+ 970:	ef 93       	push	r30
+ 972:	ff 93       	push	r31
+	uint16_t InterruptPairTimerTemp;
+	
+	InterruptPairTimerTemp = TCNT3L;
+ 974:	e4 e9       	ldi	r30, 0x94	; 148
+ 976:	f0 e0       	ldi	r31, 0x00	; 0
+ 978:	80 81       	ld	r24, Z
+	InterruptPairTimerTemp += (TCNT3H << 8);
+ 97a:	a5 e9       	ldi	r26, 0x95	; 149
+ 97c:	b0 e0       	ldi	r27, 0x00	; 0
+ 97e:	6c 91       	ld	r22, X
+	
+	TCNT3H = 0x00;
+ 980:	1c 92       	st	X, r1
+	TCNT3L = 0x00;
+ 982:	10 82       	st	Z, r1
+
+ISR(INT2_vect){
+	uint16_t InterruptPairTimerTemp;
+	
+	InterruptPairTimerTemp = TCNT3L;
+	InterruptPairTimerTemp += (TCNT3H << 8);
+ 984:	70 e0       	ldi	r23, 0x00	; 0
+ 986:	76 2f       	mov	r23, r22
+ 988:	66 27       	eor	r22, r22
+ 98a:	68 0f       	add	r22, r24
+ 98c:	71 1d       	adc	r23, r1
+	
+	TCNT3H = 0x00;
+	TCNT3L = 0x00;
+	
+	PulsePerSec[2] = 15625 / InterruptPairTimerTemp;
+ 98e:	89 e0       	ldi	r24, 0x09	; 9
+ 990:	9d e3       	ldi	r25, 0x3D	; 61
+ 992:	7d d2       	rcall	.+1274   	; 0xe8e <__udivmodhi4>
+ 994:	ea e0       	ldi	r30, 0x0A	; 10
+ 996:	f1 e0       	ldi	r31, 0x01	; 1
+ 998:	64 83       	std	Z+4, r22	; 0x04
+ 99a:	75 83       	std	Z+5, r23	; 0x05
+	
+	TransmitData[0] = (PulsePerSec[2] << 8);
+ 99c:	e8 e1       	ldi	r30, 0x18	; 24
+ 99e:	f1 e0       	ldi	r31, 0x01	; 1
+ 9a0:	10 82       	st	Z, r1
+	TransmitData[1] = PulsePerSec[2];
+ 9a2:	61 83       	std	Z+1, r22	; 0x01
+	can_tx(MASTERID, 2);
+ 9a4:	62 e0       	ldi	r22, 0x02	; 2
+ 9a6:	87 e1       	ldi	r24, 0x17	; 23
+ 9a8:	93 e0       	ldi	r25, 0x03	; 3
+ 9aa:	48 dc       	rcall	.-1904   	; 0x23c <can_tx>
+}
+ 9ac:	ff 91       	pop	r31
+ 9ae:	ef 91       	pop	r30
+ 9b0:	bf 91       	pop	r27
+ 9b2:	af 91       	pop	r26
+ 9b4:	9f 91       	pop	r25
+ 9b6:	8f 91       	pop	r24
+ 9b8:	7f 91       	pop	r23
+ 9ba:	6f 91       	pop	r22
+ 9bc:	5f 91       	pop	r21
+ 9be:	4f 91       	pop	r20
+ 9c0:	3f 91       	pop	r19
+ 9c2:	2f 91       	pop	r18
+ 9c4:	0f 90       	pop	r0
+ 9c6:	0b be       	out	0x3b, r0	; 59
+ 9c8:	0f 90       	pop	r0
+ 9ca:	0f be       	out	0x3f, r0	; 63
+ 9cc:	0f 90       	pop	r0
+ 9ce:	1f 90       	pop	r1
+ 9d0:	18 95       	reti
+
+000009d2 <__vector_4>:
+
+ISR(INT3_vect){
+ 9d2:	1f 92       	push	r1
+ 9d4:	0f 92       	push	r0
+ 9d6:	0f b6       	in	r0, 0x3f	; 63
+ 9d8:	0f 92       	push	r0
+ 9da:	11 24       	eor	r1, r1
+ 9dc:	0b b6       	in	r0, 0x3b	; 59
+ 9de:	0f 92       	push	r0
+ 9e0:	2f 93       	push	r18
+ 9e2:	3f 93       	push	r19
+ 9e4:	5f 93       	push	r21
+ 9e6:	6f 93       	push	r22
+ 9e8:	7f 93       	push	r23
+ 9ea:	8f 93       	push	r24
+ 9ec:	9f 93       	push	r25
+ 9ee:	af 93       	push	r26
+ 9f0:	bf 93       	push	r27
+ 9f2:	cf 93       	push	r28
+ 9f4:	df 93       	push	r29
+ 9f6:	ef 93       	push	r30
+ 9f8:	ff 93       	push	r31
+	if (InterruptPairDirection[1]){
+ 9fa:	80 91 17 01 	lds	r24, 0x0117	; 0x800117 <InterruptPairDirection+0x1>
+ 9fe:	88 23       	and	r24, r24
+ a00:	11 f1       	breq	.+68     	; 0xa46 <__vector_4+0x74>
+		
+		InterruptPairTimer[1] = TCNT3L;
+ a02:	e4 e9       	ldi	r30, 0x94	; 148
+ a04:	f0 e0       	ldi	r31, 0x00	; 0
+ a06:	60 81       	ld	r22, Z
+ a08:	86 2f       	mov	r24, r22
+ a0a:	90 e0       	ldi	r25, 0x00	; 0
+ a0c:	c2 e1       	ldi	r28, 0x12	; 18
+ a0e:	d1 e0       	ldi	r29, 0x01	; 1
+ a10:	9b 83       	std	Y+3, r25	; 0x03
+ a12:	8a 83       	std	Y+2, r24	; 0x02
+		InterruptPairTimer[1] += (TCNT3H << 8);
+ a14:	a5 e9       	ldi	r26, 0x95	; 149
+ a16:	b0 e0       	ldi	r27, 0x00	; 0
+ a18:	6c 91       	ld	r22, X
+ a1a:	70 e0       	ldi	r23, 0x00	; 0
+ a1c:	76 2f       	mov	r23, r22
+ a1e:	66 27       	eor	r22, r22
+ a20:	68 0f       	add	r22, r24
+ a22:	79 1f       	adc	r23, r25
+ a24:	7b 83       	std	Y+3, r23	; 0x03
+ a26:	6a 83       	std	Y+2, r22	; 0x02
+		
+		TCNT3H = 0x00;
+ a28:	1c 92       	st	X, r1
+		TCNT3L = 0x00;
+ a2a:	10 82       	st	Z, r1
+		
+		PulsePerSec[1] = 15625 / InterruptPairTimer[1];
+ a2c:	89 e0       	ldi	r24, 0x09	; 9
+ a2e:	9d e3       	ldi	r25, 0x3D	; 61
+ a30:	2e d2       	rcall	.+1116   	; 0xe8e <__udivmodhi4>
+ a32:	70 93 0d 01 	sts	0x010D, r23	; 0x80010d <__data_end+0x3>
+ a36:	60 93 0c 01 	sts	0x010C, r22	; 0x80010c <__data_end+0x2>
+		Direction[1] = 1;
+ a3a:	81 e0       	ldi	r24, 0x01	; 1
+ a3c:	80 93 09 01 	sts	0x0109, r24	; 0x800109 <Direction+0x1>
+		
+		InterruptPairDirection[1] = 0;
+ a40:	10 92 17 01 	sts	0x0117, r1	; 0x800117 <InterruptPairDirection+0x1>
+ a44:	1d c0       	rjmp	.+58     	; 0xa80 <__vector_4+0xae>
+	}
+	else{
+		uint16_t InterruptPairTimerTemp;
+		
+		InterruptPairTimerTemp = TCNT3L;
+ a46:	20 91 94 00 	lds	r18, 0x0094	; 0x800094 <__TEXT_REGION_LENGTH__+0x7e0094>
+		InterruptPairTimerTemp += (TCNT3H << 8);
+ a4a:	80 91 95 00 	lds	r24, 0x0095	; 0x800095 <__TEXT_REGION_LENGTH__+0x7e0095>
+ a4e:	90 e0       	ldi	r25, 0x00	; 0
+ a50:	98 2f       	mov	r25, r24
+ a52:	88 27       	eor	r24, r24
+ a54:	82 0f       	add	r24, r18
+ a56:	91 1d       	adc	r25, r1
+		
+		if(InterruptPairTimerTemp < (InterruptPairTimer[1]/2)){
+ a58:	20 91 14 01 	lds	r18, 0x0114	; 0x800114 <InterruptPairTimer+0x2>
+ a5c:	30 91 15 01 	lds	r19, 0x0115	; 0x800115 <InterruptPairTimer+0x3>
+ a60:	36 95       	lsr	r19
+ a62:	27 95       	ror	r18
+ a64:	82 17       	cp	r24, r18
+ a66:	93 07       	cpc	r25, r19
+ a68:	30 f4       	brcc	.+12     	; 0xa76 <__vector_4+0xa4>
+			InterruptPairDirection[1] = 1;
+ a6a:	81 e0       	ldi	r24, 0x01	; 1
+ a6c:	80 93 17 01 	sts	0x0117, r24	; 0x800117 <InterruptPairDirection+0x1>
+			Direction[1] = 0;
+ a70:	10 92 09 01 	sts	0x0109, r1	; 0x800109 <Direction+0x1>
+ a74:	05 c0       	rjmp	.+10     	; 0xa80 <__vector_4+0xae>
+		}
+		else{
+			InterruptPairDirection[1] = 0;
+ a76:	10 92 17 01 	sts	0x0117, r1	; 0x800117 <InterruptPairDirection+0x1>
+			Direction[1] = 1;
+ a7a:	81 e0       	ldi	r24, 0x01	; 1
+ a7c:	80 93 09 01 	sts	0x0109, r24	; 0x800109 <Direction+0x1>
+		}
+	}
+}
+ a80:	ff 91       	pop	r31
+ a82:	ef 91       	pop	r30
+ a84:	df 91       	pop	r29
+ a86:	cf 91       	pop	r28
+ a88:	bf 91       	pop	r27
+ a8a:	af 91       	pop	r26
+ a8c:	9f 91       	pop	r25
+ a8e:	8f 91       	pop	r24
+ a90:	7f 91       	pop	r23
+ a92:	6f 91       	pop	r22
+ a94:	5f 91       	pop	r21
+ a96:	3f 91       	pop	r19
+ a98:	2f 91       	pop	r18
+ a9a:	0f 90       	pop	r0
+ a9c:	0b be       	out	0x3b, r0	; 59
+ a9e:	0f 90       	pop	r0
+ aa0:	0f be       	out	0x3f, r0	; 63
+ aa2:	0f 90       	pop	r0
+ aa4:	1f 90       	pop	r1
+ aa6:	18 95       	reti
+
+00000aa8 <__vector_5>:
+
+ISR(INT4_vect){
+ aa8:	1f 92       	push	r1
+ aaa:	0f 92       	push	r0
+ aac:	0f b6       	in	r0, 0x3f	; 63
+ aae:	0f 92       	push	r0
+ ab0:	11 24       	eor	r1, r1
+ ab2:	0b b6       	in	r0, 0x3b	; 59
+ ab4:	0f 92       	push	r0
+ ab6:	2f 93       	push	r18
+ ab8:	3f 93       	push	r19
+ aba:	5f 93       	push	r21
+ abc:	6f 93       	push	r22
+ abe:	7f 93       	push	r23
+ ac0:	8f 93       	push	r24
+ ac2:	9f 93       	push	r25
+ ac4:	af 93       	push	r26
+ ac6:	bf 93       	push	r27
+ ac8:	cf 93       	push	r28
+ aca:	df 93       	push	r29
+ acc:	ef 93       	push	r30
+ ace:	ff 93       	push	r31
+	if (InterruptPairDirection[1]){
+ ad0:	80 91 17 01 	lds	r24, 0x0117	; 0x800117 <InterruptPairDirection+0x1>
+ ad4:	88 23       	and	r24, r24
+ ad6:	09 f1       	breq	.+66     	; 0xb1a <__vector_5+0x72>
+		
+		InterruptPairTimer[1] = TCNT3L;
+ ad8:	e4 e9       	ldi	r30, 0x94	; 148
+ ada:	f0 e0       	ldi	r31, 0x00	; 0
+ adc:	60 81       	ld	r22, Z
+ ade:	86 2f       	mov	r24, r22
+ ae0:	90 e0       	ldi	r25, 0x00	; 0
+ ae2:	c2 e1       	ldi	r28, 0x12	; 18
+ ae4:	d1 e0       	ldi	r29, 0x01	; 1
+ ae6:	9b 83       	std	Y+3, r25	; 0x03
+ ae8:	8a 83       	std	Y+2, r24	; 0x02
+		InterruptPairTimer[1] += (TCNT3H << 8);
+ aea:	a5 e9       	ldi	r26, 0x95	; 149
+ aec:	b0 e0       	ldi	r27, 0x00	; 0
+ aee:	6c 91       	ld	r22, X
+ af0:	70 e0       	ldi	r23, 0x00	; 0
+ af2:	76 2f       	mov	r23, r22
+ af4:	66 27       	eor	r22, r22
+ af6:	68 0f       	add	r22, r24
+ af8:	79 1f       	adc	r23, r25
+ afa:	7b 83       	std	Y+3, r23	; 0x03
+ afc:	6a 83       	std	Y+2, r22	; 0x02
+		
+		TCNT3H = 0x00;
+ afe:	1c 92       	st	X, r1
+		TCNT3L = 0x00;
+ b00:	10 82       	st	Z, r1
+		
+		PulsePerSec[1] = 15625 / InterruptPairTimer[1];
+ b02:	89 e0       	ldi	r24, 0x09	; 9
+ b04:	9d e3       	ldi	r25, 0x3D	; 61
+ b06:	c3 d1       	rcall	.+902    	; 0xe8e <__udivmodhi4>
+ b08:	70 93 0d 01 	sts	0x010D, r23	; 0x80010d <__data_end+0x3>
+ b0c:	60 93 0c 01 	sts	0x010C, r22	; 0x80010c <__data_end+0x2>
+		Direction[1] = 0;
+ b10:	10 92 09 01 	sts	0x0109, r1	; 0x800109 <Direction+0x1>
+		
+		InterruptPairDirection[1] = 0;
+ b14:	10 92 17 01 	sts	0x0117, r1	; 0x800117 <InterruptPairDirection+0x1>
+ b18:	1c c0       	rjmp	.+56     	; 0xb52 <__vector_5+0xaa>
+	}
+	else{
+		uint16_t InterruptPairTimerTemp;
+		
+		InterruptPairTimerTemp = TCNT3L;
+ b1a:	20 91 94 00 	lds	r18, 0x0094	; 0x800094 <__TEXT_REGION_LENGTH__+0x7e0094>
+		InterruptPairTimerTemp += (TCNT3H << 8);
+ b1e:	80 91 95 00 	lds	r24, 0x0095	; 0x800095 <__TEXT_REGION_LENGTH__+0x7e0095>
+ b22:	90 e0       	ldi	r25, 0x00	; 0
+ b24:	98 2f       	mov	r25, r24
+ b26:	88 27       	eor	r24, r24
+ b28:	82 0f       	add	r24, r18
+ b2a:	91 1d       	adc	r25, r1
+		
+		if(InterruptPairTimerTemp < (InterruptPairTimer[1]/2)){
+ b2c:	20 91 14 01 	lds	r18, 0x0114	; 0x800114 <InterruptPairTimer+0x2>
+ b30:	30 91 15 01 	lds	r19, 0x0115	; 0x800115 <InterruptPairTimer+0x3>
+ b34:	36 95       	lsr	r19
+ b36:	27 95       	ror	r18
+ b38:	82 17       	cp	r24, r18
+ b3a:	93 07       	cpc	r25, r19
+ b3c:	30 f4       	brcc	.+12     	; 0xb4a <__vector_5+0xa2>
+			InterruptPairDirection[1] = 1;
+ b3e:	81 e0       	ldi	r24, 0x01	; 1
+ b40:	80 93 17 01 	sts	0x0117, r24	; 0x800117 <InterruptPairDirection+0x1>
+			Direction[1] = 1;
+ b44:	80 93 09 01 	sts	0x0109, r24	; 0x800109 <Direction+0x1>
+ b48:	04 c0       	rjmp	.+8      	; 0xb52 <__vector_5+0xaa>
+		}
+		else{
+			InterruptPairDirection[1] = 0;
+ b4a:	10 92 17 01 	sts	0x0117, r1	; 0x800117 <InterruptPairDirection+0x1>
+			Direction[1] = 0;
+ b4e:	10 92 09 01 	sts	0x0109, r1	; 0x800109 <Direction+0x1>
+		}
+	}
+}
+ b52:	ff 91       	pop	r31
+ b54:	ef 91       	pop	r30
+ b56:	df 91       	pop	r29
+ b58:	cf 91       	pop	r28
+ b5a:	bf 91       	pop	r27
+ b5c:	af 91       	pop	r26
+ b5e:	9f 91       	pop	r25
+ b60:	8f 91       	pop	r24
+ b62:	7f 91       	pop	r23
+ b64:	6f 91       	pop	r22
+ b66:	5f 91       	pop	r21
+ b68:	3f 91       	pop	r19
+ b6a:	2f 91       	pop	r18
+ b6c:	0f 90       	pop	r0
+ b6e:	0b be       	out	0x3b, r0	; 59
+ b70:	0f 90       	pop	r0
+ b72:	0f be       	out	0x3f, r0	; 63
+ b74:	0f 90       	pop	r0
+ b76:	1f 90       	pop	r1
+ b78:	18 95       	reti
+
+00000b7a <__vector_7>:
+
+ISR(INT6_vect){
+ b7a:	1f 92       	push	r1
+ b7c:	0f 92       	push	r0
+ b7e:	0f b6       	in	r0, 0x3f	; 63
+ b80:	0f 92       	push	r0
+ b82:	11 24       	eor	r1, r1
+ b84:	0b b6       	in	r0, 0x3b	; 59
+ b86:	0f 92       	push	r0
+ b88:	2f 93       	push	r18
+ b8a:	3f 93       	push	r19
+ b8c:	5f 93       	push	r21
+ b8e:	6f 93       	push	r22
+ b90:	7f 93       	push	r23
+ b92:	8f 93       	push	r24
+ b94:	9f 93       	push	r25
+ b96:	af 93       	push	r26
+ b98:	bf 93       	push	r27
+ b9a:	cf 93       	push	r28
+ b9c:	df 93       	push	r29
+ b9e:	ef 93       	push	r30
+ ba0:	ff 93       	push	r31
+	if (InterruptPairDirection[0]){
+ ba2:	80 91 16 01 	lds	r24, 0x0116	; 0x800116 <InterruptPairDirection>
+ ba6:	88 23       	and	r24, r24
+ ba8:	19 f1       	breq	.+70     	; 0xbf0 <__vector_7+0x76>
+		
+		InterruptPairTimer[0] = TCNT1L;
+ baa:	a4 e8       	ldi	r26, 0x84	; 132
+ bac:	b0 e0       	ldi	r27, 0x00	; 0
+ bae:	8c 91       	ld	r24, X
+ bb0:	90 e0       	ldi	r25, 0x00	; 0
+ bb2:	e2 e1       	ldi	r30, 0x12	; 18
+ bb4:	f1 e0       	ldi	r31, 0x01	; 1
+ bb6:	91 83       	std	Z+1, r25	; 0x01
+ bb8:	80 83       	st	Z, r24
+		InterruptPairTimer[0] += (TCNT1H << 8);
+ bba:	c5 e8       	ldi	r28, 0x85	; 133
+ bbc:	d0 e0       	ldi	r29, 0x00	; 0
+ bbe:	28 81       	ld	r18, Y
+ bc0:	30 e0       	ldi	r19, 0x00	; 0
+ bc2:	32 2f       	mov	r19, r18
+ bc4:	22 27       	eor	r18, r18
+ bc6:	82 0f       	add	r24, r18
+ bc8:	93 1f       	adc	r25, r19
+ bca:	91 83       	std	Z+1, r25	; 0x01
+ bcc:	80 83       	st	Z, r24
+		
+		TCNT1H = 0x00;
+ bce:	18 82       	st	Y, r1
+		TCNT1L = 0x00;
+ bd0:	1c 92       	st	X, r1
+		
+		PulsePerSec[0] = 15625 / InterruptPairTimer[0];
+ bd2:	60 81       	ld	r22, Z
+ bd4:	71 81       	ldd	r23, Z+1	; 0x01
+ bd6:	89 e0       	ldi	r24, 0x09	; 9
+ bd8:	9d e3       	ldi	r25, 0x3D	; 61
+ bda:	59 d1       	rcall	.+690    	; 0xe8e <__udivmodhi4>
+ bdc:	70 93 0b 01 	sts	0x010B, r23	; 0x80010b <__data_end+0x1>
+ be0:	60 93 0a 01 	sts	0x010A, r22	; 0x80010a <__data_end>
+		Direction[0] = 1;
+ be4:	81 e0       	ldi	r24, 0x01	; 1
+ be6:	80 93 08 01 	sts	0x0108, r24	; 0x800108 <Direction>
+		
+		InterruptPairDirection[0] = 0;
+ bea:	10 92 16 01 	sts	0x0116, r1	; 0x800116 <InterruptPairDirection>
+ bee:	1d c0       	rjmp	.+58     	; 0xc2a <__vector_7+0xb0>
+	}
+	else{
+		uint16_t InterruptPairTimerTemp;
+		
+		InterruptPairTimerTemp = TCNT1L;
+ bf0:	20 91 84 00 	lds	r18, 0x0084	; 0x800084 <__TEXT_REGION_LENGTH__+0x7e0084>
+		InterruptPairTimerTemp += (TCNT1H << 8);
+ bf4:	80 91 85 00 	lds	r24, 0x0085	; 0x800085 <__TEXT_REGION_LENGTH__+0x7e0085>
+ bf8:	90 e0       	ldi	r25, 0x00	; 0
+ bfa:	98 2f       	mov	r25, r24
+ bfc:	88 27       	eor	r24, r24
+ bfe:	82 0f       	add	r24, r18
+ c00:	91 1d       	adc	r25, r1
+		
+		if(InterruptPairTimerTemp < (InterruptPairTimer[0]/2)){
+ c02:	20 91 12 01 	lds	r18, 0x0112	; 0x800112 <InterruptPairTimer>
+ c06:	30 91 13 01 	lds	r19, 0x0113	; 0x800113 <InterruptPairTimer+0x1>
+ c0a:	36 95       	lsr	r19
+ c0c:	27 95       	ror	r18
+ c0e:	82 17       	cp	r24, r18
+ c10:	93 07       	cpc	r25, r19
+ c12:	30 f4       	brcc	.+12     	; 0xc20 <__vector_7+0xa6>
+			InterruptPairDirection[0] = 1;
+ c14:	81 e0       	ldi	r24, 0x01	; 1
+ c16:	80 93 16 01 	sts	0x0116, r24	; 0x800116 <InterruptPairDirection>
+			Direction[0] = 0;
+ c1a:	10 92 08 01 	sts	0x0108, r1	; 0x800108 <Direction>
+ c1e:	05 c0       	rjmp	.+10     	; 0xc2a <__vector_7+0xb0>
+		}
+		else{
+			InterruptPairDirection[0] = 0;
+ c20:	10 92 16 01 	sts	0x0116, r1	; 0x800116 <InterruptPairDirection>
+			Direction[0] = 1;
+ c24:	81 e0       	ldi	r24, 0x01	; 1
+ c26:	80 93 08 01 	sts	0x0108, r24	; 0x800108 <Direction>
+		}
+	}
+}
+ c2a:	ff 91       	pop	r31
+ c2c:	ef 91       	pop	r30
+ c2e:	df 91       	pop	r29
+ c30:	cf 91       	pop	r28
+ c32:	bf 91       	pop	r27
+ c34:	af 91       	pop	r26
+ c36:	9f 91       	pop	r25
+ c38:	8f 91       	pop	r24
+ c3a:	7f 91       	pop	r23
+ c3c:	6f 91       	pop	r22
+ c3e:	5f 91       	pop	r21
+ c40:	3f 91       	pop	r19
+ c42:	2f 91       	pop	r18
+ c44:	0f 90       	pop	r0
+ c46:	0b be       	out	0x3b, r0	; 59
+ c48:	0f 90       	pop	r0
+ c4a:	0f be       	out	0x3f, r0	; 63
+ c4c:	0f 90       	pop	r0
+ c4e:	1f 90       	pop	r1
+ c50:	18 95       	reti
+
+00000c52 <__vector_8>:
+
+ISR(INT7_vect){
+ c52:	1f 92       	push	r1
+ c54:	0f 92       	push	r0
+ c56:	0f b6       	in	r0, 0x3f	; 63
+ c58:	0f 92       	push	r0
+ c5a:	11 24       	eor	r1, r1
+ c5c:	0b b6       	in	r0, 0x3b	; 59
+ c5e:	0f 92       	push	r0
+ c60:	2f 93       	push	r18
+ c62:	3f 93       	push	r19
+ c64:	5f 93       	push	r21
+ c66:	6f 93       	push	r22
+ c68:	7f 93       	push	r23
+ c6a:	8f 93       	push	r24
+ c6c:	9f 93       	push	r25
+ c6e:	af 93       	push	r26
+ c70:	bf 93       	push	r27
+ c72:	cf 93       	push	r28
+ c74:	df 93       	push	r29
+ c76:	ef 93       	push	r30
+ c78:	ff 93       	push	r31
+	if (InterruptPairDirection[0]){
+ c7a:	80 91 16 01 	lds	r24, 0x0116	; 0x800116 <InterruptPairDirection>
+ c7e:	88 23       	and	r24, r24
+ c80:	11 f1       	breq	.+68     	; 0xcc6 <__vector_8+0x74>
+		
+		InterruptPairTimer[0] = TCNT1L;
+ c82:	a4 e8       	ldi	r26, 0x84	; 132
+ c84:	b0 e0       	ldi	r27, 0x00	; 0
+ c86:	8c 91       	ld	r24, X
+ c88:	90 e0       	ldi	r25, 0x00	; 0
+ c8a:	e2 e1       	ldi	r30, 0x12	; 18
+ c8c:	f1 e0       	ldi	r31, 0x01	; 1
+ c8e:	91 83       	std	Z+1, r25	; 0x01
+ c90:	80 83       	st	Z, r24
+		InterruptPairTimer[0] += (TCNT1H << 8);
+ c92:	c5 e8       	ldi	r28, 0x85	; 133
+ c94:	d0 e0       	ldi	r29, 0x00	; 0
+ c96:	28 81       	ld	r18, Y
+ c98:	30 e0       	ldi	r19, 0x00	; 0
+ c9a:	32 2f       	mov	r19, r18
+ c9c:	22 27       	eor	r18, r18
+ c9e:	82 0f       	add	r24, r18
+ ca0:	93 1f       	adc	r25, r19
+ ca2:	91 83       	std	Z+1, r25	; 0x01
+ ca4:	80 83       	st	Z, r24
+		
+		TCNT1H = 0x00;
+ ca6:	18 82       	st	Y, r1
+		TCNT1L = 0x00;
+ ca8:	1c 92       	st	X, r1
+		
+		PulsePerSec[0] = 15625 / InterruptPairTimer[0];
+ caa:	60 81       	ld	r22, Z
+ cac:	71 81       	ldd	r23, Z+1	; 0x01
+ cae:	89 e0       	ldi	r24, 0x09	; 9
+ cb0:	9d e3       	ldi	r25, 0x3D	; 61
+ cb2:	ed d0       	rcall	.+474    	; 0xe8e <__udivmodhi4>
+ cb4:	70 93 0b 01 	sts	0x010B, r23	; 0x80010b <__data_end+0x1>
+ cb8:	60 93 0a 01 	sts	0x010A, r22	; 0x80010a <__data_end>
+		Direction[0] = 0;
+ cbc:	10 92 08 01 	sts	0x0108, r1	; 0x800108 <Direction>
+		
+		InterruptPairDirection[0] = 0;
+ cc0:	10 92 16 01 	sts	0x0116, r1	; 0x800116 <InterruptPairDirection>
+ cc4:	1c c0       	rjmp	.+56     	; 0xcfe <__vector_8+0xac>
+	}
+	else{
+		uint16_t InterruptPairTimerTemp;
+		
+		InterruptPairTimerTemp = TCNT1L;
+ cc6:	20 91 84 00 	lds	r18, 0x0084	; 0x800084 <__TEXT_REGION_LENGTH__+0x7e0084>
+		InterruptPairTimerTemp += (TCNT1H << 8);
+ cca:	80 91 85 00 	lds	r24, 0x0085	; 0x800085 <__TEXT_REGION_LENGTH__+0x7e0085>
+ cce:	90 e0       	ldi	r25, 0x00	; 0
+ cd0:	98 2f       	mov	r25, r24
+ cd2:	88 27       	eor	r24, r24
+ cd4:	82 0f       	add	r24, r18
+ cd6:	91 1d       	adc	r25, r1
+		
+		if(InterruptPairTimerTemp < (InterruptPairTimer[0]/2)){
+ cd8:	20 91 12 01 	lds	r18, 0x0112	; 0x800112 <InterruptPairTimer>
+ cdc:	30 91 13 01 	lds	r19, 0x0113	; 0x800113 <InterruptPairTimer+0x1>
+ ce0:	36 95       	lsr	r19
+ ce2:	27 95       	ror	r18
+ ce4:	82 17       	cp	r24, r18
+ ce6:	93 07       	cpc	r25, r19
+ ce8:	30 f4       	brcc	.+12     	; 0xcf6 <__vector_8+0xa4>
+			InterruptPairDirection[0] = 1;
+ cea:	81 e0       	ldi	r24, 0x01	; 1
+ cec:	80 93 16 01 	sts	0x0116, r24	; 0x800116 <InterruptPairDirection>
+			Direction[0] = 1;
+ cf0:	80 93 08 01 	sts	0x0108, r24	; 0x800108 <Direction>
+ cf4:	04 c0       	rjmp	.+8      	; 0xcfe <__vector_8+0xac>
+		}
+		else{
+			InterruptPairDirection[0] = 0;
+ cf6:	10 92 16 01 	sts	0x0116, r1	; 0x800116 <InterruptPairDirection>
+			Direction[0] = 0;
+ cfa:	10 92 08 01 	sts	0x0108, r1	; 0x800108 <Direction>
+		}
+	}
+}
+ cfe:	ff 91       	pop	r31
+ d00:	ef 91       	pop	r30
+ d02:	df 91       	pop	r29
+ d04:	cf 91       	pop	r28
+ d06:	bf 91       	pop	r27
+ d08:	af 91       	pop	r26
+ d0a:	9f 91       	pop	r25
+ d0c:	8f 91       	pop	r24
+ d0e:	7f 91       	pop	r23
+ d10:	6f 91       	pop	r22
+ d12:	5f 91       	pop	r21
+ d14:	3f 91       	pop	r19
+ d16:	2f 91       	pop	r18
+ d18:	0f 90       	pop	r0
+ d1a:	0b be       	out	0x3b, r0	; 59
+ d1c:	0f 90       	pop	r0
+ d1e:	0f be       	out	0x3f, r0	; 63
+ d20:	0f 90       	pop	r0
+ d22:	1f 90       	pop	r1
+ d24:	18 95       	reti
+
+00000d26 <__vector_15>:
+
+ISR(TIMER1_OVF_vect)
+{
+ d26:	1f 92       	push	r1
+ d28:	0f 92       	push	r0
+ d2a:	0f b6       	in	r0, 0x3f	; 63
+ d2c:	0f 92       	push	r0
+ d2e:	11 24       	eor	r1, r1
+ d30:	0b b6       	in	r0, 0x3b	; 59
+ d32:	0f 92       	push	r0
+ d34:	8f 93       	push	r24
+ d36:	ef 93       	push	r30
+ d38:	ff 93       	push	r31
+	PulsePerSec[0] = 0;
+ d3a:	ea e0       	ldi	r30, 0x0A	; 10
+ d3c:	f1 e0       	ldi	r31, 0x01	; 1
+ d3e:	11 82       	std	Z+1, r1	; 0x01
+ d40:	10 82       	st	Z, r1
+	PulsePerSec[3] = 0;
+ d42:	17 82       	std	Z+7, r1	; 0x07
+ d44:	16 82       	std	Z+6, r1	; 0x06
+	
+	Direction[0] = 1;
+ d46:	81 e0       	ldi	r24, 0x01	; 1
+ d48:	80 93 08 01 	sts	0x0108, r24	; 0x800108 <Direction>
+}
+ d4c:	ff 91       	pop	r31
+ d4e:	ef 91       	pop	r30
+ d50:	8f 91       	pop	r24
+ d52:	0f 90       	pop	r0
+ d54:	0b be       	out	0x3b, r0	; 59
+ d56:	0f 90       	pop	r0
+ d58:	0f be       	out	0x3f, r0	; 63
+ d5a:	0f 90       	pop	r0
+ d5c:	1f 90       	pop	r1
+ d5e:	18 95       	reti
+
+00000d60 <__vector_31>:
+
+ISR(TIMER3_OVF_vect)
+{
+ d60:	1f 92       	push	r1
+ d62:	0f 92       	push	r0
+ d64:	0f b6       	in	r0, 0x3f	; 63
+ d66:	0f 92       	push	r0
+ d68:	11 24       	eor	r1, r1
+ d6a:	0b b6       	in	r0, 0x3b	; 59
+ d6c:	0f 92       	push	r0
+ d6e:	8f 93       	push	r24
+ d70:	ef 93       	push	r30
+ d72:	ff 93       	push	r31
+	PulsePerSec[1] = 0;
+ d74:	ea e0       	ldi	r30, 0x0A	; 10
+ d76:	f1 e0       	ldi	r31, 0x01	; 1
+ d78:	13 82       	std	Z+3, r1	; 0x03
+ d7a:	12 82       	std	Z+2, r1	; 0x02
+	PulsePerSec[2] = 0;
+ d7c:	15 82       	std	Z+5, r1	; 0x05
+ d7e:	14 82       	std	Z+4, r1	; 0x04
+	
+	Direction[1] = 1;
+ d80:	81 e0       	ldi	r24, 0x01	; 1
+ d82:	80 93 09 01 	sts	0x0109, r24	; 0x800109 <Direction+0x1>
+}
+ d86:	ff 91       	pop	r31
+ d88:	ef 91       	pop	r30
+ d8a:	8f 91       	pop	r24
+ d8c:	0f 90       	pop	r0
+ d8e:	0b be       	out	0x3b, r0	; 59
+ d90:	0f 90       	pop	r0
+ d92:	0f be       	out	0x3f, r0	; 63
+ d94:	0f 90       	pop	r0
+ d96:	1f 90       	pop	r1
+ d98:	18 95       	reti
+
+00000d9a <chip_init>:
+
+
+//***** chip Initialization **********************************
+void chip_init(void){
+
+	CLKPR = ( 1 << CLKPCE );  		// Set Clock Prescaler change enable
+ d9a:	e1 e6       	ldi	r30, 0x61	; 97
+ d9c:	f0 e0       	ldi	r31, 0x00	; 0
+ d9e:	80 e8       	ldi	r24, 0x80	; 128
+ da0:	80 83       	st	Z, r24
+	CLKPR = 0x00;				// no prescaler CLK 16Mhz
+ da2:	10 82       	st	Z, r1
+ da4:	08 95       	ret
+
+00000da6 <main>:
+void chip_init (void);
+
+//***** MAIN CODE ***********************************************
+int main( void )
+{
+	chip_init();			// Chip initialization
+ da6:	f9 df       	rcall	.-14     	; 0xd9a <chip_init>
+	can_init(BAUD); 		// Can initialization
+ da8:	84 ef       	ldi	r24, 0xF4	; 244
+ daa:	91 e0       	ldi	r25, 0x01	; 1
+ dac:	cc d9       	rcall	.-3176   	; 0x146 <can_init>
+	can_rx(FUNCTION);
+ dae:	82 e0       	ldi	r24, 0x02	; 2
+ db0:	92 e0       	ldi	r25, 0x02	; 2
+ db2:	25 da       	rcall	.-2998   	; 0x1fe <can_rx>
+	int_ADC();				// ADC initialization
+ db4:	8d d9       	rcall	.-3302   	; 0xd0 <int_ADC>
+	
+	int_ExternalInterrupt();
+ db6:	6e dd       	rcall	.-1316   	; 0x894 <int_ExternalInterrupt>
+	
+	sei();					// enables interrupts
+ db8:	78 94       	sei
+	}
+	
+		while(1)
+		{
+			
+		}
+ dba:	ff cf       	rjmp	.-2      	; 0xdba <main+0x14>
+
+00000dbc <__vector_16>:
+#define ADC3LOW		90
+
+#define MAXSPEED	50
+
+
+ISR(TIMER0_COMP_vect){
+ dbc:	1f 92       	push	r1
+ dbe:	0f 92       	push	r0
+ dc0:	0f b6       	in	r0, 0x3f	; 63
+ dc2:	0f 92       	push	r0
+ dc4:	11 24       	eor	r1, r1
+ dc6:	0b b6       	in	r0, 0x3b	; 59
+ dc8:	0f 92       	push	r0
+ dca:	ff 92       	push	r15
+ dcc:	0f 93       	push	r16
+ dce:	1f 93       	push	r17
+ dd0:	2f 93       	push	r18
+ dd2:	3f 93       	push	r19
+ dd4:	4f 93       	push	r20
+ dd6:	5f 93       	push	r21
+ dd8:	6f 93       	push	r22
+ dda:	7f 93       	push	r23
+ ddc:	8f 93       	push	r24
+ dde:	9f 93       	push	r25
+ de0:	af 93       	push	r26
+ de2:	bf 93       	push	r27
+ de4:	cf 93       	push	r28
+ de6:	df 93       	push	r29
+ de8:	ef 93       	push	r30
+ dea:	ff 93       	push	r31
+	TCNT0 = 0;
+ dec:	16 bc       	out	0x26, r1	; 38
+	
+	uint8_t j = 0;
+	
+	getADC(0);
+ dee:	80 e0       	ldi	r24, 0x00	; 0
+ df0:	78 d9       	rcall	.-3344   	; 0xe2 <getADC>
+	if(ADCValue[0] > ADC1LOW){	ADCValue[0] = MAXSPEED * (ADCValue[0]-ADC1LOW);}
+ df2:	80 91 00 01 	lds	r24, 0x0100	; 0x800100 <ADCValue>
+ df6:	90 91 01 01 	lds	r25, 0x0101	; 0x800101 <ADCValue+0x1>
+ dfa:	89 3a       	cpi	r24, 0xA9	; 169
+ dfc:	22 e0       	ldi	r18, 0x02	; 2
+ dfe:	92 07       	cpc	r25, r18
+ e00:	70 f0       	brcs	.+28     	; 0xe1e <__vector_16+0x62>
+ e02:	42 e3       	ldi	r20, 0x32	; 50
+ e04:	48 9f       	mul	r20, r24
+ e06:	90 01       	movw	r18, r0
+ e08:	49 9f       	mul	r20, r25
+ e0a:	30 0d       	add	r19, r0
+ e0c:	11 24       	eor	r1, r1
+ e0e:	c9 01       	movw	r24, r18
+ e10:	80 5d       	subi	r24, 0xD0	; 208
+ e12:	94 48       	sbci	r25, 0x84	; 132
+ e14:	90 93 01 01 	sts	0x0101, r25	; 0x800101 <ADCValue+0x1>
+ e18:	80 93 00 01 	sts	0x0100, r24	; 0x800100 <ADCValue>
+ e1c:	04 c0       	rjmp	.+8      	; 0xe26 <__vector_16+0x6a>
+	else{						ADCValue[0] = 0;}
+ e1e:	10 92 01 01 	sts	0x0101, r1	; 0x800101 <ADCValue+0x1>
+ e22:	10 92 00 01 	sts	0x0100, r1	; 0x800100 <ADCValue>
+	
+	TransmitData[j++] = 0x90;
+ e26:	c8 e1       	ldi	r28, 0x18	; 24
+ e28:	d1 e0       	ldi	r29, 0x01	; 1
+ e2a:	0f 2e       	mov	r0, r31
+ e2c:	f0 e9       	ldi	r31, 0x90	; 144
+ e2e:	ff 2e       	mov	r15, r31
+ e30:	f0 2d       	mov	r31, r0
+ e32:	f8 82       	st	Y, r15
+	TransmitData[j++] = ADCValue[0];
+ e34:	00 e0       	ldi	r16, 0x00	; 0
+ e36:	11 e0       	ldi	r17, 0x01	; 1
+ e38:	f8 01       	movw	r30, r16
+ e3a:	90 81       	ld	r25, Z
+ e3c:	81 81       	ldd	r24, Z+1	; 0x01
+ e3e:	99 83       	std	Y+1, r25	; 0x01
+	TransmitData[j++] = (ADCValue[0] >> 8);
+ e40:	8a 83       	std	Y+2, r24	; 0x02
+	
+	can_tx(0x0210, j);
+ e42:	63 e0       	ldi	r22, 0x03	; 3
+ e44:	80 e1       	ldi	r24, 0x10	; 16
+ e46:	92 e0       	ldi	r25, 0x02	; 2
+ e48:	f9 d9       	rcall	.-3086   	; 0x23c <can_tx>
+	j = 0;
+	
+	TransmitData[j++] = 0x90;
+ e4a:	f8 82       	st	Y, r15
+	TransmitData[j++] = ADCValue[0];
+ e4c:	f8 01       	movw	r30, r16
+ e4e:	90 81       	ld	r25, Z
+ e50:	81 81       	ldd	r24, Z+1	; 0x01
+ e52:	99 83       	std	Y+1, r25	; 0x01
+	TransmitData[j++] = (ADCValue[0] >> 8);
+ e54:	8a 83       	std	Y+2, r24	; 0x02
+	
+	can_tx(0x0211, j);
+ e56:	63 e0       	ldi	r22, 0x03	; 3
+ e58:	81 e1       	ldi	r24, 0x11	; 17
+ e5a:	92 e0       	ldi	r25, 0x02	; 2
+ e5c:	ef d9       	rcall	.-3106   	; 0x23c <can_tx>
+	can_tx(0x0210, j);
+	j = 0;
+	*/
+	
+	
+ e5e:	ff 91       	pop	r31
+ e60:	ef 91       	pop	r30
+ e62:	df 91       	pop	r29
+ e64:	cf 91       	pop	r28
+ e66:	bf 91       	pop	r27
+ e68:	af 91       	pop	r26
+ e6a:	9f 91       	pop	r25
+ e6c:	8f 91       	pop	r24
+ e6e:	7f 91       	pop	r23
+ e70:	6f 91       	pop	r22
+ e72:	5f 91       	pop	r21
+ e74:	4f 91       	pop	r20
+ e76:	3f 91       	pop	r19
+ e78:	2f 91       	pop	r18
+ e7a:	1f 91       	pop	r17
+ e7c:	0f 91       	pop	r16
+ e7e:	ff 90       	pop	r15
+ e80:	0f 90       	pop	r0
+ e82:	0b be       	out	0x3b, r0	; 59
+ e84:	0f 90       	pop	r0
+ e86:	0f be       	out	0x3f, r0	; 63
+ e88:	0f 90       	pop	r0
+ e8a:	1f 90       	pop	r1
+ e8c:	18 95       	reti
+
+00000e8e <__udivmodhi4>:
+ e8e:	aa 1b       	sub	r26, r26
+ e90:	bb 1b       	sub	r27, r27
+ e92:	51 e1       	ldi	r21, 0x11	; 17
+ e94:	07 c0       	rjmp	.+14     	; 0xea4 <__udivmodhi4_ep>
+
+00000e96 <__udivmodhi4_loop>:
+ e96:	aa 1f       	adc	r26, r26
+ e98:	bb 1f       	adc	r27, r27
+ e9a:	a6 17       	cp	r26, r22
+ e9c:	b7 07       	cpc	r27, r23
+ e9e:	10 f0       	brcs	.+4      	; 0xea4 <__udivmodhi4_ep>
+ ea0:	a6 1b       	sub	r26, r22
+ ea2:	b7 0b       	sbc	r27, r23
+
+00000ea4 <__udivmodhi4_ep>:
+ ea4:	88 1f       	adc	r24, r24
+ ea6:	99 1f       	adc	r25, r25
+ ea8:	5a 95       	dec	r21
+ eaa:	a9 f7       	brne	.-22     	; 0xe96 <__udivmodhi4_loop>
+ eac:	80 95       	com	r24
+ eae:	90 95       	com	r25
+ eb0:	bc 01       	movw	r22, r24
+ eb2:	cd 01       	movw	r24, r26
+ eb4:	08 95       	ret
+
+00000eb6 <_exit>:
+ eb6:	f8 94       	cli
+
+00000eb8 <__stop_program>:
+ eb8:	ff cf       	rjmp	.-2      	; 0xeb8 <__stop_program>

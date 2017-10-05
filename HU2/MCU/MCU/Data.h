@@ -1,0 +1,11 @@
+#ifndef _DATA_H
+#define _DATA_H
+
+void data_send_ecu(uint8_t node, uint8_t data);
+
+extern volatile uint32_t gas1eng;
+extern volatile uint16_t gas1, gas2, brake, gas1perc, gas2perc, brakeperc;
+extern volatile uint16_t rpm_fl, rpm_fr, steerpos, flowleft, flowright;
+extern volatile uint8_t shutdownon;
+
+#endif

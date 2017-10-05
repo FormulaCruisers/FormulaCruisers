@@ -1,0 +1,245 @@
+/*************************************************************************
+Title:    Main Control Unit HU-2
+Author:   Jeroen Mostert, LCD Library by peterfleury
+File:     main.c
+Software: AVR-GCC 4.x
+Hardware: Main Control Unit V1.0
+**************************************************************************/
+
+#include <stdlib.h>
+#include <avr/io.h>
+#include <avr/pgmspace.h>
+#include <util/delay.h>
+#include <avr/interrupt.h>
+#include "lcd.h"
+
+volatile int lcd_status = 0, refresh_rate = 0, adc_fast = 0, adc_slow = 0;			// 0 = Motorcontroller, 1 = Watercooling loop, 2 = Batteries
+volatile char Linebuffer0[21], Linebuffer1[21], Linebuffer2[21], Linebuffer3[21];	// LCD Line Buffer
+volatile uint16_t gas1 = 0, gas2 = 0, brake = 0, steer = 0, TEMPL = 0, TEMPR = 0, ADCP6 = 0, ADCP7 = 0;
+
+ISR(ADC_vect)							// ADC Conversion done Interrupt
+{	
+	if(adc_fast == 0){
+		gas1 = ADC;
+		ADMUX++;
+	}
+	if(adc_fast == 1){
+		gas2 = ADC;
+		ADMUX++;
+	}
+	if(adc_fast == 2){
+		brake = ADC;
+		ADMUX++;
+	}	
+	if(adc_fast == 3){
+		steer = ADC;
+		if(adc_slow == 0){
+			ADMUX++;
+		}
+		if(adc_slow == 1){
+			ADMUX += 2;
+		}
+		if(adc_slow == 2){
+			ADMUX += 3;
+		}
+		if(adc_slow == 3){
+			ADMUX += 4;
+		}
+	}	
+	if(adc_fast == 4){
+		if(adc_slow == 0){
+			TEMPL = ADC;
+		}
+		if(adc_slow == 1){
+			TEMPR = ADC;
+		}
+		if(adc_slow == 2){
+			ADCP6 = ADC;
+		}
+		if(adc_slow == 3){
+			ADCP7 = ADC;
+		}
+		if ((adc_slow >= 0) && (adc_slow <= 2)){	// Check adc_slow
+			adc_slow++;
+		}
+		else adc_slow = 0;							// Reset adc_slow
+		ADMUX = 0b010000000;
+	}
+	if ((adc_fast >= 0) && (adc_fast <= 3)){		// Check adc_fast
+		adc_fast++;
+	}
+	else adc_fast = 0;								// Reset adc_fast
+}
+
+ISR(INT5_vect)							// LCD Switch External Interrupt
+{
+	_delay_ms(5);						// Delay for key debounce
+	if (PINE & (1<<PE5)){
+			if (lcd_status == 2){		
+ 					lcd_status = 0;		// Reset lcd status
+			}
+			else lcd_status++;	
+			lcd_refresh();	
+	}
+}
+
+ISR(TIMER2_OVF_vect)					// Real Time Clock Interrupt
+{
+		TCNT2 = 192;					// Set initial counter value(0.25 Seconds)
+		
+		if(refresh_rate == 4){
+			refresh_rate = 0;
+			lcd_refresh();
+		}
+		else {
+			refresh_rate++;
+			lcd_fast_refresh();
+		}
+}
+
+ISR(TIMER0_OVF_vect)					// Timer 0 Overflow Interrupt(500HZ)
+{
+	TCNT0 = 130;						// Set initial counter value(2ms)
+	ADCSRA |= (1 << ADSC);
+}
+
+void lcd_fast_refresh(void)				// LCD Fast Refresh for Speed Only
+{
+//	lcd_cont_screen();
+//	lcd_gotoxy(0 ,0);					// Set display to Line 0, Character 0
+//	lcd_puts(Linebuffer0);
+}
+
+void lcd_refresh(void)					// LCD Refresh for Whole LCD
+{
+	lcd_clrscr();
+/*	
+	lcd_cont_screen();
+	
+	if (lcd_status == 0){
+	lcd_motor_screen();
+	}
+	if (lcd_status == 1){
+	lcd_water_screen();
+	}
+	if (lcd_status == 2){
+	lcd_batteries_screen();
+	}
+*/
+
+	snprintf (Linebuffer0, sizeof Linebuffer0,"ADC0:%d ADC1:%d", gas1, gas2);
+	
+	snprintf (Linebuffer1, sizeof Linebuffer0,"ADC2:%d ADC3:%d", brake, steer);
+	
+	snprintf (Linebuffer2, sizeof Linebuffer0,"ADC4:%d ADC5:%d", TEMPL, TEMPR);
+	
+	snprintf (Linebuffer3, sizeof Linebuffer0,"ADC6:%d ADC7:%d", ADCP6, ADCP7);
+	
+	lcd_gotoxy(0 ,0);					// Set display to Line 0, Character 0
+	lcd_puts(Linebuffer0);
+	
+	lcd_gotoxy(40 ,0);					// Set display to Line 1, Character 0
+	lcd_puts(Linebuffer1);
+	
+	lcd_gotoxy(20 ,0);					// Set display to Line 2, Character 0
+	lcd_puts(Linebuffer2);
+	
+	lcd_gotoxy(20 ,1);					// Set display to Line 3, Character 0
+	lcd_puts(Linebuffer3);
+
+}
+
+void lcd_motor_screen(void)				// LCD Motor Control Screen
+{
+	snprintf (Linebuffer1, sizeof Linebuffer1,"     C MOTOR       C");
+	snprintf (Linebuffer2, sizeof Linebuffer2,"     C CONTR       C");
+}
+
+void lcd_water_screen(void)				// LCD Watercooling Screen
+{
+//	snprintf (Linebuffer1, sizeof Linebuffer1,"     C  WATER      C");
+//	snprintf (Linebuffer2, sizeof Linebuffer2,"    L/m FLOW     L/m");
+	
+	snprintf (Linebuffer1, sizeof Linebuffer1,"%d   C  WATER %e   C", TEMPL, TEMPR);
+	snprintf (Linebuffer2, sizeof Linebuffer2,"    L/m FLOW     L/m");
+}
+
+void lcd_batteries_screen(void)			// LCD Batteries Screen
+{
+		snprintf (Linebuffer1, sizeof Linebuffer1,"     Battery        ");
+		snprintf (Linebuffer2, sizeof Linebuffer2,"     Screen         ");
+}
+
+void lcd_blue_screen(void)				// LCD Press Blue Button Screen
+{
+	snprintf (Linebuffer0, sizeof Linebuffer0," Press Blue Button  ");
+}
+
+void lcd_green_screen(void)				// LCD Press Blue Button Screen
+{
+	snprintf (Linebuffer0, sizeof Linebuffer0," Press Green Button ");
+}
+
+void lcd_cont_screen(void)				// LCD Race Screen/Home Screen
+{
+//	snprintf (Linebuffer0, sizeof Linebuffer0,"  Speed:      KM/H  ");
+
+//	snprintf (Linebuffer0, sizeof Linebuffer0,"ADC: %d", gas1);
+	
+	snprintf (Linebuffer3, sizeof Linebuffer3,"H:   V/    A L:    V");
+}
+
+void init_RTC(void)						// 4Hz Clock Initialization (Timer Counter 2)
+{
+		ASSR  = (1<< AS2);						// Enable asynchronous mode
+		TCNT2 = 192;							// Set initial counter value(0.25 Seconds)
+		TCCR2A |= (1 << CS02)|(1 << CS00);		// 128 Prescaler ((255*128)/32.786 = 1Hz)
+		TIFR2   = (1 << TOV2);					// Clear interrupt flags
+		TIMSK2  = (1 << TOIE2);					// Enable TOV2 interrupt
+}
+
+void init_ADC(void)						// ADC Initialization
+{
+//		ADCSRA |= (1 << ADEN);									// Enable ADC
+		ADCSRA = (1 << ADEN) | (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0);	// 128 PreScaler
+		ADMUX |= ( 0 << REFS1) | (1 << REFS0);									// Set 5V Ref Voltage on AVcc
+		ADCSRA |= (1 << ADIE);									// Enable ADC Interrupt
+}
+
+void init_TIMER0(void)					// 500HZ Clock Initialization(Timer Counter 0)		
+{
+		TCCR0A |= (1 << CS02);					// 256 Prescaler
+		TCNT0 = 130;							// Set initial counter value(2ms)
+		TIMSK0 |= (1 << TOIE0);					// Overflow Interrupt Enable
+}
+
+int main()
+{
+		init_ADC();	
+		init_RTC();
+		init_TIMER0();
+
+	    DDRE &=~ (1 << PE5);        // Pin PE5 input              
+	    PORTE |= (1 << PE5);        // Pin PE5 pull-up enabled    
+		
+		DDRF = 0x00;				// PortF All Inputs
+		PORTF = 0x00;				// PortF Pullup Disabled
+
+		EIMSK |= (1 << INT5);					// Enable Interrupt 5
+		EICRB  |= (1 << ISC51) | (1 << ISC50);	// Falling edge creates interrupt
+	
+		lcd_init(LCD_DISP_ON);		// Initialize display, cursor off
+        lcd_clrscr();				// Clear display, set display to Line 0, char 0
+		
+		sei();						// Enable Global Interrupts
+		
+//		lcd_cont_screen();
+//		lcd_motor_screen();
+	
+		lcd_refresh();
+		
+		while(1){
+			
+		}
+		
+}

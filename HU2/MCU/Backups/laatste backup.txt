@@ -1,0 +1,835 @@
+/*************************************************************************
+Title:    Electric Control Unit for HU-2
+Author:   Jeroen Mostert, LCD Library by peterfleury
+File:     main.c
+Software: AVR-GCC 4.x
+Hardware: Main Control Unit V1.1
+**************************************************************************/
+
+#include <stdlib.h>
+#include <stdio.h>
+#include <avr/io.h>
+#include <avr/pgmspace.h>
+#include <util/delay.h>
+#include <avr/interrupt.h>
+#include <stdbool.h>
+#include "lcd.h"
+
+#include "Defines.h"
+#include "CAN.h"
+//#include "CAN.c"
+
+
+
+#define BRAKINGVALUE			40
+
+#define DELTAGASVALUE			50
+#define DELTABRAKEVALUE			50
+
+
+#define MAXDISTANCE				25		// Maximum distance from the maximum, 0 and 1023 (0 + MAXDISTANCE) & (1023 - MAXDISTANCE)
+#define MAXPEDALSHOOT			0.05	// In percentage, maximum pedal over and undershoot
+
+#define MAXOVERLAP				90		// In percentage, maximum overlap between the two gas pedals, to determine the offset !! 100% is not allowed !!
+
+#define RTDS					PC7
+
+#define button1					PD0
+#define button2					PD1
+#define bluebutton				PD2
+#define greenbutton				PD3
+
+
+
+volatile uint16_t gas1 = 0, gas2 = 0, brake = 0, steer = 0;
+volatile int gassensor1min = 0, gassensor1max = 0, gassensor2min = 0, gassensor2max = 0, brakemin = 0, brakemax = 0, gasdelta1 = 0, gasdelta2 = 0, brakedelta = 0, gaspercentcounter = 0, gasbrakecheck = 0, gasoffset = 0;
+volatile int lcd_status = 0, refresh_rate = 0, adc_fast = 0, adc_slow = 0, errorcode = 0, warningcode = 0, calibrating = 0,  gas1failurecounter = 0, gas2failurecounter = 0, brakefailurecounter = 0;
+volatile bool bluebutton_pressed = 0, greenbutton_pressed = 0, failedcalibration = 0, succeededcalibration = 0, runenablebool = 0;
+volatile int percent25gas = 0, percent5gasbrakecheck = 0, braking = 0, watertempR = 0, watertempL = 0, calerrorcode = 0;
+volatile char Linebuffer0[21], Linebuffer1[21], Linebuffer2[21], Linebuffer3[21];
+
+volatile int millitimer = 0;
+volatile uint8_t greenbuttontimer = 8, bluebuttontimer = 8, lcdbuttontimer = 8;
+
+volatile uint8_t greenbuttondebounce = 0, bluebuttondebounce = 0, lcdbuttondebounce = 0;
+volatile bool readytodrivesoundbool = 0, predisbool = 0, mainrelaisbool = 1, shutdownon = 0;
+
+volatile uint32_t readytodrivesoundcounter = 2000, prediscounter = 100, mainrelaiscounter = 1000;
+
+volatile uint8_t node1_timer = 0, node2_timer = 0, rearecu_timer = 0, node3_timer = 0, node4_timer = 0;
+
+
+
+void lcd_welcome_screen(void)			// Hardware & Software version welcome screen
+{
+	snprintf (Linebuffer0, sizeof Linebuffer0,"  HU-2     Version  ");
+	snprintf (Linebuffer1, sizeof Linebuffer1,"Hardware:  V1.3     ");
+	snprintf (Linebuffer2, sizeof Linebuffer2,"Software:  CAN V1.1 ");
+}
+
+ISR(TIMER2_OVF_vect)					// Timer 2 Overflow Interrupt(4Hz)
+{
+	TCNT2 = 192;						// Set initial counter value(0.25 Seconds)
+	lcd_fast_refresh();					// Refresh LCD Screen
+}
+
+ISR(TIMER0_OVF_vect)					// Timer 0 Overflow Interrupt(1000Hz)
+{
+	if (millitimer == 0){			// APPS1
+		TransmitData[0] = 0x3D;
+		TransmitData[1] = 0x21;
+		can_tx(NODEID2, 2);
+	}
+	
+	if (millitimer == 2){			// APPS2
+		TransmitData[0] = 0x3D;
+		TransmitData[1] = 0x22;
+		can_tx(NODEID2, 2);
+	}
+	
+	if (millitimer == 4){			// Brake
+		TransmitData[0] = 0x3D;
+		TransmitData[1] = 0x23;
+		can_tx(NODEID2, 2);
+	}
+	
+	millitimer++;
+	if (millitimer == 10){
+		millitimer = 0;
+	}
+	
+	
+	
+	// LCD button 1
+	if ((PIND & (1 << button1)) && (errorcode == 0)){	// When button is still pushed and no errors occured
+		lcdbuttontimer --;
+		if((lcdbuttontimer == 0) && (PIND & (1 << button1)) && (lcdbuttondebounce == 0)){
+			lcdbuttondebounce = 1;
+			if(calibrating == 4 && failedcalibration == 0){	// When no failures occured calibration
+				succeededcalibration = 1;
+				calibrating++;								// Go to screen 5, which are the normal screen
+			}
+			if(calibrating == 4 && failedcalibration == 1){	// Only add one to go to the values screen, not further
+				calibrating++;
+			}
+			if(calibrating == 3){							// Add one, but dont get the values, these are already obtained
+				calibrating++;
+			}
+			if(calibrating <= 2){							// These two steps are neccesary to go through the calibration
+				getcalibrationvalues();
+				calibrating++;
+			}
+			if((succeededcalibration == 1) && (bluebutton_pressed == 1) && (greenbutton_pressed == 1)){	// Only if calibration is done and car is running
+				if (lcd_status == 2){
+					lcd_status = 0;							// Reset LCD status
+				}
+				else lcd_status++;
+				lcd_fast_refresh();							// Refresh screen when button is pressed
+			}
+		}
+	}
+	else{
+		lcdbuttontimer = 8;
+		lcdbuttondebounce = 0;
+	}
+	
+	// greenbutton
+	if ((PIND & (1 << greenbutton))){			// When button is still pressed
+		greenbuttontimer --;
+		if((greenbuttontimer == 0) && (PIND & (1 << greenbutton)) && (errorcode == 0) && (greenbuttondebounce == 0)){
+			greenbuttondebounce = 1;
+			if ((succeededcalibration == 1) && (bluebutton_pressed == 1) && (greenbutton_pressed == 0)){	// When blue button is pressed and calibration succeeded
+				if(brake >= braking){				// You can only start the car when the brake is beeing pressed
+					
+					PORTC |= (1 << RTDS);			// Enable the Ready to Drive Sound
+					readytodrivesoundbool = 1;
+//					_delay_ms(2000);				// Wait 2s
+//					PORTC &= ~(1 << RTDS);			// Disable the Ready to Drive Sound
+					//				PORTC |= (1 << runenable);		// Enable the run Enable to the Motorcontrollers
+					
+					TransmitData[0] = 0x59;			// Enable cooling pumps
+					TransmitData[1] = 0xFF;
+					can_tx(ECU2ID, 2);
+				
+					runenablebool = 1;				// Internal Run Enable bool to 1
+					greenbutton_pressed = 1;
+					lcd_fast_refresh();				// Refresh LCD Screen
+				}
+			}
+		}
+	}
+	else{
+		greenbuttontimer = 8;
+		greenbuttondebounce = 0;
+	}
+
+	// bluebutton
+	if ((PIND & (1 << bluebutton))){									// When button is still pressed
+		bluebuttontimer --;
+		if((bluebuttontimer == 0) && (PIND & (1 << bluebutton)) && (errorcode == 0) && (bluebuttondebounce == 0)){
+			lcdbuttondebounce = 1;
+			
+			TransmitData[0] = 0x3D;	// Aks for shutdown circuit
+			TransmitData[1] = 0x61;
+			can_tx(ECU2ID, 2);
+			
+			if((succeededcalibration == 1) && (bluebutton_pressed == 0) && shutdownon == 1){	// Only when calibration succeeded and blue button is not already pressed
+				TransmitData[0] = 0x56;	// Enable motor controllers
+				TransmitData[1] = 0xFF;
+				can_tx(ECU2ID, 2);
+
+				predisbool = 1;
+//				mainrelaisbool = 1;
+				
+				lcd_fast_refresh();											// Refresh LCD screen
+			}
+		}
+	}
+
+	else{
+		bluebuttontimer = 8;
+		bluebuttondebounce = 0;
+	}
+	
+	if (readytodrivesoundbool == 1){
+		readytodrivesoundcounter--;
+		if (readytodrivesoundcounter == 0){		// disable ready to drive sound
+			PORTC &= ~(1 << RTDS);				// Disable the Ready to Drive Sound
+			
+			TransmitData[0] = 0x55;				// Enable the run Enable
+			TransmitData[1] = 0xFF;
+			can_tx(ECU2ID, 2);
+			
+			readytodrivesoundbool = 0;
+		}
+	}
+	
+	if (predisbool == 1){
+		prediscounter--;
+		if (prediscounter == 0){
+			TransmitData[0] = 0x58;				// Enable pre-Discharge
+			TransmitData[1] = 0xFF;
+			can_tx(ECU2ID, 2);
+			
+			predisbool = 0;
+			bluebutton_pressed = 1;
+		}
+	}
+	if (mainrelaisbool == 1){
+		mainrelaiscounter--;
+		if(mainrelaiscounter == 0){
+			TransmitData[0] = 0x60;				// Enable Main Relais
+			TransmitData[1] = 0xFF;
+			can_tx(ECU2ID, 2);
+		}
+	}
+	
+	node1_timer++;	// APPS Node
+	if (node1_timer > CANTIMEOUT){
+		TransmitData[0] = 0x55;				// Disable the run Enable
+		TransmitData[1] = 0x00;
+		can_tx(ECU2ID, 2);
+	}
+	
+//	node2_timer++;
+//	node3_timer++;
+//	node4_timer++;
+//	rearecu_timer++;
+	
+	TCNT0 = 193;						// Set initial counter value(1ms)	
+}
+
+
+void getpedalcalculationvalues(void)	// Get the percentage once for all the equations
+{
+	percent25gas = (gasdelta1*0.25) + gassensor1min;			// Get the value of 25% pedal travel of the gaspedal
+	braking = BRAKINGVALUE + brakemin;							// Get the value of the minimum brake pedal travel
+	percent5gasbrakecheck = (gasdelta1*0.05) + gassensor1min;	// Get the value of  5% pedal travel of the gaspedal
+}
+
+
+void getcalibrationvalues(void)			// Puts the right ADC Value in the right variable
+{
+	if(calibrating == 1){
+		gassensor1min = gas1;			// Put the current value in a the corresponding integer
+		gassensor2min = gas2;			// Put the current value in a the corresponding integer
+		brakemin = brake;				// Put the current value in a the corresponding integer
+	}
+	if(calibrating == 2){
+		gassensor1max = gas1;			// Put the current value in a the corresponding integer
+		gassensor2max = gas2;			// Put the current value in a the corresponding integer
+		brakemax = brake;				// Put the current value in a the corresponding integer
+
+		checkdeltas();					// Only check values if all calibration values are obtained
+		getpedalcalculationvalues();	// Get the percentage once for all the equations
+		checkoffset();					// Check if the offset is high enough
+		checkpedalrange();				// Check if the range does not come close to 0 and 1023
+
+		if(calerrorcode > 0){			// If any calibration error occurred
+			failedcalibration = 1;		// The calibration failed
+		}
+	}
+}
+
+void checkdeltas(void)					// Checks if the gained deltas are high enough
+{
+	gasdelta1 =  gassensor1max - gassensor1min;			// Get the delta of gassensor1
+	if (gasdelta1 < DELTAGASVALUE){						// Checks if the delta is more then defined
+		calerrorcode = 1;
+	}
+
+	gasdelta2 =  gassensor2max - gassensor2min;			// Get the delta of gassensor1
+	if (gasdelta2 < DELTAGASVALUE){						// Checks if the delta is more then defined
+		calerrorcode = 2;
+	}
+
+	brakedelta =  brakemax - brakemin;					// Get the delta of the brake
+	if (brakedelta < DELTABRAKEVALUE){					// Checks if the delta is more then defined
+		calerrorcode = 3;
+	}
+}
+
+void checkoffset(void)					// Checks if the offset is high enough
+{
+	int overlap = 0, offset = 0;					// Making temporary integers
+
+	if(gasdelta1 >= gasdelta2){						// If gasdelta1 is bigger or equal, use geasdelta2
+		offset = (gasdelta2 * (MAXOVERLAP/100));	// Calculate the maximum overlapping
+	}
+	if(gasdelta2 > gasdelta1){						// If gasdelta1 is bigger or equal, use geasdelta2
+		offset = (gasdelta1 * (MAXOVERLAP/100));	// Calculate the maximum overlapping
+	}
+
+	if(gassensor1min >= gassensor2min){				// If gassensor1min is higher then gassensor2min use gassensor2max
+		overlap = gassensor2max - gassensor1min;	// Calculate how much of the delta is overlapping
+	}
+	if(gassensor2min > gassensor1min){				// If gassensor2min is higher then gassensor1min use gassensor1max
+		overlap = gassensor1max - gassensor2min;	// Calculate how much of the delta is overlapping
+	}
+
+	if(overlap > offset){							// If the overlapping is higher then the maximum percentage allowed
+		calerrorcode = 4;							// A calibration error will occur
+	}
+}
+
+void checkpedalrange(void)				// Checks if the maximum and minimum values are not near 0 and 1023
+{
+	int min = 0, max = 0, mingassensor1min = 0, maxgassensor1max = 0 , mingassensor2min = 0 , maxgassensor2max = 0, minbrakemin = 0, maxbrakemax = 0;
+//	float pedalshoot = 0;		// This has to be replaced with a function that wont include a float
+
+	min = 0 + MAXDISTANCE;											// Calculating the minimum value
+	max = 1023 - MAXDISTANCE;										// Calculate the maximum value
+//	pedalshoot = MAXPEDALSHOOT/100;									// Making a variable for the equations
+	
+								// Making a variable for the equations
+
+	mingassensor1min = gassensor1min - (gasdelta1 * MAXPEDALSHOOT);	// The new minimum value
+	maxgassensor1max = gassensor1max + (gasdelta1 * MAXPEDALSHOOT);	// The new Maximum value
+	mingassensor2min = gassensor2min - (gasdelta2 * MAXPEDALSHOOT);	// The new minimum value
+	maxgassensor2max = gassensor2max + (gasdelta2 * MAXPEDALSHOOT);	// The new Maximum value
+	minbrakemin = brakemin - (brakedelta * MAXPEDALSHOOT);				// The new minimum value
+	maxbrakemax = brakemax + (brakedelta * MAXPEDALSHOOT);				// The new maximum value
+
+	if((maxgassensor1max > max) || (mingassensor1min < min)){		// If gassensor1 is outside of the calculated range
+		calerrorcode = 5;											// An calibration error will occur
+	}
+	if((maxgassensor2max > max) || (mingassensor2min < min)){		// If gassensor2 is outside of the calculated range
+		calerrorcode = 6;											// An calibration error will occur
+	}
+	if((maxbrakemax > max) || (minbrakemin < min)){					// If the brakesensor is outside of the calculated range
+		calerrorcode = 7;											// An calibration error will occur
+	}
+}
+
+
+//
+void checkpedalcables(int sensorcable, int error)	// Check if the cables are still attached(or faulty)(EV 2.4.5, EV 2.3.10) or sensors are broken
+{
+	//  Atmega internal pull-up will pull up to 5V when a cable is disconnected or faulty, so the ADC value becomes 1023
+	if ((errorcode == 0) && (calibrating > 0)){
+		if(sensorcable == 1023){					// When a sensor is disconnected or a sensor is broken or the cable is faulty
+			errorcode = error;						// The correct error code will be given
+		}
+		checkerrorcode();							// Checks if an error occured otherwise nothing will happen
+	}
+
+}
+
+void checkpercentgaspedals(void)		// Checks if the gas pedals different more then 10% from each other(EV 2.3.5)
+{
+	if(runenablebool == 1){
+		int gasmindelta1 = 0, gas1percent = 0, gasmindelta2 = 0, gas2percent = 0, gaspercentdifference = 0;	// Making variables used for the equations
+
+		gasmindelta1 = gas1 - gassensor1min;					// Obtaining the delta value of gassensor1 from its minimum calibration position
+		gas1percent = (gasmindelta1 *100) / gasdelta1;			// Calculating the pedal travel in percentage
+
+		gasmindelta2 = gas2 - gassensor2min;					// Obtaining the delta value of gassensor2 from its minimum calibration position
+		gas2percent = (gasmindelta2 *100) / gasdelta2;			// Calculating the pedal travel in percentage
+
+		if(gas2percent >= gas1percent){							// If gas2percent is bigger or equal to gas1percent use gas2percent
+			gaspercentdifference = gas2percent - gas1percent;	// Abstract the lowest value from the highest value, a delta between the two calculated values is obtained
+		}
+		if(gas2percent < gas1percent){							// If gas2percent is smaller to gas1percent use gas1percent
+			gaspercentdifference = gas1percent - gas2percent;	// Abstract the lowest value from the highest value, a delta between the two calculated values is obtained
+		}
+
+		if(gaspercentdifference > 10){						// If the difference is more than 10%
+			gaspercentcounter++;							// Start a counter by adding 1
+		}
+		if(gaspercentdifference <= 10){						// If they differ less than 10%
+			gaspercentcounter = 0;							// The counter will be reset
+		}
+		if(gaspercentcounter == 10){						// If the counter reaches 10(10 * 10ms = 100ms)
+			errorcode = 1;									// An Error will occur
+			checkerrorcode();								// Checks if an error occured
+		}
+	}
+}
+
+void checkbrakeandgas(void)				// Checks if the brake is pressed when the gas is more than 25% pressed(EV 2.5)
+{
+	if(runenablebool == 1){														// Only do this when run enable is on
+		if((percent25gas <= gas1) && (braking <= brake) && (errorcode == 0)){	// If the gas pedal travel is more then 25% and the brake pedal travel is more than minimum
+			errorcode = 2;														// An Error will occur
+			checkerrorcode();
+		}
+	}
+	// If this error occurs the car may start again if the gas pedal travel is less then 5%, brake pedal travel is not important here(EV 2.5.1)
+	if((runenablebool == 0) && (errorcode == 2)){				// If run enable is turned off by this error and the error code is on
+		if(gas1 < percent5gasbrakecheck){						// Check if the gas pedal travel is less than 5%
+			errorcodereset();									// Reset the error code and turn run enable on again
+		}
+	}
+}
+
+
+
+void checkbrakelight(void)				// Checks if the brakes are being pressed and turns the brakelight on/off
+{
+	if(succeededcalibration == 1){
+		if(brake >= braking){				// If brake is higher than the minimum brake value
+//			PORTC |= (1 << Brakelight);		// Turn the brake lights on
+			TransmitData[0] = 0x57;
+			TransmitData[1] = 0xFF;
+			can_tx(ECU2ID, 2);
+		}
+		if(brake < (braking - 15)){			// If brake is lower than the minimum brake value minus a bit more(preventing brakelight flickering)
+//			PORTC &= ~(1 << Brakelight);	// Turn the brake lights off
+			TransmitData[0] = 0x57;
+			TransmitData[1] = 0x00;
+			can_tx(ECU2ID, 2);
+		}
+	}
+}
+
+void checkoverheating(void)				// Checks if the cooling pumps have to be enabled
+{
+/*	if (PINE & (1 << MCoverheating)){	// Check if the overheating pin is logic high
+		PORTC |= (1 << pumpenable);		// Enable cooling pumps
+	}
+	else{
+		PORTC &= ~(1 << pumpenable);	// Disable cooling pumps
+	}
+	*/
+}
+
+
+void checkerrorcode(void)				// Checks if an Error occurred
+{
+	if(errorcode > 0){					// If any Error occurred
+//		PORTC &= ~(1 << runenable);		// Turn off the run enable pin
+		TransmitData[0] = 0x55;
+		TransmitData[1] = 0x00;
+		can_tx(ECU2ID, 2);
+		
+		runenablebool = 0;				// Set the runenablebool to zero
+		lcd_fast_refresh();
+	}
+}
+
+void errorcodereset(void)				// Resets the error code and turn run enable on
+{
+	errorcode = 0;						// Reset Errorcode
+//	PORTC |= (1 << runenable);			// Turn run enable on again
+	TransmitData[0] = 0x55;
+	TransmitData[1] = 0xFF;
+	can_tx(ECU2ID, 2);
+	
+	runenablebool = 1;					// Set runenablebool to one again
+	lcd_fast_refresh();
+}
+
+
+
+void lcd_fast_refresh(void)				// 4 Hz LCD Fast Refresh
+{
+	checklcdstatus();						// Checks the status so it knows which screen has to be put on the LCD screen
+
+	lcd_gotoxy(0 ,0);					// Set display to Line 0, Character 0
+	lcd_puts(Linebuffer0);
+
+	lcd_gotoxy(40 ,0);					// Set display to Line 1, Character 0
+	lcd_puts(Linebuffer1);
+
+	lcd_gotoxy(20 ,0);					// Set display to Line 2, Character 0
+	lcd_puts(Linebuffer2);
+
+	lcd_gotoxy(20 ,1);					// Set display to Line 3, Character 0
+	lcd_puts(Linebuffer3);
+}
+
+void checklcdstatus(void)				// Checks the status of the LCD which screen to display
+{
+	if(errorcode == 0){
+		if(calibrating == 0){
+		}
+		if(calibrating == 1){
+			lcd_release_pedals_screen();
+		}
+		if(calibrating == 2){
+			lcd_press_pedals_screen();
+		}
+		if((calibrating == 3) && (failedcalibration == 0)){
+			lcd_succeeded_calibration_screen();
+		}
+		if((calibrating == 3) && (failedcalibration == 1)){
+			lcd_failed_calibration_screen();
+		}
+		if(calibrating == 4){
+			lcd_calibration_values_screen();
+		}
+		if((calibrating == 5) && (failedcalibration == 1)){		// When calibration failed
+			if(calerrorcode == 1){
+				lcd_calerrorcode_1_screen();
+			}
+			if(calerrorcode == 3){
+				lcd_calerrorcode_2_screen();
+			}
+			if(calerrorcode == 3){
+				lcd_calerrorcode_3_screen();
+			}
+			if(calerrorcode == 4){
+				lcd_calerrorcode_4_screen();
+			}
+			if(calerrorcode == 5){
+				lcd_calerrorcode_5_screen();
+			}
+			if(calerrorcode == 6){
+				lcd_calerrorcode_6_screen();
+			}
+			if(calerrorcode == 7){
+				lcd_calerrorcode_7_screen();
+			}
+		}
+		if(succeededcalibration == 1){							// When calobration succeeded
+			lcd_cont_screen();
+			if(bluebutton_pressed == 0){
+				lcd_blue_screen();
+			}
+			if ((bluebutton_pressed == 1) && (greenbutton_pressed == 0)){
+				lcd_green_screen();
+			}
+			if((bluebutton_pressed == 1) && (greenbutton_pressed == 1)){
+				if (lcd_status == 0){
+					lcd_motor_screen();
+				}
+				if (lcd_status == 1){
+	//				getwatertemperature();
+					lcd_water_screen();
+				}
+				if (lcd_status == 2){
+					lcd_batteries_screen();
+				}
+			}
+		}
+	}
+	if(errorcode > 0){											// If any error occurred
+		if(errorcode == 1){
+			lcd_errorcode_1_screen();
+		}
+		if(errorcode == 2){
+			lcd_errorcode_2_screen();
+		}
+		if(errorcode == 3){
+			lcd_errorcode_3_screen();
+		}
+		if(errorcode == 4){
+			lcd_errorcode_4_screen();
+		}
+		if(errorcode == 5){
+			lcd_errorcode_5_screen();
+		}
+		if(errorcode == 6){
+			lcd_errorcode_6_screen();
+		}
+		if(errorcode == 7){
+			lcd_errorcode_7_screen();
+		}
+		if(errorcode == 8){
+			lcd_errorcode_8_screen();
+		}
+	}
+
+}
+
+
+void lcd_succeeded_calibration_screen(void)	// Calibration Succeeded Screen
+{
+	snprintf (Linebuffer0, sizeof Linebuffer0,"                    ");
+	snprintf (Linebuffer1, sizeof Linebuffer1,"    Calibration     ");
+	snprintf (Linebuffer2, sizeof Linebuffer2,"     Succeeded      ");
+}
+
+void lcd_failed_calibration_screen(void)	// Calibration Failed Screen
+{
+	snprintf (Linebuffer0, sizeof Linebuffer0,"                    ");
+	snprintf (Linebuffer1, sizeof Linebuffer1,"     Calibration    ");
+	snprintf (Linebuffer2, sizeof Linebuffer2,"       Failed       ");
+	snprintf (Linebuffer3, sizeof Linebuffer3,"                    ");
+}
+
+void lcd_release_pedals_screen(void)		// Calibration Step 1 Screen
+{
+	snprintf (Linebuffer0, sizeof Linebuffer0,"                    ");
+	snprintf (Linebuffer1, sizeof Linebuffer1,"       Release      ");
+	snprintf (Linebuffer2, sizeof Linebuffer2,"     Both Pedals    ");
+	snprintf (Linebuffer3, sizeof Linebuffer3,"                    ");
+}
+
+void lcd_press_pedals_screen(void)			// Calibration Step 2 Screen
+{
+	snprintf (Linebuffer1, sizeof Linebuffer1,"        Press       ");
+	snprintf (Linebuffer2, sizeof Linebuffer2,"    Both Pedals     ");
+}
+
+void lcd_calibration_values_screen(void)	// Displays all calibration values
+{
+	snprintf (Linebuffer0, sizeof Linebuffer0,"      Min Delta  Max");
+	snprintf (Linebuffer1, sizeof Linebuffer1,"Gas1: %.3d %.3d  %.4d", gassensor1min, gasdelta1 ,gassensor1max);
+	snprintf (Linebuffer2, sizeof Linebuffer2,"Gas2: %.3d %.3d  %.4d", gassensor2min, gasdelta2, gassensor2max);
+	snprintf (Linebuffer3, sizeof Linebuffer3,"Brake:%.3d %.3d  %.4d", brakemin, brakedelta, brakemax);
+}
+
+
+
+void lcd_calerrorcode_1_screen(void)	// Gassensor1 delta to small
+{
+	snprintf (Linebuffer1, sizeof Linebuffer1,"	    Gassensor 1    ");
+	snprintf (Linebuffer2, sizeof Linebuffer2,"   delta to small   ");
+}
+
+void lcd_calerrorcode_2_screen(void)	// Gassensor2 delta to small
+{
+	snprintf (Linebuffer1, sizeof Linebuffer1,"	    Gassensor 1    ");
+	snprintf (Linebuffer2, sizeof Linebuffer2,"   delta to small   ");
+}
+
+void lcd_calerrorcode_3_screen(void)	// Brake delta to small
+{
+	snprintf (Linebuffer1, sizeof Linebuffer1,"	    Brakesensor     ");
+	snprintf (Linebuffer2, sizeof Linebuffer2,"   delta to small   ");
+}
+
+void lcd_calerrorcode_4_screen(void)	// Gas Pedal Sensors offset to small
+{
+	snprintf (Linebuffer0, sizeof Linebuffer0,"	                   ");
+	snprintf (Linebuffer1, sizeof Linebuffer1,"	    Gas Sensors    ");
+	snprintf (Linebuffer2, sizeof Linebuffer2,"   offset to small  ");
+	snprintf (Linebuffer3, sizeof Linebuffer3,"	                   ");
+
+}
+
+void lcd_calerrorcode_5_screen(void)	// Gassensor1 close to minimum or maximum
+{
+	snprintf (Linebuffer1, sizeof Linebuffer1,"Gassensor2 close to ");
+	snprintf (Linebuffer2, sizeof Linebuffer2," minimum or maximum ");
+}
+
+void lcd_calerrorcode_6_screen(void)	// Gassensor2 close to minimum or maximum
+{
+	snprintf (Linebuffer1, sizeof Linebuffer1,"Gassensor2 close to ");
+	snprintf (Linebuffer2, sizeof Linebuffer2," minimum or maximum ");
+}
+
+void lcd_calerrorcode_7_screen(void)	// Brake close to minimum or maximum
+{
+	snprintf (Linebuffer1, sizeof Linebuffer1,"Brakesensor close to");
+	snprintf (Linebuffer2, sizeof Linebuffer2," minimum or maximum ");
+}
+
+
+
+void lcd_errorcode_1_screen(void)		// 10% Gas Pedal difference
+{
+	snprintf (Linebuffer1, sizeof Linebuffer1,"	     10% Gas       ");
+	snprintf (Linebuffer2, sizeof Linebuffer2,"  Pedal Difference  ");
+}
+
+void lcd_errorcode_2_screen(void)		// Gas & Brake pedals pressed at the same time
+{
+	snprintf (Linebuffer1, sizeof Linebuffer1,"	Gas & Brake pressed");
+	snprintf (Linebuffer2, sizeof Linebuffer2,"   RELEASE PEDALS   ");
+}
+
+void lcd_errorcode_3_screen(void)		// Gas Sensor 1 Out of Defined Range
+{
+	snprintf (Linebuffer1, sizeof Linebuffer1,"    Gas Sensor 1    ");
+	snprintf (Linebuffer2, sizeof Linebuffer2,"Out of Defined Range");
+}
+
+void lcd_errorcode_4_screen(void)		// Gas Sensor 2 Out of Defined Range
+{
+	snprintf (Linebuffer1, sizeof Linebuffer1,"     Gas Senor 2    ");
+	snprintf (Linebuffer2, sizeof Linebuffer2,"Out of Defined Range");
+}
+
+void lcd_errorcode_5_screen(void)		// Brake Sensor out of Defined Range
+{
+	snprintf (Linebuffer1, sizeof Linebuffer1,"    Brake Sensor    ");
+	snprintf (Linebuffer2, sizeof Linebuffer2,"Out of Defined Range");
+}
+
+void lcd_errorcode_6_screen(void)		// Gas Sensor 1 Cable Fault or broken sensor
+{
+	snprintf (Linebuffer1, sizeof Linebuffer1,"    Gas Sensor 1     ");
+	snprintf (Linebuffer2, sizeof Linebuffer2,"  Broken/Cable Fault ");
+}
+
+void lcd_errorcode_7_screen(void)		// Gas Sensor 2 Cable Fault or broken sensor
+{
+	snprintf (Linebuffer1, sizeof Linebuffer1,"    Gas Sensor 2     ");
+	snprintf (Linebuffer2, sizeof Linebuffer2,"  Broken/Cable Fault ");
+}
+
+void lcd_errorcode_8_screen(void)		// Brake Sensor Cable Fault or broken sensor
+{
+	snprintf (Linebuffer1, sizeof Linebuffer1,"    Brake Sensor     ");
+	snprintf (Linebuffer2, sizeof Linebuffer2,"  Broken/Cable Fault ");
+}
+
+
+void lcd_motor_screen(void)				// LCD Motor Control Screen
+{
+	snprintf (Linebuffer1, sizeof Linebuffer1,"     C MOTOR       C");
+	snprintf (Linebuffer2, sizeof Linebuffer2,"     C CONTR       C");
+}
+
+void lcd_water_screen(void)				// LCD Watercooling Screen
+{
+//	snprintf (Linebuffer1, sizeof Linebuffer1,"%d   C  WATER %d   C", watertempL, watertempR);
+//	snprintf (Linebuffer1, sizeof Linebuffer1,"%d   C  WATER %d   C", TEMPL, TEMPR);
+	snprintf (Linebuffer2, sizeof Linebuffer2,"    L/m FLOW     L/m");
+}
+
+void lcd_batteries_screen(void)			// LCD Batteries Screen
+{
+		snprintf (Linebuffer1, sizeof Linebuffer1,"     Battery        ");
+		snprintf (Linebuffer2, sizeof Linebuffer2,"     Screen         ");
+}
+
+
+void lcd_blue_screen(void)				// LCD Press Blue Button Screen
+{
+	snprintf (Linebuffer1, sizeof Linebuffer1," Press Blue Button  ");
+	snprintf (Linebuffer2, sizeof Linebuffer2,"                    ");
+}
+
+void lcd_green_screen(void)				// LCD Press Green Button Screen
+{
+	snprintf (Linebuffer1, sizeof Linebuffer1," Press Brake Pedal  ");
+	snprintf (Linebuffer2, sizeof Linebuffer2,"  & Green Button    ");
+}
+
+
+void lcd_cont_screen(void)				// LCD Race Screen/Home Screen
+{
+//	snprintf (Linebuffer0, sizeof Linebuffer0,"  Speed:      KM/H  ");
+	snprintf (Linebuffer0, sizeof Linebuffer0,"RUNEN %d error %d", runenablebool, errorcode);
+//	snprintf (Linebuffer3, sizeof Linebuffer3,"H:   V/    A L:    V");
+	snprintf (Linebuffer3, sizeof Linebuffer3,"gas: %d  gas2 %d", gas1, gas2);
+}
+
+
+///
+
+void initMCU(void)						// Initialize whole MCU
+{
+//	init_ADC();
+	init_TIMER0();
+	init_TIMER2();
+	lcd_init(LCD_DISP_ON);		// Initialize display, cursor off
+	init_IO();
+	can_init(BAUD);
+	can_rx(MASTERID);
+	
+//	init_external_interrupts();
+
+	sei();						// Enable Global Interrupts
+
+	lcd_welcome_screen();
+	lcd_fast_refresh();
+
+	SMCR |= (1 << SE);			// Enable sleep mode
+}
+
+void init_TIMER0(void)					// 1000Hz Clock Initialization (Timer Counter 0)
+{
+	TCCR0A |= (1 << CS02);					// 256 Prescaler
+	TCNT0 = 193;							// Set initial counter value(1ms)
+	TIMSK0 |= (1 << TOIE0);					// Overflow Interrupt Enable
+}
+
+void init_TIMER2(void)					//   4Hz Clock Initialization (Timer Counter 2)
+{
+		ASSR  = (1<< AS2);						// Enable asynchronous mode
+		TCNT2 = 192;							// Set initial counter value(0.25 Seconds)
+//		TCCR2A |= (1 << CS02)|(1 << CS00);		// 128 Prescaler ((255*128)/32.768 = 1Hz)
+		TCCR2A |= (1 << CS01)|(1 << CS00);		// 128 Prescaler ((255*128)/32.768 = 1Hz)
+		TIFR2   = (1 << TOV2);					// Clear interrupt flags
+		TIMSK2  = (1 << TOIE2);					// Enable TOV2 interrupt
+}
+
+/*
+void init_ADC(void)						// ADC Initialization
+{
+		DDRF = 0x00;											// PortF All Inputs
+		PORTF = 0x00;											// PortF Pullup Disabled
+
+		ADCSRA |= (1 << ADEN);									// Enable ADC
+		ADCSRA |= (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0);	// 128 PreScaler
+		ADMUX &= ~((1<<REFS0)|(1<<REFS1));
+		ADCSRA |= (1 << ADIE);									// Enable ADC Interrupt
+}
+*/
+
+void init_IO(void)						// Initialize Input and Output Ports and Pins
+{
+	DDRD &=~ ((1 << bluebutton) | (1 << greenbutton) | (1 << button1) | (1 << button2));		// Inputs
+
+	DDRC |= 0xff;											// PORTC are all output
+	DDRE |= 0b11110000;										// High side of port E are outputs
+	
+	PORTC &= 0;												// Set all outputs on PortC standard to logic 0
+	PORTE &= 0b00000000;
+	
+	// PORTE |= (1 << AMSLED);
+	// PORTE |= (1 << IMDLED);
+}
+
+void init_external_interrupts(void)		// Initialize External Interrupts
+{
+	EIMSK |= (1 << INT6 | (1 << INT7) | (1 << INT0) | (1 << INT1));					// Enable External Interrupts
+	EICRB  |= (0 << ISC51) | (1 << ISC50);											// Rising edge creates interrupt
+}
+
+
+
+int main()								// Main function
+{
+		initMCU();
+
+		while(1){
+//		SLEEP_MODE_IDLE;						// Sleep while doing nothing, only interrupts can wake the MC
+		}
+
+}
