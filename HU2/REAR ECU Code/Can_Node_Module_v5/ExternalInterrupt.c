@@ -119,15 +119,15 @@ ISR(INT3_vect){
 	}
 }
 
-//ISR(INT4_vect){
-//	TransmitData[0] = 0x99;			// AMS Shutdown
-//	can_tx(MASTERID, 1);
-//}
+ISR(INT4_vect){
+	TransmitData[0] = 0x99;			// AMS Shutdown
+	can_tx(MASTERID, 1);
+}
 
-//ISR(INT5_vect){
-//	TransmitData[0] = 0x98;			// IMDSHUTDOWN
-//	can_tx(MASTERID, 1);
-//}
+ISR(INT5_vect){
+	TransmitData[0] = 0x98;			// IMDSHUTDOWN
+	can_tx(MASTERID, 1);
+}
 
 ISR(INT6_vect){
 	if (InterruptPairDirection[0]){

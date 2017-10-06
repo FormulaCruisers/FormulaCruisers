@@ -32,8 +32,6 @@ int main()
 	can_init();
 	can_rx(MASTERID);
 	
-	lcd_init(LCD_DISP_ON);
-	
 	//Set CPU into sleep mode(simultaneously enabling interrupts)
 	set_sleep_mode(SLEEP_MODE_IDLE);
 	sleep_enable();

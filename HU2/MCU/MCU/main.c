@@ -44,7 +44,7 @@ volatile enum _error _errorcode = ERROR_NONE;
 
 void debounce(uint8_t* btn, uint8_t val);
 
-uint8_t ttt = 0;
+uint8_t ttt = 0; //Counter to make sure each node only gets one request at a time
 
 ISR(TIMER0_OVF_vect)
 {
@@ -60,20 +60,14 @@ ISR(TIMER0_OVF_vect)
 	{
 		case 0:
 			data_send8(CAN_REQUEST_DATA, RPM_FRONT_LEFT, NODEID1);
-			break;
-		case 3:
 			data_send8(CAN_REQUEST_DATA, GAS_1, NODEID2);
 			break;
 		case 1:
 			data_send8(CAN_REQUEST_DATA, RPM_FRONT_RIGHT, NODEID1);
-			break;
-		case 4:
 			data_send8(CAN_REQUEST_DATA, GAS_2, NODEID2);
 			break;
 		case 2:
 			data_send8(CAN_REQUEST_DATA, STEERING_POS, NODEID1);
-			break;
-		case 5:
 			data_send8(CAN_REQUEST_DATA, BRAKE, NODEID2);
 			break;
 	}
@@ -160,7 +154,7 @@ ISR(TIMER0_OVF_vect)
 			break;
 	}
 	
-	ttt = (ttt + 1) % 6;
+	ttt = (ttt + 1) % 3;
 	/*
 	if(readybeep > 1) readybeep--;
 	else if(readybeep == 1)
