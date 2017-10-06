@@ -14,7 +14,6 @@ void log_data(uint8_t node, uint16_t val)
 	char dstr[16];
 	snprintf(dstr, sizeof(dstr), "%x: %5d", node, val);
 	log_println(dstr);
-	//blabla dit is een regel code
 }
 
 void log_print(char* str)
@@ -34,7 +33,7 @@ void data_request(uint16_t node, uint8_t num, uint16_t* outputvar, uint8_t wait)
 	while(outvars[num] != 0 && timeout-- > 1) ;
 	
 	//If there was a timeout, throw an error
-	if(timeout <= 1) e_throw("Data wait timed out");
+	if(timeout <= 1) e_throw("Pre-wait timeout");
 	
 	//Add to the list
 	waitingon++;
@@ -42,7 +41,11 @@ void data_request(uint16_t node, uint8_t num, uint16_t* outputvar, uint8_t wait)
 	data_send8(CAN_REQUEST_DATA, num, node);
 	if(wait)
 	{
-		while(outvars[num] != 0) ;
+		timeout = DATA_WAIT_TIMEOUT;
+		while(outvars[num] != 0 && timeout-- > 1) ;
+		
+		//If there was a timeout, throw an error
+		if(timeout <= 1) e_throw("Data wait timeout");
 	}
 }
 
@@ -53,31 +56,7 @@ void data_waitforall()
 	while(waitingon > 0 && timeout-- > 1) ;
 	
 	//Throw error if timed out
-	if(timeout <= 1) e_throw("Data wait timeout");
-}
-
-void data_send_ecu(uint8_t node, uint8_t data, uint8_t wait)
-{	
-	//If there's still a request on this node, wait for it
-	uint8_t timeout = DATA_WAIT_TIMEOUT;
-	while(outvars[node] != 0 && timeout-- > 1) ;
-	
-	//If there was a timeout, throw an error
 	if(timeout <= 1) e_throw("Data waitall timeout");
-	
-	//Add to the list
-	waitingon++;
-	outvars[node] = (uint16_t*)-1;
-	
-	//Send two bytes in the form of {node, data} to the ECU
-	TransmitData[0] = node;
-	TransmitData[1] = data;
-	can_tx(ECU2ID, 2);
-	
-	if(wait)
-	{
-		while(outvars[node] != 0) ;
-	}
 }
 
 ISR(CANIT_vect)
