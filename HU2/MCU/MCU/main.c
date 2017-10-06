@@ -138,8 +138,8 @@ ISR(TIMER0_OVF_vect)
 			/*
 			if(_errorcode == ERROR_NONE)
 			{
-				data_send16(CAN_SEND_DATA, (uint16_t)gas1eng, MCDR);
-				data_send16(CAN_SEND_DATA, (uint16_t)gas1eng, MCDL);	
+				data_send16(CAN_SEND_DATA, (uint16_t)((gas1eng * stuurpos) / 100), MCDR);
+				data_send16(CAN_SEND_DATA, (uint16_t)((gas1eng * 100) / stuurpos), MCDL);	
 			}
 			else
 			{

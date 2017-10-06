@@ -14,6 +14,7 @@ void log_data(uint8_t node, uint16_t val)
 	char dstr[16];
 	snprintf(dstr, sizeof(dstr), "%x: %5d", node, val);
 	log_println(dstr);
+	//blabla dit is een regel code
 }
 
 void log_print(char* str)
