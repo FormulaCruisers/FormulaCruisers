@@ -96,7 +96,7 @@ ISR(TIMER0_OVF_vect)
 			}
 			else if(predistimer == PREDISCHARGE_TIMER - 2000)
 			{
-				//e_checkflow();
+				e_checkflow();
 			}
 			break;
 		
@@ -129,17 +129,18 @@ ISR(TIMER0_OVF_vect)
 			}
 			if(ttt == 3)
 			{
-				//e_checkflow();
+				e_checkflow();
 				e_checksensors();
 				e_checkranges();
 				e_checkdiscrepancy();	
 			}
 			
-			/*
+			//*
 			if(_errorcode == ERROR_NONE)
 			{
-				data_send16(CAN_SEND_DATA, (uint16_t)((gas1eng * stuurpos) / 100), MCDR);
-				data_send16(CAN_SEND_DATA, (uint16_t)((gas1eng * 100) / stuurpos), MCDL);	
+				uint8_t wheel_diff = steerpos - STEER_MIDDLE + 100;
+				data_send16(CAN_SEND_DATA, (uint16_t)((gas1eng * wheel_diff) / 100), MCDR);
+				data_send16(CAN_SEND_DATA, (uint16_t)((gas1eng * 100) / wheel_diff), MCDL);	
 			}
 			else
 			{

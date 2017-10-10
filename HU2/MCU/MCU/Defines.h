@@ -39,6 +39,8 @@
 
 #define FLOWMIN						10
 
+#define STEER_MIDDLE				500
+
 //Counter values
 #define _TM0						192 //1 kHz
 #define _TM2						192 //8 Hz
