@@ -39,13 +39,13 @@ ISR(CANIT_vect){  	// use interrupts
 				}
 				if (ReceiveData[i] == RPM_VOOR_LINKS){
 					TransmitData[j++] = ReceiveData[i];
-					TransmitData[j++] = (PulsePerSec[2] >> 8);
-					TransmitData[j++] = PulsePerSec[2];
+					TransmitData[j++] = (PulsePerSec[3] >> 8);
+					TransmitData[j++] = PulsePerSec[3];
 				}
 				if (ReceiveData[i] == RPM_VOOR_RECHTS){
 					TransmitData[j++] = ReceiveData[i];
-					TransmitData[j++] = (PulsePerSec[3] >> 8);
-					TransmitData[j++] = PulsePerSec[3];
+					TransmitData[j++] = (PulsePerSec[2] >> 8);
+					TransmitData[j++] = PulsePerSec[2];
 				}
 			}
 			can_tx(MASTERID, j); //Transmit data depending on the number of message received

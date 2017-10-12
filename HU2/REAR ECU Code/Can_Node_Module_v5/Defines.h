@@ -12,6 +12,8 @@
 #define _LEFT				2
 #define PD_SHUTDOWN			PD7
 
+#define PREDISCHARGE_TIMER			10000 //10 seconds
+
 /*************** Node 1 ***************/
 #define STUURPOSITIE				0x11
 #define RPM_VOOR_LINKS				0x12
