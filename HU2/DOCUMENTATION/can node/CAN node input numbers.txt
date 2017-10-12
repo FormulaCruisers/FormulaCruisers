@@ -25,9 +25,9 @@ NODE2:
 	2 - Brake
 
 NODE3:
-	2 - Flow left   Staat aangesloten op 7
-	0 - Temp left   Staat aangesloten op 1
+	7 - Flow left
+	1 - Temp left
 
 NODE4:
-	2 - Flow right  Staat aangesloten op 7
-	0 - Temp right  Staat aangesloten op 1
+	7 - Flow right
+	1 - Temp right
