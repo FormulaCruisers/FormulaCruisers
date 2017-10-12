@@ -89,11 +89,11 @@ ISR(CANIT_vect){  	// use interrupts
 			for(uint8_t i = 1; i < length; i++){
 				if (ReceiveData[i] == FLOW_RICHTING_LINKS){ //if Receive data 0x01, Transmit the following data:
 					TransmitData[j++] = ReceiveData[i];
-					TransmitData[j++] = (PulsePerSec[2] >> 8);
-					TransmitData[j++] = PulsePerSec[2];
+					TransmitData[j++] = (PulsePerSec[0] >> 8);
+					TransmitData[j++] = PulsePerSec[0];
 				}
 				if (ReceiveData[i] == TEMP_LINKS){
-					getADC(0);
+					getADC(1);
 					TransmitData[j++] = ReceiveData[i];
 					TransmitData[j++] = (ADCValue[0] << 8);
 					TransmitData[j++] = ADCValue[0];
@@ -109,11 +109,11 @@ ISR(CANIT_vect){  	// use interrupts
 			for(uint8_t i = 1; i < length; i++){
 				if (ReceiveData[i] == FLOW_RICHTING_RECHTS){ //if Receive data 0x01, Transmit the following data:
 					TransmitData[j++] = ReceiveData[i];
-					TransmitData[j++] = (PulsePerSec[2] >> 8);
-					TransmitData[j++] = PulsePerSec[2];
+					TransmitData[j++] = (PulsePerSec[0] >> 8);
+					TransmitData[j++] = PulsePerSec[0];
 				}
 				if (ReceiveData[i] == TEMP_RECHTS){
-					getADC(0);
+					getADC(1);
 					TransmitData[j++] = ReceiveData[i];
 					TransmitData[j++] = (ADCValue[0] << 8);
 					TransmitData[j++] = ADCValue[0];
