@@ -1,0 +1,24 @@
+from left to right: (left being where the 5V, GND and IN labels are)
+
+ADC xx0321
+INT 764321
+
+Let op: ADC0 = INT4
+
+NODE1:
+	3 - Steerpos
+	7 - RPM left
+	6 - RPM right
+
+NODE2:
+	0 - Gas 1
+	1 - Gas 2
+	2 - Brake
+
+NODE3:
+	2 - Flow dir left
+	0 - Flow left
+
+NODE4:
+	2 - Flow dir right
+	0 - Flow right
