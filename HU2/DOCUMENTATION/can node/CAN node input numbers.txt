@@ -16,8 +16,8 @@ Let op: ADC0 = INT4
 
 NODE1:
 	3 - Steerpos
-	7 - RPM left
-	6 - RPM right
+	6 - RPM left
+	7 - RPM right
 
 NODE2:
 	0 - Gas 1
