@@ -3,6 +3,15 @@ from left to right: (left being where the 5V, GND and IN labels are)
 ADC xx0321
 INT 764321
 
+0:adc0
+1:adc1 & pps[3]
+2:adc2 & pps[2]
+3:adc3 & pps[1]
+4:adc0 & pps[1]
+6:pps[0]
+7:pps[0]
+
+
 Let op: ADC0 = INT4
 
 NODE1:
@@ -16,9 +25,9 @@ NODE2:
 	2 - Brake
 
 NODE3:
-	2 - Flow dir left
-	0 - Flow left
+	2 - Flow left   Staat aangesloten op 7
+	0 - Temp left   Staat aangesloten op 1
 
 NODE4:
-	2 - Flow dir right
-	0 - Flow right
+	2 - Flow right  Staat aangesloten op 7
+	0 - Temp right  Staat aangesloten op 1
