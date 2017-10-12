@@ -16,7 +16,7 @@ void chip_init (void);
 
 uint32_t cantimer = 0;
 
-bool predison = 0, mainrelaison = 0;
+bool predison = 0;
 volatile uint32_t MainRelaisTimer = 1000;
 
 void init_TIMER0(void)					// 1000Hz Clock Initialization (Timer Counter 0)
@@ -32,9 +32,9 @@ int main( void )
 	chip_init();			// Chip initialization
 	can_init(BAUD); 		// Can initialization
 	can_rx(FUNCTION);
-	//	int_ADC();				// ADC initialization
-	//int_ExternalInterrupt();
-	//init_TIMER0();
+	int_ADC();				// ADC initialization
+	int_ExternalInterrupt();
+	init_TIMER0();
 	
 	sei();					// enables interrupts
 	
@@ -57,15 +57,9 @@ ISR(TIMER0_OVF_vect)					// Timer 0 Overflow Interrupt(1000Hz)
 	if ((predison == 1) && (PIND & (1 << PD7)))
 	{
 		PORTC	|= (1 << PC3);		//Precharge on
-		if (mainrelaison == 0 )
-		{
-			MainRelaisTimer--;
-		}
-		
-		if (MainRelaisTimer < 30)
+		if (MainRelaisTimer-- > 30)
 		{
 			PORTC	|= (1 << PC2);	// Main relais on
-			mainrelaison = 1;
 		}
 	}
 	else
@@ -73,7 +67,6 @@ ISR(TIMER0_OVF_vect)					// Timer 0 Overflow Interrupt(1000Hz)
 		MainRelaisTimer = 1000;
 		PORTC &= ~(1 << PC3);	// Turn pre charge off
 		PORTC &= ~(1 << PC2);	// Turn main Relais off
-		mainrelaison = 0;
 	}
 	
 	
