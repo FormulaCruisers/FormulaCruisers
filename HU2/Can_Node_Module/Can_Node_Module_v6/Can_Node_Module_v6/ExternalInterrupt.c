@@ -92,7 +92,7 @@ ISR(INT0_vect){
 	
 }
 
-ISR(INT1_vect){
+ISR(INT6_vect){   //Should be INT6 on node1, INT1 everywhere else... Dangit rens
 	
 	
 	uint16_t InterruptPairTimerTemp;
@@ -110,7 +110,7 @@ ISR(INT1_vect){
 	can_tx(MASTERID, 2);
 }
 
-ISR(INT2_vect){
+ISR(INT7_vect){  //Should be INT7 on node1, INT2 everywhere else... Dangit rens
 	uint16_t InterruptPairTimerTemp;
 	
 	InterruptPairTimerTemp = TCNT3L;
@@ -188,7 +188,7 @@ ISR(INT4_vect){
 	}
 }
 
-ISR(INT6_vect){
+ISR(INT1_vect){ //Should be INT1 on node1, INT6 everywhere else... Dangit rens
 	if (InterruptPairDirection[0]){
 		
 		InterruptPairTimer[0] = TCNT1L;
@@ -219,7 +219,7 @@ ISR(INT6_vect){
 	}
 }
 
-ISR(INT7_vect){
+ISR(INT2_vect){ //Should be INT2 on node1, INT7 everywhere else... Dangit rens
 	if (InterruptPairDirection[0]){
 		
 		InterruptPairTimer[0] = TCNT1L;

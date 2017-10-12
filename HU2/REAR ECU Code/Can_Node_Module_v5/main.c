@@ -29,6 +29,7 @@ void init_TIMER0(void)					// 1000Hz Clock Initialization (Timer Counter 0)
 //***** MAIN CODE ***********************************************
 int main( void )
 {
+	/*
 	chip_init();			// Chip initialization
 	can_init(BAUD); 		// Can initialization
 	can_rx(FUNCTION);
@@ -37,6 +38,17 @@ int main( void )
 	//init_TIMER0();
 	
 	sei();					// enables interrupts
+	//*/
+	
+	DDRC = 0xFF;
+	//while(1)
+	//{
+		PORTC = 0xFF;
+		_delay_ms(500);
+		//PORTC = 0x00;
+	//	_delay_ms(500);	
+	//}
+	
 	
 	while(1){
 	}
