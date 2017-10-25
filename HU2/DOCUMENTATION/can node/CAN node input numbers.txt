@@ -11,11 +11,8 @@ INT 764321
 6:	 pps[0], dir=1
 7:	 pps[0], dir=0
 
-
-Let op: ADC0 = INT4
-
 NODE1:
-	3 - Steerpos
+	2 - Steerpos
 	6 - RPM left
 	7 - RPM right
 

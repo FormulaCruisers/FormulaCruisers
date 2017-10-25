@@ -5,7 +5,6 @@
 void int_ADC(void);
 void getADC(uint8_t ADC_pin);
 
-extern uint16_t ADCValue[4];
-
+extern uint16_t PulsePerSec[4];
 
 #endif

@@ -16,6 +16,7 @@ uint8_t TransmitData[8];
 
 //***** Reception ISR **********************************
 ISR(CANIT_vect){  	// use interrupts
+	
 	int8_t length;
 	
 	CANPAGE = ( 0 << MOBNB3 ) | ( 0 << MOBNB2 ) | ( 0 << MOBNB1 ) | ( 1 << MOBNB0 ); // select CANMOB 0001 = MOB1
@@ -32,20 +33,20 @@ ISR(CANIT_vect){  	// use interrupts
 			uint8_t j = 0;
 			for(uint8_t i = 1; i < length; i++){
 				if (ReceiveData[i] == STUURPOSITIE){ //if Receive data 0x01, Transmit the following data:
-					getADC(3);
+					getADC(2);
 					TransmitData[j++] = ReceiveData[i];
-					TransmitData[j++] = (ADCValue[3] >> 8);
-					TransmitData[j++] = ADCValue[3];
+					TransmitData[j++] = R_L;
+					TransmitData[j++] = R_H;
 				}
 				if (ReceiveData[i] == RPM_VOOR_LINKS){
 					TransmitData[j++] = ReceiveData[i];
-					TransmitData[j++] = (PulsePerSec[3] >> 8);
 					TransmitData[j++] = PulsePerSec[3];
+					TransmitData[j++] = (PulsePerSec[3] >> 8);
 				}
 				if (ReceiveData[i] == RPM_VOOR_RECHTS){
 					TransmitData[j++] = ReceiveData[i];
-					TransmitData[j++] = (PulsePerSec[2] >> 8);
 					TransmitData[j++] = PulsePerSec[2];
+					TransmitData[j++] = (PulsePerSec[2] >> 8);
 				}
 			}
 			can_tx(MASTERID, j); //Transmit data depending on the number of message received
@@ -60,23 +61,20 @@ ISR(CANIT_vect){  	// use interrupts
 				if (ReceiveData[i] == GAS_1){
 					getADC(0);
 					TransmitData[j++] = ReceiveData[i];
-					TransmitData[j++] = ADCVALUEL;	// Aanpassing Jeroen
-					TransmitData[j++] = ADCVALUEH;  // Aanpassing Jeroen
+					TransmitData[j++] = ADCL;
+					TransmitData[j++] = ADCH;
 				}
 				if (ReceiveData[i] == GAS_2){
 					getADC(1);
 					TransmitData[j++] = ReceiveData[i];
-					TransmitData[j++] = ADCVALUEL;
-					TransmitData[j++] = ADCVALUEH;
-					
-				//	TransmitData[j++] = (ADCValue[1] << 8);	// Original
-				//	TransmitData[j++] = ADCValue[1];
+					TransmitData[j++] = ADCL;
+					TransmitData[j++] = ADCH;
 				}
 				if (ReceiveData[i] == REM){
 					getADC(2);
 					TransmitData[j++] = ReceiveData[i];
-					TransmitData[j++] = ADCVALUEL;
-					TransmitData[j++] = ADCVALUEH;
+					TransmitData[j++] = ADCL;
+					TransmitData[j++] = ADCH;
 				}
 			}
 			can_tx(MASTERID, j); //Transmit data depending on the number of message received
@@ -95,8 +93,8 @@ ISR(CANIT_vect){  	// use interrupts
 				if (ReceiveData[i] == TEMP_LINKS){
 					getADC(1);
 					TransmitData[j++] = ReceiveData[i];
-					TransmitData[j++] = (ADCValue[0] << 8);
-					TransmitData[j++] = ADCValue[0];
+					TransmitData[j++] = ADCL;
+					TransmitData[j++] = ADCH;
 				}
 			}
 			can_tx(MASTERID, j); //Transmit data depending on the number of message received
@@ -115,8 +113,8 @@ ISR(CANIT_vect){  	// use interrupts
 				if (ReceiveData[i] == TEMP_RECHTS){
 					getADC(1);
 					TransmitData[j++] = ReceiveData[i];
-					TransmitData[j++] = (ADCValue[0] << 8);
-					TransmitData[j++] = ADCValue[0];
+					TransmitData[j++] = ADCL;
+					TransmitData[j++] = ADCH;
 				}
 			}
 			can_tx(MASTERID, j); //Transmit data depending on the number of message received
@@ -204,8 +202,8 @@ void can_init(uint16_t Baud){
 	}
 	else{
 		DDRD = 0x80;
-		PORTD &= ~(1<<PORTD7); // Enable Can-chip
-		//PORTD |= (1<<PORTD7); // Disable Can-chip
+		PORTD &= ~(1<<PD7); // Enable Can-chip
+		//PORTD |= (1<<PD7); // Disable Can-chip
 	}
 	
 	CANGCON = ( 1 << SWRES );   // Software reset

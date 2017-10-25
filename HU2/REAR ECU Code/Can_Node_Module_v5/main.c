@@ -38,6 +38,8 @@ int main( void )
 	
 	sei();					// enables interrupts
 	
+	//DDRC = 0xFF;
+	//PORTC = 0xFF;
 	
 	while(1){
 	}
