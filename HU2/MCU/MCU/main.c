@@ -93,6 +93,7 @@ ISR(TIMER0_OVF_vect)
 		case SCREEN_PREDISCHARGING:
 			if(predistimer-- == 0)
 			{
+				data_send_ecu(RUN_ENABLE, _HIGH);
 				data_send_ecu(MOTOR_CONTROLLER, _HIGH);
 				change_screen(SCREEN_DRIVING);
 			}
@@ -122,7 +123,6 @@ ISR(TIMER0_OVF_vect)
 					// TODO: Uncomment when beep should be implemented
 					//PORTC |= 1 << RTDS
 					
-					data_send_ecu(RUN_ENABLE, _HIGH);
 					data_send_ecu(PUMP_ENABLE, _HIGH);
 				}
 			}
@@ -165,14 +165,14 @@ ISR(TIMER0_OVF_vect)
 	}
 	
 	ttt = (ttt + 1) % 3;
-	/*
+	
 	if(readybeep > 1) readybeep--;
 	else if(readybeep == 1)
 	{
 		// TODO: Uncomment when beep should be implemented
 		//PORTC &= ~(1<<RTDS);
 		readybeep = 0;
-	}//*/
+	}
 	
 	TCNT0 = _TM0;
 }
