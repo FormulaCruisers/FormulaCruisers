@@ -42,6 +42,9 @@ uint8_t btngreen = 0;
 volatile enum uiscreen ui_current_screen = SCREEN_WELCOME;
 volatile enum _error _errorcode = ERROR_NONE;
 
+volatile uint8_t ams_shutdown = _LOW;
+volatile uint8_t imd_shutdown = _LOW;
+
 void debounce(uint8_t* btn, uint8_t val);
 
 uint8_t ttt = 0; //Counter to make sure each node only gets one request at a time
@@ -50,10 +53,14 @@ ISR(TIMER0_OVF_vect)
 {
 	data_send8(CAN_REQUEST_DATA, SHUTDOWN, ECU2ID);
 	
-	//if(shutdownon) return;
-	
 	debounce(&btnblue, PIND & (1<<BUTTONBLUE));
 	debounce(&btngreen, PIND & (1<<BUTTONGREEN));
+	
+	if(btngreen == 1)
+	{
+		ams_shutdown = 0;
+		imd_shutdown = 0;
+	}
 	
 	//Request gas/brake values
 	switch(ttt)

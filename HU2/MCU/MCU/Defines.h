@@ -80,6 +80,9 @@
 #define PUMP_ENABLE					0x59
 #define MAIN_RELAIS					0x60
 
+#define IMDSHUTDOWN					0x99
+#define AMSSHUTDOWN					0x98
+
 
 // CAN node IDs
 #define MASTERID	0x317 // Transmit Adress Master

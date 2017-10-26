@@ -17,7 +17,7 @@ volatile enum uiscreen ui_current_screen;
 volatile enum _error _errorcode;
 
 extern volatile uint16_t gas1perc, gas2perc, brakeperc, predistimer, flowleft, flowright, rpm_fl, rpm_fr, steerpos, gas1, gas2, brake;
-
+extern volatile uint8_t shutdownon;
 void lcd_refresh();
 void lcd_quickrefresh();
 void change_screen(enum uiscreen s);

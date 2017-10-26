@@ -9,6 +9,30 @@ void lcd_refresh()
 {
 	get_screen(Linebuffer, ui_current_screen);
 
+	if(!shutdownon)
+	{
+		Linebuffer[2][16] = '!';
+		Linebuffer[2][17] = 'S';
+		Linebuffer[2][18] = 'D';
+		Linebuffer[2][19] = '!';
+	}
+	if(ams_shutdown)
+	{
+		Linebuffer[2][11] = '!';
+		Linebuffer[2][12] = 'A';
+		Linebuffer[2][13] = 'M';
+		Linebuffer[2][14] = 'S';
+		Linebuffer[2][15] = '!';
+	}
+	if(imd_shutdown)
+	{
+		Linebuffer[2][6] = '!';
+		Linebuffer[2][7] = 'I';
+		Linebuffer[2][8] = 'M';
+		Linebuffer[2][9] = 'D';
+		Linebuffer[2][10] = '!';
+	}
+
 	lcd_quickrefresh();
 }
 

@@ -68,6 +68,14 @@ ISR(CANIT_vect)
 			case FLOW_RIGHT:
 				flowleft = (ReceiveData[1] + (ReceiveData[2] << 8));
 				break;
+				
+			case AMSSHUTDOWN:
+				ams_shutdown = _HIGH;
+				break;
+			
+			case IMDSHUTDOWN:
+				imd_shutdown = _HIGH;
+				break;
 		}
 	}
 	

@@ -48,6 +48,9 @@
 #define PUMP						0x59
 #define MAINRELAIS					0x60
 
+#define IMDSHUTDOWN					0x99
+#define AMSSHUTDOWN					0x98
+
 #define MASTERID	0x317 // Transmit Adress Master
 #define NODEID1		0x201 // NODE ID 1	Steering Node
 #define NODEID2		0x202 // NODE ID 2	Pedalbox Node

@@ -21,8 +21,10 @@ uint8_t Direction[2] = {1,1};
 
 //***** ADC CODE ***********************************************
 void int_ExternalInterrupt(void){
-	PORTE	|= 0b00000000; // Input 5   INT7   PullUp
-	PORTE	|= 0b00000000; // Input 6   INT6   PullUp
+	PORTD	|= 0b00000100; // Input 2   INT2   PullUp
+	PORTD	|= 0b00001000; // Input 3   INT3   PullUp
+	PORTE	|= 0b00010000; // Input 4   INT4   PullUp
+	PORTE	|= 0b00100000; // Input 5   INT5   PullUp
 	
 	TCCR1B |= ( 1 << CS12 ) | (1 << CS10); // 16000000 / 1024 = 15625 counts/second
 	TCCR3B |= ( 1 << CS32 ) | (1 << CS30); // 16000000 / 1024 = 15625 counts/second
@@ -99,12 +101,12 @@ ISR(INT3_vect){
 }
 
 ISR(INT4_vect){
-	TransmitData[0] = 0x99;			// AMS Shutdown
+	TransmitData[0] = AMSSHUTDOWN;			// AMS Shutdown
 	can_tx(MASTERID, 1);
 }
 
 ISR(INT5_vect){
-	TransmitData[0] = 0x98;			// IMDSHUTDOWN
+	TransmitData[0] = IMDSHUTDOWN;			// IMDSHUTDOWN
 	can_tx(MASTERID, 1);
 }
 
