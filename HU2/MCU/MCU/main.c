@@ -50,7 +50,7 @@ ISR(TIMER0_OVF_vect)
 {
 	data_send8(CAN_REQUEST_DATA, SHUTDOWN, ECU2ID);
 	
-	if(shutdownon) return;
+	//if(shutdownon) return;
 	
 	debounce(&btnblue, PIND & (1<<BUTTONBLUE));
 	debounce(&btngreen, PIND & (1<<BUTTONGREEN));
@@ -86,7 +86,7 @@ ISR(TIMER0_OVF_vect)
 		case SCREEN_PREDISCHARGING:
 			if(predistimer-- == 0)
 			{
-				//data_send_ecu(MOTOR_CONTROLLER, _HIGH);
+				data_send_ecu(MOTOR_CONTROLLER, _HIGH);
 				change_screen(SCREEN_DRIVING);
 			}
 			else if(predistimer == PREDISCHARGE_TIMER - 1900)
@@ -96,26 +96,26 @@ ISR(TIMER0_OVF_vect)
 			}
 			else if(predistimer == PREDISCHARGE_TIMER - 2000)
 			{
-				e_checkflow();
+				//e_checkflow();
 			}
 			break;
 		
 		case SCREEN_START:
 			if(btngreen == 1)
 			{
-				e_checksensors();
-				e_checkranges();
+				//e_checksensors();
+				//e_checkranges();
 				
 				if(_errorcode == ERROR_NONE)
 				{
-					//data_send_ecu(PREDISCHARGE, _HIGH);
+					data_send_ecu(PREDISCHARGE, _HIGH);
 					change_screen(SCREEN_PREDISCHARGING);
 					
 					readybeep = RTDS_TIME;
 					// TODO: Uncomment when beep should be implemented
 					//PORTC |= 1 << RTDS
 					
-					//data_send_ecu(RUN_ENABLE, _HIGH);
+					data_send_ecu(RUN_ENABLE, _HIGH);
 					data_send_ecu(PUMP_ENABLE, _HIGH);
 				}
 			}
@@ -129,18 +129,20 @@ ISR(TIMER0_OVF_vect)
 			}
 			if(ttt == 3)
 			{
-				e_checkflow();
-				e_checksensors();
-				e_checkranges();
-				e_checkdiscrepancy();	
+				//e_checkflow();
+				//e_checksensors();
+				//e_checkranges();
+				//e_checkdiscrepancy();	
 			}
 			
 			//*
 			if(_errorcode == ERROR_NONE)
 			{
 				uint8_t wheel_diff = steerpos - STEER_MIDDLE + 100;
-				data_send16(CAN_SEND_DATA, (uint16_t)((gas1eng * wheel_diff) / 100), MCDR);
-				data_send16(CAN_SEND_DATA, (uint16_t)((gas1eng * 100) / wheel_diff), MCDL);	
+				//data_send16(CAN_SEND_DATA, (uint16_t)((gas1eng * wheel_diff) / 100), MCDR);
+				//data_send16(CAN_SEND_DATA, (uint16_t)((gas1eng * 100) / wheel_diff), MCDL);	
+				data_send16(CAN_SEND_DATA, (uint16_t)gas1eng, MCDR);
+				data_send16(CAN_SEND_DATA, (uint16_t)gas1eng, MCDL);
 			}
 			else
 			{
@@ -194,7 +196,7 @@ void debounce(uint8_t* btn, uint8_t val)
 int main()
 {
 	lcd_init(LCD_DISP_ON);
-	change_screen(SCREEN_STATUS);
+	change_screen(SCREEN_WELCOME);
 	
 	//Initialize timer0
 	TCCR0A |= (1 << CS02);// || (1 << CS01);	//Prescaler

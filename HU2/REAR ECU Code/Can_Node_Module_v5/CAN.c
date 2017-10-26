@@ -38,21 +38,21 @@ ISR(CANIT_vect){  	// use interrupts
 				uint8_t j = 0;
 				if (ReceiveData[i] == RPM_LINKS_ACHTER){ //if Receive data 0x01, Transmit the following data:
 					TransmitData[j++] = ReceiveData[i];
-					TransmitData[j++] = (PulsePerSec[2] >> 8);
-					TransmitData[j++] = PulsePerSec[2];
+					TransmitData[j++] = (PulsePerSec[_LEFT] >> 8);
+					TransmitData[j++] = PulsePerSec[_LEFT];
 				}
 				if (ReceiveData[i] == RPM_RECHTS_ACHTER){ //if Receive data 0x01, Transmit the following data:
 					TransmitData[j++] = ReceiveData[i];
-					TransmitData[j++] = (PulsePerSec[1] >> 8);
-					TransmitData[j++] = PulsePerSec[1];
+					TransmitData[j++] = (PulsePerSec[_RIGHT] >> 8);
+					TransmitData[j++] = PulsePerSec[_RIGHT];
 				}
 				if (ReceiveData[i] == DRAAIRICHTING_LINKS_ACHTER){
 					TransmitData[j++] = ReceiveData[i];
-					TransmitData[j++] = Direction[2];
+					TransmitData[j++] = Direction[_LEFT];
 				}
 				if (ReceiveData[i] == DRAAIRICHTING_RECHTS_ACHTER){
 					TransmitData[j++] = ReceiveData[i];
-					TransmitData[j++] = Direction[1];
+					TransmitData[j++] = Direction[_RIGHT];
 				}
 				if (ReceiveData[i] == SHUTDOWN){
 					DDRD &= ~(1<<PD7);

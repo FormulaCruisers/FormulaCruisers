@@ -1,7 +1,5 @@
-
 #include "Defines.h"
 #include "CAN.h"
-#include "ADC.h"
 #include "ExternalInterrupt.h"
 
 
@@ -32,7 +30,6 @@ int main( void )
 	chip_init();			// Chip initialization
 	can_init(BAUD); 		// Can initialization
 	can_rx(FUNCTION);
-	int_ADC();				// ADC initialization
 	int_ExternalInterrupt();
 	init_TIMER0();
 	

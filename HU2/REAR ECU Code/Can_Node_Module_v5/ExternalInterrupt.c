@@ -26,7 +26,7 @@ void int_ExternalInterrupt(void){
 	
 	TCCR1B |= ( 1 << CS12 ) | (1 << CS10); // 16000000 / 1024 = 15625 counts/second
 	TCCR3B |= ( 1 << CS32 ) | (1 << CS30); // 16000000 / 1024 = 15625 counts/second
-	EIMSK=(0<<INT7)|(0<<INT6)|(1<<INT5)|(1<<INT4)|(0<<INT3)|(0<<INT2)|(0<<INT1)|(0 << INT0);
+	EIMSK=(0<<INT7)|(0<<INT6)|(1<<INT5)|(1<<INT4)|(1<<INT3)|(1<<INT2)|(0<<INT1)|(0 << INT0);
 	
 	TIMSK1 |= ( 1 << TOIE1);
 	TIMSK3 |= ( 1 << TOIE3);
@@ -48,27 +48,6 @@ void int_ExternalInterrupt(void){
 			| (0 << ISC50)
 			| (1 << ISC41)
 			| (0 << ISC40);
-}
-
-ISR(INT0_vect){
-	
-}
-
-ISR(INT1_vect)
-{
-	uint16_t InterruptPairTimerTemp;
-	
-	InterruptPairTimerTemp = TCNT1L;
-	InterruptPairTimerTemp += (TCNT1H << 8);
-	
-	TCNT3H = 0x00;
-	TCNT3L = 0x00;
-	
-	PulsePerSec[3] = 15625 / InterruptPairTimerTemp;
-	
-	TransmitData[0] = (PulsePerSec[3] << 8);
-	TransmitData[1] = PulsePerSec[3];
-	can_tx(MASTERID, 2);
 }
 
 ISR(INT2_vect)
@@ -128,76 +107,6 @@ ISR(INT5_vect){
 	TransmitData[0] = 0x98;			// IMDSHUTDOWN
 	can_tx(MASTERID, 1);
 }
-
-ISR(INT6_vect){
-	if (InterruptPairDirection[0]){
-		
-		InterruptPairTimer[0] = TCNT1;
-		
-		TCNT1H = 0x00;
-		TCNT1L = 0x00;
-		
-		PulsePerSec[0] = 15625 / InterruptPairTimer[0];
-		Direction[0] = 1;
-		
-		InterruptPairDirection[0] = 0;
-	}
-	else{
-		uint16_t InterruptPairTimerTemp;
-		
-		InterruptPairTimerTemp = TCNT1;
-		
-		if(InterruptPairTimerTemp < (InterruptPairTimer[0]/2)){
-			InterruptPairDirection[0] = 1;
-			Direction[0] = 0;
-		}
-		else{
-			InterruptPairDirection[0] = 0;
-			Direction[0] = 1;
-		}
-	}
-}
-
-ISR(INT7_vect){
-	if (InterruptPairDirection[0]){
-		
-		InterruptPairTimer[0] = TCNT1L;
-		InterruptPairTimer[0] += (TCNT1H << 8);
-		
-		TCNT1H = 0x00;
-		TCNT1L = 0x00;
-		
-		PulsePerSec[0] = 15625 / InterruptPairTimer[0];
-		Direction[0] = 0;
-		
-		InterruptPairDirection[0] = 0;
-	}
-	else{
-		uint16_t InterruptPairTimerTemp;
-		
-		InterruptPairTimerTemp = TCNT1L;
-		InterruptPairTimerTemp += (TCNT1H << 8);
-		
-		if(InterruptPairTimerTemp < (InterruptPairTimer[0]/2)){
-			InterruptPairDirection[0] = 1;
-			Direction[0] = 1;
-		}
-		else{
-			InterruptPairDirection[0] = 0;
-			Direction[0] = 0;
-		}
-	}
-}
-
-
-ISR(TIMER1_OVF_vect)
-{
-	PulsePerSec[0] = 0;
-	PulsePerSec[3] = 0;
-	
-	Direction[0] = 1;
-}
-
 
 ISR(TIMER3_OVF_vect)
 {
