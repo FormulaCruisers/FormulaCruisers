@@ -12,8 +12,6 @@
 //***** Initialization ***********************************************
 void chip_init (void);
 
-uint32_t cantimer = 0;
-
 //***** MAIN CODE ***********************************************
 int main( void )
 {
@@ -23,9 +21,6 @@ int main( void )
 	int_ExternalInterrupt();
 	
 	sei();					// enables interrupts
-	
-	//DDRC = 0xFF;
-	//PORTC = 0xFF;
 	
 	while(1){
 	}
