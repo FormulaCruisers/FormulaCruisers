@@ -95,6 +95,7 @@ ISR(TIMER0_OVF_vect)
 			{
 				data_send_ecu(RUN_ENABLE, _HIGH);
 				data_send_ecu(MOTOR_CONTROLLER, _HIGH);
+				data_send_ecu(MAIN_RELAIS, _HIGH);
 				change_screen(SCREEN_DRIVING);
 			}
 			else if(predistimer == PREDISCHARGE_TIMER - 1900)

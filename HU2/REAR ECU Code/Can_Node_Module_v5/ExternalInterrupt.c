@@ -9,7 +9,6 @@
 #include <inttypes.h>
 #include <avr/interrupt.h>
 #include "CAN.h"
-#include "ADC.h"
 #include "ExternalInterrupt.h"
 
 uint8_t InterruptPairDirection[2] = {0x00,0x00};

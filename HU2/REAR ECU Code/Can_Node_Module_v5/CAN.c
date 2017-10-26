@@ -9,11 +9,12 @@
 #include <avr/interrupt.h>
 #include <util/delay.h>
 #include "CAN.h"
-#include "ADC.h"
 #include "ExternalInterrupt.h"
 
 uint8_t ReceiveData[8];
 uint8_t TransmitData[8];
+
+bool predison = false;
 
 //***** Reception ISR **********************************
 ISR(CANIT_vect){  	// use interrupts
@@ -110,14 +111,13 @@ ISR(CANIT_vect){  	// use interrupts
 			if (ReceiveData[i] == PRE_DISCHARGE){
 				i++;
 				DDRC |= (1 << PC3);
-				//DDRC |= (1 << PC2);
-				// DDRD &= ~(1<<PD7);
 				
 				if(ReceiveData[i]){
-					predison = 1;
+					predison = true;
 					PORTC	|= (1 << PC3);
 				}
 				else{
+					predison = false;
 					PORTC	&= ~(1 << PC3);
 				}
 				_delay_ms(1);
@@ -127,7 +127,7 @@ ISR(CANIT_vect){  	// use interrupts
 			if (ReceiveData[i] == MAINRELAIS){
 				i++;
 				DDRC	|= (1 << PC2);
-				if(ReceiveData[i++] && predison == 1){
+				if(ReceiveData[i++] && predison){
 					PORTC	|= (1 << PC2);
 				}
 				else{
