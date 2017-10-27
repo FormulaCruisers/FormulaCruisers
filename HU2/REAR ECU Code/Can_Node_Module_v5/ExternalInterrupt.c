@@ -11,6 +11,8 @@
 #include "CAN.h"
 #include "ExternalInterrupt.h"
 
+#define TINT_DIV 15625
+
 uint8_t InterruptPairDirection[2] = {0x00,0x00};
 uint16_t InterruptPairTimer[2] = {0x0000,0x0000};
 
@@ -61,7 +63,7 @@ ISR(INT2_vect)
 	TCNT3H = 0x00;
 	TCNT3L = 0x00;
 	
-	PulsePerSec[_LEFT] = 15625 / InterruptPairTimerTemp;
+	PulsePerSec[_LEFT] = TINT_DIV / InterruptPairTimerTemp;
 	
 	TransmitData[0] = (PulsePerSec[_LEFT] << 8);
 	TransmitData[1] = PulsePerSec[_LEFT];
@@ -77,7 +79,7 @@ ISR(INT3_vect){
 		TCNT3H = 0x00;
 		TCNT3L = 0x00;
 		
-		PulsePerSec[_RIGHT] = 15625 / InterruptPairTimer[1];
+		PulsePerSec[_RIGHT] = TINT_DIV / InterruptPairTimer[1];
 		Direction[_RIGHT] = 1;
 		
 		InterruptPairDirection[1] = 0;
@@ -100,13 +102,13 @@ ISR(INT3_vect){
 }
 
 ISR(INT4_vect){
-	TransmitData[0] = AMSSHUTDOWN;			// AMS Shutdown
-	can_tx(MASTERID, 1);
+//	TransmitData[0] = AMSSHUTDOWN;			// AMS Shutdown
+//	can_tx(MASTERID, 1);
 }
 
 ISR(INT5_vect){
-	TransmitData[0] = IMDSHUTDOWN;			// IMDSHUTDOWN
-	can_tx(MASTERID, 1);
+//	TransmitData[0] = IMDSHUTDOWN;			// IMDSHUTDOWN
+//	can_tx(MASTERID, 1);
 }
 
 ISR(TIMER3_OVF_vect)

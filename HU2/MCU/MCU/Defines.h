@@ -34,7 +34,7 @@
 #define BRAKEMIN					20
 #define RANGESLACK					20
 
-#define ENGINE_MAX					50000
+#define ENGINE_MAX					30000
 #define PUMP_TEMP_MAX				100
 
 #define FLOWMIN						10

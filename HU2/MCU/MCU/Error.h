@@ -18,6 +18,8 @@ enum _error
 	
 	ERROR_PUMPFLOW,			//When the pump is on but there is no flow
 	ERROR_PUMPTEMP,			//When the pump gets too hot
+	
+	ERROR_SHUTDOWN,			//When a shutdown is called while predischarging or driving
 };
 
 extern volatile uint16_t gas1, gas2, brake, gas1perc, gas2perc, brakeperc, flowleft, flowright;

@@ -21,7 +21,7 @@ volatile uint16_t brake = 0;
 volatile uint16_t gas1perc = 0;
 volatile uint16_t gas2perc = 0;
 volatile uint16_t brakeperc = 0;
-volatile uint32_t gas1eng = 0;
+volatile int32_t gas1eng = 0;
 
 volatile uint8_t shutdownon = 0;
 
@@ -36,8 +36,7 @@ uint16_t readybeep = 0;
 
 volatile uint16_t predistimer = PREDISCHARGE_TIMER;
 
-uint8_t btnblue = 0;
-uint8_t btngreen = 0;
+uint8_t btnblue = 0, btngreen = 0, btn1 = 0, btn2 = 0;
 
 volatile enum uiscreen ui_current_screen = SCREEN_WELCOME;
 volatile enum _error _errorcode = ERROR_NONE;
@@ -53,14 +52,18 @@ ISR(TIMER0_OVF_vect)
 {
 	data_send8(CAN_REQUEST_DATA, SHUTDOWN, ECU2ID);
 	
+	if(!shutdownon || ams_shutdown || imd_shutdown)
+	{
+		if(ui_current_screen == SCREEN_PREDISCHARGING || ui_current_screen == SCREEN_DRIVING || ui_current_screen == SCREEN_STATUS)
+		{
+			_errorcode = ERROR_SHUTDOWN;
+		}
+	}
+	
 	debounce(&btnblue, PIND & (1<<BUTTONBLUE));
 	debounce(&btngreen, PIND & (1<<BUTTONGREEN));
-	
-	if(btngreen == 1)
-	{
-		ams_shutdown = 0;
-		imd_shutdown = 0;
-	}
+	debounce(&btn1, PIND & (1<<BUTTON1)); //The button that is above the green button(doesn't work right now?)
+	debounce(&btn2, PIND & (1<<BUTTON2)); //The button that is above the blue button
 	
 	//Request gas/brake values
 	switch(ttt)
@@ -79,13 +82,30 @@ ISR(TIMER0_OVF_vect)
 			break;
 	}
 	
-	if(_errorcode != ERROR_NONE) change_screen(SCREEN_ERROR);
+	if(_errorcode != ERROR_NONE)
+	{
+		//Reset literally everything possible
+		data_send_ecu(MOTOR_CONTROLLER, _LOW);
+		data_send_ecu(RUN_ENABLE, _LOW);
+		data_send_ecu(PREDISCHARGE, _LOW);
+		data_send_ecu(MAIN_RELAIS, _LOW);
+		data_send_ecu(PUMP_ENABLE, _LOW);
+		if(ui_current_screen == SCREEN_DRIVING)
+		{
+			data_send16(CAN_SEND_DATA, 0, MCDR);
+			data_send16(CAN_SEND_DATA, 0, MCDL);
+		}
+		
+		//Change into error screen
+		change_screen(SCREEN_ERROR);
+	}
 	
 	switch(ui_current_screen)
 	{
 		case SCREEN_WELCOME:
 			if(btnblue == 1)
 			{
+				data_send_ecu(MOTOR_CONTROLLER, _HIGH);
 				if(_errorcode == ERROR_NONE) change_screen(SCREEN_START);
 			}
 			break;
@@ -93,10 +113,8 @@ ISR(TIMER0_OVF_vect)
 		case SCREEN_PREDISCHARGING:
 			if(predistimer-- == 0)
 			{
-				data_send_ecu(RUN_ENABLE, _HIGH);
-				data_send_ecu(MOTOR_CONTROLLER, _HIGH);
 				data_send_ecu(MAIN_RELAIS, _HIGH);
-				change_screen(SCREEN_DRIVING);
+				change_screen(SCREEN_STATUS);
 			}
 			else if(predistimer == PREDISCHARGE_TIMER - 1900)
 			{
@@ -110,7 +128,7 @@ ISR(TIMER0_OVF_vect)
 			break;
 		
 		case SCREEN_START:
-			if(btngreen == 1)
+			if(btnblue == 1)
 			{
 				//e_checksensors();
 				//e_checkranges();
@@ -149,8 +167,8 @@ ISR(TIMER0_OVF_vect)
 				uint8_t wheel_diff = steerpos - STEER_MIDDLE + 100;
 				//data_send16(CAN_SEND_DATA, (uint16_t)((gas1eng * wheel_diff) / 100), MCDR);
 				//data_send16(CAN_SEND_DATA, (uint16_t)((gas1eng * 100) / wheel_diff), MCDL);	
-				data_send16(CAN_SEND_DATA, (uint16_t)gas1eng, MCDR);
-				data_send16(CAN_SEND_DATA, (uint16_t)gas1eng, MCDL);
+				data_send16(CAN_SEND_DATA, (int16_t)gas1eng, MCDR);
+				data_send16(CAN_SEND_DATA, (int16_t)gas1eng, MCDL);
 			}
 			else
 			{
@@ -160,7 +178,21 @@ ISR(TIMER0_OVF_vect)
 			break;
 			
 		case SCREEN_ERROR:
+			if(btngreen == 1)
+			{
+				ams_shutdown = 0;
+				imd_shutdown = 0;
+				_errorcode = ERROR_NONE;
+				change_screen(SCREEN_START);
+			}
+			break;
 		case SCREEN_STATUS:
+			if(btngreen == 1)
+			{
+				data_send_ecu(RUN_ENABLE, _HIGH);
+				change_screen(SCREEN_DRIVING);
+			}
+			break;
 		default:
 			break;
 	}
@@ -189,7 +221,7 @@ void debounce(uint8_t* btn, uint8_t val)
 {
 	if(*btn >= DEBOUNCE_TIME)
 	{
-		if(!val) btn = 0;
+		if(!val) (*btn) = 0;
 	}
 	else if(*btn > 0)
 	{

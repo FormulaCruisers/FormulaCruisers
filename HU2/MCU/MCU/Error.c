@@ -20,6 +20,8 @@ char* get_error(enum _error e)
 		
 		case ERROR_PUMPFLOW:		return "No pump water flow";
 		case ERROR_PUMPTEMP:		return "Pump temp too high";
+		
+		case ERROR_SHUTDOWN:		return "Shutdown!";
 
 		default:			return "Unknown error?!";
 	}

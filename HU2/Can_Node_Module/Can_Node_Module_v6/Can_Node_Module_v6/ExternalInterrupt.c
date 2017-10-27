@@ -90,7 +90,7 @@ ISR(INT6_vect){   //Should be INT6 on node1, INT1 everywhere else... Dangit rens
 	TCNT1H = 0x00;
 	TCNT1L = 0x00;
 	
-	PulsePerSec[3] = 15625 * 60 / InterruptPairTimerTemp;
+	PulsePerSec[3] = 15625 * 120 / InterruptPairTimerTemp;
 	
 	//TransmitData[0] = (PulsePerSec[3] << 8);
 	//TransmitData[1] = PulsePerSec[3];
@@ -106,7 +106,7 @@ ISR(INT7_vect){  //Should be INT7 on node1, INT2 everywhere else... Dangit rens
 	TCNT3H = 0x00;
 	TCNT3L = 0x00;
 	
-	PulsePerSec[2] = 15625 * 60 / InterruptPairTimerTemp;
+	PulsePerSec[2] = 15625 * 120 / InterruptPairTimerTemp;
 	
 	//TransmitData[0] = (PulsePerSec[2] << 8);
 	//TransmitData[1] = PulsePerSec[2];

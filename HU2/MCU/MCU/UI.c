@@ -8,31 +8,6 @@
 void lcd_refresh()
 {
 	get_screen(Linebuffer, ui_current_screen);
-
-	if(!shutdownon)
-	{
-		Linebuffer[2][16] = '!';
-		Linebuffer[2][17] = 'S';
-		Linebuffer[2][18] = 'D';
-		Linebuffer[2][19] = '!';
-	}
-	if(ams_shutdown)
-	{
-		Linebuffer[2][11] = '!';
-		Linebuffer[2][12] = 'A';
-		Linebuffer[2][13] = 'M';
-		Linebuffer[2][14] = 'S';
-		Linebuffer[2][15] = '!';
-	}
-	if(imd_shutdown)
-	{
-		Linebuffer[2][6] = '!';
-		Linebuffer[2][7] = 'I';
-		Linebuffer[2][8] = 'M';
-		Linebuffer[2][9] = 'D';
-		Linebuffer[2][10] = '!';
-	}
-
 	lcd_quickrefresh();
 }
 
@@ -80,8 +55,8 @@ void get_screen(char buffer[4][21], enum uiscreen s)
 		case SCREEN_START:
 			snprintf(buffer[0], sizeof buffer[0], "Gas1:%4d Gas2:%4d", gas1, gas2);
 			snprintf(buffer[1], sizeof buffer[1], "Brake:%4d          ", brake);
-			snprintf(buffer[2], sizeof buffer[2], "                    ");
-			snprintf(buffer[3], sizeof buffer[3], "Press green to begin");
+			snprintf(buffer[1], sizeof buffer[1], "Rpm: FL%5d FR%5d", rpm_fl, rpm_fr);
+			snprintf(buffer[3], sizeof buffer[3], "Press blue to begin ");
 			break;
 
 		case SCREEN_DRIVING:
