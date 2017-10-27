@@ -65,6 +65,17 @@ ISR(TIMER0_OVF_vect)
 	debounce(&btn1, PIND & (1<<BUTTON1)); //The button that is above the green button(doesn't work right now?)
 	debounce(&btn2, PIND & (1<<BUTTON2)); //The button that is above the blue button
 	
+	DDRE |= 0b11111111;
+	
+	if(btngreen || btnblue || btn1 || btn2)
+	{
+		PORTE |= 0b11111111;
+	}
+	else
+	{
+		PORTE &= ~(0b11111111);
+	}
+	
 	//Request gas/brake values
 	switch(ttt)
 	{
