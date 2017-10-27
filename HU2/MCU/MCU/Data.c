@@ -57,6 +57,14 @@ ISR(CANIT_vect)
 				rpm_fr = (ReceiveData[1] + (ReceiveData[2] << 8));
 				break;
 				
+			case RPM_BACK_LEFT:
+				rpm_bl++;
+				break;
+				
+			case RPM_BACK_RIGHT:
+				rpm_br++;
+				break;
+				
 			case STEERING_POS:
 				steerpos = (ReceiveData[1] + (ReceiveData[2] << 8));
 				break;
