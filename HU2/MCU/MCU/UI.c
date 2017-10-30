@@ -8,6 +8,20 @@
 void lcd_refresh()
 {
 	get_screen(Linebuffer, ui_current_screen);
+	
+	if(shutdownon)
+	{
+		Linebuffer[2][0] = 'S';
+	}
+	if(ams_shutdown)
+	{
+		Linebuffer[2][1] = 'A';
+	}
+	if(imd_shutdown)
+	{
+		Linebuffer[2][2] = 'I';
+	}
+	
 	lcd_quickrefresh();
 }
 

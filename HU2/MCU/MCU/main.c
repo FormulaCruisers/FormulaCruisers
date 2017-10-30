@@ -54,13 +54,14 @@ ISR(TIMER0_OVF_vect)
 {
 	data_send8(CAN_REQUEST_DATA, SHUTDOWN, ECU2ID);
 	
+	/*
 	if(!shutdownon || ams_shutdown || imd_shutdown)
 	{
 		if(ui_current_screen == SCREEN_PREDISCHARGING || ui_current_screen == SCREEN_DRIVING || ui_current_screen == SCREEN_STATUS)
 		{
 			_errorcode = ERROR_SHUTDOWN;
 		}
-	}
+	}//*/
 	
 	debounce(&btnblue, PIND & (1<<BUTTONBLUE));
 	debounce(&btngreen, PIND & (1<<BUTTONGREEN));
@@ -125,6 +126,26 @@ ISR(TIMER0_OVF_vect)
 			}
 			break;
 		
+		case SCREEN_START:
+			if(btnblue == 1)
+			{
+				e_checksensors();
+				e_checkranges();
+			
+				if(_errorcode == ERROR_NONE)
+				{
+					data_send_ecu(PREDISCHARGE, _HIGH);
+					change_screen(SCREEN_PREDISCHARGING);
+				
+					readybeep = RTDS_TIME;
+					// TODO: Uncomment when beep should be implemented
+					//PORTC |= 1 << RTDS
+				
+					data_send_ecu(PUMP_ENABLE, _HIGH);
+				}
+			}
+			break;
+		
 		case SCREEN_PREDISCHARGING:
 			if(predistimer-- == 0)
 			{
@@ -141,24 +162,12 @@ ISR(TIMER0_OVF_vect)
 				//e_checkflow();
 			}
 			break;
-		
-		case SCREEN_START:
-			if(btnblue == 1)
+			
+		case SCREEN_STATUS:
+			if(btngreen == 1)
 			{
-				//e_checksensors();
-				//e_checkranges();
-				
-				if(_errorcode == ERROR_NONE)
-				{
-					data_send_ecu(PREDISCHARGE, _HIGH);
-					change_screen(SCREEN_PREDISCHARGING);
-					
-					readybeep = RTDS_TIME;
-					// TODO: Uncomment when beep should be implemented
-					//PORTC |= 1 << RTDS
-					
-					data_send_ecu(PUMP_ENABLE, _HIGH);
-				}
+				data_send_ecu(RUN_ENABLE, _HIGH);
+				change_screen(SCREEN_DRIVING);
 			}
 			break;
 		
@@ -171,24 +180,19 @@ ISR(TIMER0_OVF_vect)
 			if(ttt == 3)
 			{
 				//e_checkflow();
-				//e_checksensors();
-				//e_checkranges();
-				//e_checkdiscrepancy();	
+				e_checksensors();
+				e_checkranges();
+				e_checkdiscrepancy();	
 			}
 			
 			//*
 			if(_errorcode == ERROR_NONE)
 			{
-				uint8_t wheel_diff = steerpos - STEER_MIDDLE + 100;
+				//uint8_t wheel_diff = steerpos - STEER_MIDDLE + 100;
 				//data_send16(CAN_SEND_DATA, (uint16_t)((gas1eng * wheel_diff) / 100), MCDR);
 				//data_send16(CAN_SEND_DATA, (uint16_t)((gas1eng * 100) / wheel_diff), MCDL);	
 				data_send16(CAN_SEND_DATA, (int16_t)gas1eng, MCDR);
 				data_send16(CAN_SEND_DATA, (int16_t)gas1eng, MCDL);
-			}
-			else
-			{
-				data_send16(CAN_SEND_DATA, 0, MCDR);	
-				data_send16(CAN_SEND_DATA, 0, MCDL);
 			}//*/
 			break;
 			
@@ -198,14 +202,7 @@ ISR(TIMER0_OVF_vect)
 				ams_shutdown = 0;
 				imd_shutdown = 0;
 				_errorcode = ERROR_NONE;
-				change_screen(SCREEN_START);
-			}
-			break;
-		case SCREEN_STATUS:
-			if(btngreen == 1)
-			{
-				data_send_ecu(RUN_ENABLE, _HIGH);
-				change_screen(SCREEN_DRIVING);
+				change_screen(SCREEN_WELCOME);
 			}
 			break;
 		default:
