@@ -79,12 +79,10 @@ ISR(TIMER0_OVF_vect)
 		case 0:
 			data_send8(CAN_REQUEST_DATA, RPM_FRONT_LEFT, NODEID1);
 			data_send8(CAN_REQUEST_DATA, GAS_1, NODEID2);
-			data_send8(CAN_REQUEST_DATA, RPM_BACK_LEFT, ECU2ID);
 			break;
 		case 1:
 			data_send8(CAN_REQUEST_DATA, RPM_FRONT_RIGHT, NODEID1);
 			data_send8(CAN_REQUEST_DATA, GAS_2, NODEID2);
-			data_send8(CAN_REQUEST_DATA, RPM_BACK_RIGHT, ECU2ID);
 			break;
 		case 2:
 			data_send8(CAN_REQUEST_DATA, STEERING_POS, NODEID1);
@@ -92,7 +90,7 @@ ISR(TIMER0_OVF_vect)
 			break;
 	}
 	
-	//*
+	/*
 	if(_errorcode != ERROR_NONE)
 	{
 		//Reset literally everything possible
@@ -125,12 +123,18 @@ ISR(TIMER0_OVF_vect)
 			
 			//At the end of the animation, switch back to the welcome screen
 			if(anim == 0) change_screen(SCREEN_WELCOME);
+			
+			if(btnblue == 1)
+			{
+				data_send_ecu(MOTOR_CONTROLLER, _HIGH);
+				if(_errorcode == ERROR_NONE) change_screen(SCREEN_START);
+			}
 			break;
 		
 		case SCREEN_WELCOME:
 			//Animation timer
 			welcome_anim_ttt++;
-			if(welcome_anim_ttt > 10000)
+			if(welcome_anim_ttt > 2000)
 			{
 				//Start animation
 				welcome_anim_ttt = 0;
@@ -193,7 +197,8 @@ ISR(TIMER0_OVF_vect)
 				change_screen(SCREEN_DRIVING);
 			}
 			break;
-		
+			
+		//The screen that appears when actually driving.
 		case SCREEN_DRIVING:
 			if(ttt == 1)
 			{
@@ -212,15 +217,11 @@ ISR(TIMER0_OVF_vect)
 			if(_errorcode == ERROR_NONE)
 			{
 				//uint8_t wheel_diff = steerpos - STEER_MIDDLE + 100;
-				//data_send16(CAN_SEND_DATA, (uint16_t)((gas1eng * wheel_diff) / 100), MCDR);
-				//data_send16(CAN_SEND_DATA, (uint16_t)((gas1eng * 100) / wheel_diff), MCDL);	
+				//data_send16(CAN_SEND_DATA, (int16_t)((gas1eng * wheel_diff) / 100), MCDR);
+				//data_send16(CAN_SEND_DATA, (int16_t)((gas1eng * 100) / wheel_diff), MCDL);	
 				data_send16(CAN_SEND_DATA, (int16_t)gas1eng, MCDR);
 				data_send16(CAN_SEND_DATA, (int16_t)gas1eng, MCDL);
 			}//*/
-			break;
-			
-		//The screen that appears when actually driving.
-		case SCREEN_DRIVING:
 			break;
 			
 		case SCREEN_ERROR:
