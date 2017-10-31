@@ -4,15 +4,27 @@
 #include "Data.h"
 #include "CAN.h"
 
+volatile int8_t waiting = 0;
+
+void wait_for_rx()
+{
+	while(++waiting > 0);
+	waiting = 0;
+}
+
 void data_send_ecu(uint8_t node, uint8_t data)
 {
 	TransmitData[0] = node;
 	TransmitData[1] = data;
 	can_tx(ECU2ID, 2);
+	
+	wait_for_rx();
 }
 
 ISR(CANIT_vect)
 {
+	waiting = 0;
+	
 	CANPAGE = ( 0 << MOBNB3 ) | ( 0 << MOBNB2 ) | ( 0 << MOBNB1 ) | ( 1 << MOBNB0 ); // select CANMOB 0001 = MOB1
 
 	uint8_t length = ( CANCDMOB & 0x0F );
