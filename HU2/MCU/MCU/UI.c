@@ -5,10 +5,19 @@
 #include "UI.h"
 #include "Error.h"
 
+extern volatile uint8_t av;
+extern volatile uint8_t anim;
+
+char* anim1 = "                      _    _                         ";
+char* anim2 = "                      ]`../ |o_..__                  ";
+char* anim3 = "                    `.,(_)______(_).>                ";
+char* anim4 = "                    .`,(_)______(_).>                ";
+
 void lcd_refresh()
 {
 	get_screen(Linebuffer, ui_current_screen);
-	
+
+	/*	
 	if(shutdownon)
 	{
 		Linebuffer[2][0] = 'S';
@@ -20,7 +29,7 @@ void lcd_refresh()
 	if(imd_shutdown)
 	{
 		Linebuffer[2][2] = 'I';
-	}
+	}//*/
 	
 	lcd_quickrefresh();
 }
@@ -85,6 +94,12 @@ void get_screen(char buffer[4][21], enum uiscreen s)
 			snprintf(buffer[1], sizeof buffer[1], "Rpm: FL%5d FR%5d", rpm_fl, rpm_fr);
 			snprintf(buffer[2], sizeof buffer[2], "Gas1:%3d%%, Gas2:%3d%%", gas1perc, gas2perc);
 			snprintf(buffer[3], sizeof buffer[3], "Steerpos: %5d     ", steerpos);
+			break;
+			
+		case SCREEN_ANIMATION:
+			snprintf(buffer[0], sizeof buffer[0], "%s", &anim1[av]);
+			snprintf(buffer[1], sizeof buffer[1], "%s", &anim2[av]);
+			snprintf(buffer[2], sizeof buffer[2], "%s", (anim % 2 == 0) ? &anim3[av] : &anim4[av]);
 			break;
 
 		default:

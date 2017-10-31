@@ -46,6 +46,11 @@ volatile enum _error _errorcode = ERROR_NONE;
 volatile uint8_t ams_shutdown = _LOW;
 volatile uint8_t imd_shutdown = _LOW;
 
+volatile uint8_t anim = 0;
+volatile uint8_t av = 0;
+uint8_t animttt = 0;
+uint16_t welcome_anim_ttt = 0;
+
 void debounce(uint8_t* btn, uint8_t val);
 
 uint8_t ttt = 0; //Counter to make sure each node only gets one request at a time
@@ -98,6 +103,7 @@ ISR(TIMER0_OVF_vect)
 			break;
 	}
 	
+	//*
 	if(_errorcode != ERROR_NONE)
 	{
 		//Reset literally everything possible
@@ -114,11 +120,30 @@ ISR(TIMER0_OVF_vect)
 		
 		//Change into error screen
 		change_screen(SCREEN_ERROR);
-	}
+	}//*/
 	
 	switch(ui_current_screen)
 	{
+		case SCREEN_ANIMATION:
+			animttt++;
+			if(animttt > 60)
+			{
+				anim--;
+				animttt = 0;
+			}
+			av = (anim > 20) ? 20 : anim;
+			if(anim == 0) change_screen(SCREEN_WELCOME);
+			break;
+		
 		case SCREEN_WELCOME:
+			welcome_anim_ttt++;
+			if(welcome_anim_ttt > 10000)
+			{
+				welcome_anim_ttt = 0;
+				anim = 33;
+				change_screen(SCREEN_ANIMATION);
+			}
+			
 			if(btnblue == 1)
 			{
 				data_send_ecu(MOTOR_CONTROLLER, _HIGH);

@@ -10,7 +10,8 @@ enum uiscreen
 	SCREEN_PREDISCHARGING,
 	SCREEN_START,
 	SCREEN_DRIVING,
-	SCREEN_STATUS
+	SCREEN_STATUS,
+	SCREEN_ANIMATION,
 };
 
 volatile enum uiscreen ui_current_screen;
