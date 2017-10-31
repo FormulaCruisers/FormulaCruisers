@@ -46,10 +46,10 @@ volatile enum _error _errorcode = ERROR_NONE;
 volatile uint8_t ams_shutdown = _LOW;
 volatile uint8_t imd_shutdown = _LOW;
 
-volatile uint8_t anim = 0;
-volatile uint8_t av = 0;
-uint8_t animttt = 0;
-uint16_t welcome_anim_ttt = 0;
+volatile uint8_t anim = 0;		//Animation frame counter
+volatile uint8_t av = 0;		//Range normalized of the above
+uint8_t animttt = 0;			//Timer for animation frame incrementation
+uint16_t welcome_anim_ttt = 0;	//Welcome screen timer for when to show the animation
 
 void debounce(uint8_t* btn, uint8_t val);
 
@@ -114,20 +114,25 @@ ISR(TIMER0_OVF_vect)
 	switch(ui_current_screen)
 	{
 		case SCREEN_ANIMATION:
+			//Increase the animation timer faster when the animation car is actually moving
 			animttt+= (anim>20) ? 1 : 2;
-			if(animttt > 100)
+			if(animttt > 50 + (anim * 2)) // (speed increasing as time goes by!)
 			{
 				anim--;
 				animttt = 0;
 			}
 			av = (anim > 20) ? 20 : anim;
+			
+			//At the end of the animation, switch back to the welcome screen
 			if(anim == 0) change_screen(SCREEN_WELCOME);
 			break;
 		
 		case SCREEN_WELCOME:
+			//Animation timer
 			welcome_anim_ttt++;
 			if(welcome_anim_ttt > 10000)
 			{
+				//Start animation
 				welcome_anim_ttt = 0;
 				anim = 27;
 				change_screen(SCREEN_ANIMATION);
@@ -140,6 +145,7 @@ ISR(TIMER0_OVF_vect)
 			}
 			break;
 		
+		//The screen that appears after closing the welcome screen
 		case SCREEN_START:
 			if(btnblue == 1)
 			{
@@ -160,6 +166,8 @@ ISR(TIMER0_OVF_vect)
 			}
 			break;
 		
+		//10 seconds of this screen while predischarging.
+		//Also checks the pumps to see if they have any flow, otherwise turn off!
 		case SCREEN_PREDISCHARGING:
 			if(predistimer-- == 0)
 			{
@@ -176,7 +184,8 @@ ISR(TIMER0_OVF_vect)
 				//e_checkflow();
 			}
 			break;
-			
+		
+		//The screen that appears after predischarging; Only one press of the green LAUNCH button to start driving. (run_enable)
 		case SCREEN_STATUS:
 			if(btngreen == 1)
 			{
@@ -208,6 +217,10 @@ ISR(TIMER0_OVF_vect)
 				data_send16(CAN_SEND_DATA, (int16_t)gas1eng, MCDR);
 				data_send16(CAN_SEND_DATA, (int16_t)gas1eng, MCDL);
 			}//*/
+			break;
+			
+		//The screen that appears when actually driving.
+		case SCREEN_DRIVING:
 			break;
 			
 		case SCREEN_ERROR:
