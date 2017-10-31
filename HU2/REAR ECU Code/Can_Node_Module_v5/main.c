@@ -18,11 +18,16 @@ int main( void )
 	chip_init();			// Chip initialization
 	can_init(BAUD); 		// Can initialization
 	can_rx(FUNCTION);
-	int_ExternalInterrupt();
+	//int_ExternalInterrupt();
 	
 	sei();					// enables interrupts
 	
-	while(1){
+	while(1)
+	{
+		//TransmitData[0] = SHUTDOWN;
+		//TransmitData[1] = 0xFF;
+		//can_tx(MASTERID, 2);
+		//_delay_ms(100);
 	}
 	return(0);
 }

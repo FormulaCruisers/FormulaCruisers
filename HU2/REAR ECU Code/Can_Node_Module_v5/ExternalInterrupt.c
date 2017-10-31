@@ -101,14 +101,16 @@ ISR(INT3_vect){
 	}
 }
 
-ISR(INT4_vect){
-//	TransmitData[0] = AMSSHUTDOWN;			// AMS Shutdown
-//	can_tx(MASTERID, 1);
+ISR(INT4_vect)
+{
+	TransmitData[0] = AMSSHUTDOWN;			// AMS Shutdown
+	can_tx(MASTERID, 1);
 }
 
-ISR(INT5_vect){
-//	TransmitData[0] = IMDSHUTDOWN;			// IMDSHUTDOWN
-//	can_tx(MASTERID, 1);
+ISR(INT5_vect)
+{
+	TransmitData[0] = IMDSHUTDOWN;			// IMDSHUTDOWN
+	can_tx(MASTERID, 1);
 }
 
 ISR(TIMER3_OVF_vect)

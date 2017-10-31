@@ -46,7 +46,7 @@ ISR(CANIT_vect)
 				break;
 			
 			case SHUTDOWN:
-				if (ReceiveData[1]) shutdownon = 1;
+				shutdownon = ReceiveData[1] ? 1 : 0;
 				break;
 				
 			case RPM_FRONT_LEFT:
