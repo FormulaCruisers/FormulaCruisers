@@ -59,7 +59,7 @@ ISR(TIMER0_OVF_vect)
 {
 	data_send8(CAN_REQUEST_DATA, SHUTDOWN, ECU2ID);
 	
-	/*
+	//*
 	if(!shutdownon || ams_shutdown || imd_shutdown)
 	{
 		if(ui_current_screen == SCREEN_PREDISCHARGING || ui_current_screen == SCREEN_DRIVING || ui_current_screen == SCREEN_STATUS)
@@ -70,19 +70,8 @@ ISR(TIMER0_OVF_vect)
 	
 	debounce(&btnblue, PIND & (1<<BUTTONBLUE));
 	debounce(&btngreen, PIND & (1<<BUTTONGREEN));
-	debounce(&btn1, PIND & (1<<BUTTON1)); //The button that is above the green button(doesn't work right now?)
+	debounce(&btn1, PIND & (1<<BUTTON1)); //The button that is above the green button
 	debounce(&btn2, PIND & (1<<BUTTON2)); //The button that is above the blue button
-	
-	DDRE |= 0b11111111;
-	
-	if(btngreen || btnblue || btn1 || btn2)
-	{
-		PORTE |= 0b11111111;
-	}
-	else
-	{
-		PORTE &= ~(0b11111111);
-	}
 	
 	//Request gas/brake values
 	switch(ttt)
@@ -125,8 +114,8 @@ ISR(TIMER0_OVF_vect)
 	switch(ui_current_screen)
 	{
 		case SCREEN_ANIMATION:
-			animttt++;
-			if(animttt > 60)
+			animttt+= (anim>20) ? 1 : 2;
+			if(animttt > 100)
 			{
 				anim--;
 				animttt = 0;
@@ -140,7 +129,7 @@ ISR(TIMER0_OVF_vect)
 			if(welcome_anim_ttt > 10000)
 			{
 				welcome_anim_ttt = 0;
-				anim = 33;
+				anim = 27;
 				change_screen(SCREEN_ANIMATION);
 			}
 			
