@@ -192,7 +192,8 @@ ISR(TIMER0_COMP_vect)
 				}
 			}
 			else
-			{	
+			{
+				//Send data on a timer as to not overload CAN. Because the motor controller doesn't send an ACK message back, we can't wait for RX.
 				if(stimer == 1) data_send_mc(MC_N_LIMIT, vsettings[0], 2, MCDL);
 				else if(stimer == 2) data_send_mc(MC_N_LIMIT, vsettings[0], 2, MCDR);
 				else if(stimer == 3) data_send_mc(MC_CURRENT_MAXPK, vsettings[1], 4, MCDL);
