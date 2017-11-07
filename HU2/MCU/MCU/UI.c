@@ -13,7 +13,7 @@ char* anim2 = "                      ]`../ |o_..__                  ";
 char* anim3 = "                    `.,(_)______(_).>                ";
 char* anim4 = "                    .`,(_)______(_).>                ";
 
-char* fsettings[3] = {"Speed limit (0-127) ","Max pk.current(0-63) ","Current coneff(0-63)"};
+char* fsettings[SETTINGS_COUNT] = {"Speed limit (0-127) ","Max pk.current(0-63) ","Current coneff(0-63)","Max engine *1k(0-?) "};
 char cs[2] = "> ";
 
 void lcd_refresh()
@@ -97,6 +97,13 @@ void get_screen(char buffer[4][21], enum uiscreen s)
 			snprintf(buffer[1], sizeof buffer[1], "Rpm: FL%5d FR%5d", rpm_fl, rpm_fr);
 			snprintf(buffer[2], sizeof buffer[2], "Gas1:%3d%%, Gas2:%3d%%", gas1perc, gas2perc);
 			snprintf(buffer[3], sizeof buffer[3], "Steerpos: %5d     ", steerpos);
+			break;
+			
+		case SCREEN_SAVING:
+			snprintf(buffer[0], sizeof buffer[0], "Applying settings...");
+			snprintf(buffer[1], sizeof buffer[1], "                    ");
+			snprintf(buffer[2], sizeof buffer[2], "                    ");
+			snprintf(buffer[3], sizeof buffer[3], "                    ");
 			break;
 			
 		case SCREEN_ANIMATION:

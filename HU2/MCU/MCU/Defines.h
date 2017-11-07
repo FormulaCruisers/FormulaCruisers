@@ -4,7 +4,7 @@
 
 #define F_CPU 16000000UL	// Define processor clock speed for compiler
 
-#define SOFTWARE_VERSION			"Software: V2.044"  //Version should be 2.xxx where xxx is amount of commits(do "git rev-list HEAD --count" to check)
+#define SOFTWARE_VERSION			"Software: V2.046"  //Version should be 2.xxx where xxx is amount of commits(do "git rev-list HEAD --count" to check)
 
 #define RTDS						PC7 //Loud ready beep
 #define RTDS_TIME					2000 //2 seconds
@@ -25,6 +25,8 @@
 
 #define CANTIMEOUT					100	//100 ms
 
+#define SETTINGS_COUNT				4
+
 //Pedal min and max values(with some slack)
 #define GAS1MAX						777
 #define GAS1MIN						693
@@ -34,7 +36,6 @@
 #define BRAKEMIN					20
 #define RANGESLACK					20
 
-#define ENGINE_MAX					10000
 #define PUMP_TEMP_MAX				100
 
 #define FLOWMIN						10

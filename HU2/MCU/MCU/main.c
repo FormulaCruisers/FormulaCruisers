@@ -24,6 +24,8 @@ volatile uint16_t gas2perc = 0;
 volatile uint16_t brakeperc = 0;
 volatile int32_t gas1eng = 0;
 
+volatile uint32_t ENGINE_MAX = 10000;
+
 volatile uint8_t shutdownon = 0;
 
 volatile uint16_t rpm_fl = 0;
@@ -53,10 +55,11 @@ uint8_t animttt = 0;			//Timer for animation frame incrementation
 uint16_t welcome_anim_ttt = 0;	//Welcome screen timer for when to show the animation
 
 volatile uint8_t selsetting = 0;
-volatile uint8_t vsettings[3] = {0};
+volatile uint8_t vsettings[SETTINGS_COUNT] = {0};
 uint16_t EEMEM ee_MC_N_LIMIT = 127;
-uint16_t EEMEM ee_MC_CURRENT_MAXPK = 7;
-uint16_t EEMEM ee_MC_CURRENT_CONEFF = 7;
+uint16_t EEMEM ee_MC_CURRENT_MAXPK = 6;
+uint16_t EEMEM ee_MC_CURRENT_CONEFF = 6;
+uint16_t EEMEM ee_MC_MAX_VAL = 10;
 volatile uint8_t ischanging = 0;
 uint8_t stimer = 0;
 
@@ -80,8 +83,8 @@ ISR(TIMER0_COMP_vect)
 	
 	debounce(&btnblue, PIND & (1<<BUTTONBLUE));
 	debounce(&btngreen, PIND & (1<<BUTTONGREEN));
-	debounce(&btn1, PIND & (1<<BUTTON1)); //The button that is above the green button
-	debounce(&btn2, PIND & (1<<BUTTON2)); //The button that is above the blue button
+	debounce(&btn1, PIND & (1<<BUTTON1)); //The button that is above the green button (i.e. left)
+	debounce(&btn2, PIND & (1<<BUTTON2)); //The button that is above the blue button (i.e. right)
 	
 	//Request gas/brake values
 	switch(ttt)
@@ -142,7 +145,8 @@ ISR(TIMER0_COMP_vect)
 			if(btnblue == 1)
 			{
 				data_send_ecu(MOTOR_CONTROLLER, _HIGH);
-				if(_errorcode == ERROR_NONE) change_screen(SCREEN_START);
+				stimer = 1;
+				if(_errorcode == ERROR_NONE) change_screen(SCREEN_SAVING);
 			}
 			break;
 		
@@ -160,7 +164,26 @@ ISR(TIMER0_COMP_vect)
 			if(btnblue == 1)
 			{
 				data_send_ecu(MOTOR_CONTROLLER, _HIGH);
-				if(_errorcode == ERROR_NONE) change_screen(SCREEN_START);
+				stimer = 1;
+				if(_errorcode == ERROR_NONE) change_screen(SCREEN_SAVING);
+			}
+			break;
+		
+		case SCREEN_SAVING:
+			if (stimer == 200)
+			{
+				change_screen(SCREEN_START);
+				stimer = 0;
+			}
+			else
+			{
+				if(stimer == 191)      data_send_mc(MC_N_LIMIT, vsettings[0], 2, MCDL);
+				else if(stimer == 192) data_send_mc(MC_N_LIMIT, vsettings[0], 2, MCDR);
+				else if(stimer == 193) data_send_mc(MC_CURRENT_MAXPK, vsettings[1], 4, MCDL);
+				else if(stimer == 194) data_send_mc(MC_CURRENT_MAXPK, vsettings[1], 4, MCDR);
+				else if(stimer == 195) data_send_mc(MC_CURRENT_CONEFF, vsettings[2], 4, MCDL);
+				else if(stimer == 196) data_send_mc(MC_CURRENT_CONEFF, vsettings[2], 4, MCDR);
+				stimer++;
 			}
 			break;
 		
@@ -172,8 +195,8 @@ ISR(TIMER0_COMP_vect)
 				{
 					//Cursor on top; Changing the selected variable
 					if(btnblue == 1) ischanging++;
-					else if(btn2 == 1) selsetting = (selsetting == 2) ? 0 : selsetting + 1;
-					else if(btn1 == 1) selsetting = (selsetting == 0) ? 2 : selsetting - 1;	
+					else if(btn2 == 1) selsetting = (selsetting == SETTINGS_COUNT-1) ? 0 : selsetting + 1;
+					else if(btn1 == 1) selsetting = (selsetting == 0) ? SETTINGS_COUNT-1 : selsetting - 1;	
 				}
 				else if(ischanging == 1)
 				{
@@ -189,24 +212,14 @@ ISR(TIMER0_COMP_vect)
 					eeprom_write_word(&ee_MC_N_LIMIT, vsettings[0]);
 					eeprom_write_word(&ee_MC_CURRENT_MAXPK, vsettings[1]);
 					eeprom_write_word(&ee_MC_CURRENT_CONEFF, vsettings[2]);
+					eeprom_write_word(&ee_MC_MAX_VAL, vsettings[3]);
+					ENGINE_MAX = vsettings[3] * 1000;
 					stimer = 1;
 				}
 			}
 			else
 			{
-				//Send data on a timer as to not overload CAN. Because the motor controller doesn't send an ACK message back, we can't wait for RX.
-				if(stimer == 1) data_send_mc(MC_N_LIMIT, vsettings[0], 2, MCDL);
-				else if(stimer == 2) data_send_mc(MC_N_LIMIT, vsettings[0], 2, MCDR);
-				else if(stimer == 3) data_send_mc(MC_CURRENT_MAXPK, vsettings[1], 4, MCDL);
-				else if(stimer == 4) data_send_mc(MC_CURRENT_MAXPK, vsettings[1], 4, MCDR);
-				else if(stimer == 5) data_send_mc(MC_CURRENT_CONEFF, vsettings[2], 4, MCDL);
-				else if(stimer == 6)
-				{
-					data_send_mc(MC_CURRENT_CONEFF, vsettings[2], 4, MCDR);
-					change_screen(SCREEN_START);
-				}
-				
-				stimer++;
+				change_screen(SCREEN_SAVING);
 			}
 			
 			break;
@@ -350,11 +363,15 @@ int main()
 	vsettings[0] = eeprom_read_word(&ee_MC_N_LIMIT);
 	vsettings[1] = eeprom_read_word(&ee_MC_CURRENT_MAXPK);
 	vsettings[2] = eeprom_read_word(&ee_MC_CURRENT_CONEFF);
+	vsettings[3] = eeprom_read_word(&ee_MC_MAX_VAL);
 	
 	//In case there is a weird value, reset to defaults.
 	if(vsettings[0] > 127) vsettings[0] = 127;
 	if(vsettings[1] > 63) vsettings[1] = 6;
 	if(vsettings[2] > 63) vsettings[2] = 6;
+	if(vsettings[3] > 31) vsettings[3] = 10;
+	
+	ENGINE_MAX = vsettings[3] * 1000;
 	
 	lcd_init(LCD_DISP_ON);
 	change_screen(SCREEN_WELCOME);
