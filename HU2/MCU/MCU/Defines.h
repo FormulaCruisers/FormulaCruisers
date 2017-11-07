@@ -21,7 +21,7 @@
 #define IMDLED						PE7
 #define AMSLED						PE5
 
-#define PREDISCHARGE_TIMER			10000 //10 seconds
+#define PREDISCHARGE_TIMER			5000 //10 seconds
 
 #define CANTIMEOUT					100	//100 ms
 
@@ -82,6 +82,13 @@
 
 #define IMDSHUTDOWN					0x99
 #define AMSSHUTDOWN					0x98
+
+/// Motor controller
+#define MC_SET_SPEED					0x31
+#define MC_N_LIMIT						0x34
+#define MC_SET_TORQUE					0x90
+#define MC_CURRENT_MAXPK				0xC4
+#define MC_CURRENT_CONEFF				0xC5
 
 
 // CAN node IDs

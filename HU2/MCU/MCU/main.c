@@ -225,9 +225,8 @@ ISR(TIMER0_COMP_vect)
 				//uint8_t wheel_diff = steerpos - STEER_MIDDLE + 100;
 				//data_send16(CAN_SEND_DATA, (int16_t)((gas1eng * wheel_diff) / 100), MCDR);
 				//data_send16(CAN_SEND_DATA, (int16_t)((gas1eng * 100) / wheel_diff), MCDL);	
-				data_send16(CAN_SEND_DATA, (int16_t)gas1eng, MCDR);
-				wait_for_rx();
-				data_send16(CAN_SEND_DATA, (int16_t)gas1eng, MCDL);
+				data_send16(MC_SET_TORQUE, -1000, MCDR);
+				data_send16(MC_SET_TORQUE, 1000, MCDL);
 			}//*/
 			break;
 			
