@@ -13,6 +13,9 @@ char* anim2 = "                      ]`../ |o_..__                  ";
 char* anim3 = "                    `.,(_)______(_).>                ";
 char* anim4 = "                    .`,(_)______(_).>                ";
 
+char* fsettings[3] = {"Speed limit (0-127) ","Max pk.current(0-63) ","Current coneff(0-63)"};
+char cs[2] = "> ";
+
 void lcd_refresh()
 {
 	get_screen(Linebuffer, ui_current_screen);
@@ -78,7 +81,7 @@ void get_screen(char buffer[4][21], enum uiscreen s)
 		case SCREEN_START:
 			snprintf(buffer[0], sizeof buffer[0], "Gas1:%4d Gas2:%4d", gas1, gas2);
 			snprintf(buffer[1], sizeof buffer[1], "Brake:%4d          ", brake);
-			snprintf(buffer[1], sizeof buffer[1], "                    ");
+			snprintf(buffer[2], sizeof buffer[2], "                    ");
 			snprintf(buffer[3], sizeof buffer[3], "Press blue to begin ");
 			break;
 
@@ -100,6 +103,13 @@ void get_screen(char buffer[4][21], enum uiscreen s)
 			snprintf(buffer[0], sizeof buffer[0], "%s", &anim1[av]);
 			snprintf(buffer[1], sizeof buffer[1], "%s", &anim2[av]);
 			snprintf(buffer[2], sizeof buffer[2], "%s", (anim % 2 == 0) ? &anim3[av] : &anim4[av]);
+			break;
+
+		case SCREEN_SETTINGS:
+			snprintf(buffer[0], sizeof buffer[0], "%c%s", cs[ischanging], fsettings[selsetting]);
+			snprintf(buffer[1], sizeof buffer[1], "%c%5d               ", cs[1-ischanging], vsettings[selsetting]);
+			snprintf(buffer[2], sizeof buffer[2], "Blue = edit setting ");
+			snprintf(buffer[3], sizeof buffer[3], "Green= save and exit");
 			break;
 
 		default:

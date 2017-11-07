@@ -41,7 +41,7 @@ ISR(CANIT_vect)
 			
 				//Bound checking while fixing range
 				gas1perc = (gas1 < GAS1MIN) ? 0 : ((gas1 > GAS1MAX) ? (GAS1MAX - GAS1MIN) : (gas1 - GAS1MIN));
-				gas1eng = (gas1perc * ENGINE_MAX) / (GAS2MAX - GAS2MIN);
+				gas1eng = (gas1perc * ENGINE_MAX) / (GAS1MAX - GAS1MIN);
 				gas1perc = (gas1perc * 100) / (GAS1MAX - GAS1MIN);
 				break;
 

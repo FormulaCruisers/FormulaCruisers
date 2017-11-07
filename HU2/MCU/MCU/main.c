@@ -8,6 +8,7 @@
 #include <avr/pgmspace.h>
 #include <util/delay.h>
 #include <stdbool.h>
+#include <avr/eeprom.h>
 
 #include "lcd.h"
 #include "CAN.h"
@@ -50,6 +51,14 @@ volatile uint8_t anim = 0;		//Animation frame counter
 volatile uint8_t av = 0;		//Range normalized of the above
 uint8_t animttt = 0;			//Timer for animation frame incrementation
 uint16_t welcome_anim_ttt = 0;	//Welcome screen timer for when to show the animation
+
+volatile uint8_t selsetting = 0;
+volatile uint8_t vsettings[3] = {0};
+uint16_t EEMEM ee_MC_N_LIMIT = 127;
+uint16_t EEMEM ee_MC_CURRENT_MAXPK = 7;
+uint16_t EEMEM ee_MC_CURRENT_CONEFF = 7;
+volatile uint8_t ischanging = 0;
+uint8_t stimer = 0;
 
 void debounce(uint8_t* btn, uint8_t val);
 
@@ -154,8 +163,56 @@ ISR(TIMER0_COMP_vect)
 			}
 			break;
 		
+		//settings screen
+		case SCREEN_SETTINGS:
+			if(stimer == 0)
+			{
+				if(ischanging == 0)
+				{
+					if(btnblue == 1) ischanging++;
+					else if(btn2 == 1) selsetting = (selsetting == 2) ? 0 : selsetting + 1;
+					else if(btn1 == 1) selsetting = (selsetting == 0) ? 2 : selsetting - 1;	
+				}
+				else if(ischanging == 1)
+				{
+					uint8_t vmax = selsetting == 0 ? 127 : 63;
+					if(btnblue == 1) ischanging--;
+					else if(btn2 == 1) vsettings[selsetting] = (vsettings[selsetting] == vmax) ? vmax : vsettings[selsetting] + 1;
+					else if(btn1 == 1) vsettings[selsetting] = (vsettings[selsetting] == 0) ? 0 : vsettings[selsetting] - 1;
+				}
+			
+				if(btngreen == 1)
+				{
+					eeprom_write_word(&ee_MC_N_LIMIT, vsettings[0]);
+					eeprom_write_word(&ee_MC_CURRENT_MAXPK, vsettings[1]);
+					eeprom_write_word(&ee_MC_CURRENT_CONEFF, vsettings[2]);
+					stimer = 1;
+				}
+			}
+			else
+			{	
+				if(stimer == 1) data_send_mc(MC_N_LIMIT, vsettings[0], 2, MCDL);
+				else if(stimer == 2) data_send_mc(MC_N_LIMIT, vsettings[0], 2, MCDR);
+				else if(stimer == 3) data_send_mc(MC_CURRENT_MAXPK, vsettings[1], 4, MCDL);
+				else if(stimer == 4) data_send_mc(MC_CURRENT_MAXPK, vsettings[1], 4, MCDR);
+				else if(stimer == 5) data_send_mc(MC_CURRENT_CONEFF, vsettings[2], 4, MCDL);
+				else if(stimer == 6) data_send_mc(MC_CURRENT_CONEFF, vsettings[2], 4, MCDR);
+				
+				else if(stimer == 7) change_screen(SCREEN_START);
+				
+				stimer++;
+			}
+			
+			break;
+		
 		//The screen that appears after closing the welcome screen
 		case SCREEN_START:
+			if(btn1 && btn2)
+			{
+				ischanging = 0;
+				stimer = 0;
+				change_screen(SCREEN_SETTINGS);
+			}
 			if(btnblue == 1)
 			{
 				e_checksensors();
@@ -222,11 +279,10 @@ ISR(TIMER0_COMP_vect)
 			//*
 			if(_errorcode == ERROR_NONE)
 			{
-				//uint8_t wheel_diff = steerpos - STEER_MIDDLE + 100;
-				//data_send16(CAN_SEND_DATA, (int16_t)((gas1eng * wheel_diff) / 100), MCDR);
-				//data_send16(CAN_SEND_DATA, (int16_t)((gas1eng * 100) / wheel_diff), MCDL);	
-				data_send16(MC_SET_TORQUE, -1000, MCDR);
-				data_send16(MC_SET_TORQUE, 1000, MCDL);
+				if(ttt == 0)
+					data_send16(MC_SET_TORQUE, -gas1perc * 100, MCDR);
+				else if(ttt == 1)
+					data_send16(MC_SET_TORQUE, gas1perc * 100, MCDL);
 			}//*/
 			break;
 			
@@ -281,6 +337,15 @@ void debounce(uint8_t* btn, uint8_t val)
 
 int main()
 {
+	vsettings[0] = eeprom_read_word(&ee_MC_N_LIMIT);
+	vsettings[1] = eeprom_read_word(&ee_MC_CURRENT_MAXPK);
+	vsettings[2] = eeprom_read_word(&ee_MC_CURRENT_CONEFF);
+	
+	//In case there is a weird value, reset to defaults.
+	if(vsettings[0] > 127) vsettings[0] = 127;
+	if(vsettings[1] > 63) vsettings[1] = 6;
+	if(vsettings[2] > 63) vsettings[2] = 6;
+	
 	lcd_init(LCD_DISP_ON);
 	change_screen(SCREEN_WELCOME);
 	
