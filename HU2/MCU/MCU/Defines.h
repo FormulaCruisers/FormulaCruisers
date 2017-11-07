@@ -4,7 +4,7 @@
 
 #define F_CPU 16000000UL	// Define processor clock speed for compiler
 
-#define SOFTWARE_VERSION			"Software: V2.041"  //Version should be 2.xxx where xxx is amount of commits(do "git rev-list HEAD --count" to check)
+#define SOFTWARE_VERSION			"Software: V2.042"  //Version should be 2.xxx where xxx is amount of commits(do "git rev-list HEAD --count" to check)
 
 #define RTDS						PC7 //Loud ready beep
 #define RTDS_TIME					2000 //2 seconds
@@ -34,7 +34,7 @@
 #define BRAKEMIN					20
 #define RANGESLACK					20
 
-#define ENGINE_MAX					3000
+#define ENGINE_MAX					10000
 #define PUMP_TEMP_MAX				100
 
 #define FLOWMIN						10
@@ -88,9 +88,9 @@
 #define MC_SET_TORQUE					0x90
 
 //settings
-#define MC_N_LIMIT						0x34
-#define MC_CURRENT_MAXPK				0xC4
-#define MC_CURRENT_CONEFF				0xC5
+#define MC_N_LIMIT						0x34		//Value between 0-127
+#define MC_CURRENT_MAXPK				0xC4		//Value between 0-63	(though it won't go above 85%?!)
+#define MC_CURRENT_CONEFF				0xC5		//Value between 0-63	(though it won't go above 85%?!)
 
 
 // CAN node IDs

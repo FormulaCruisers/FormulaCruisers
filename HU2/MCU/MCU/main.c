@@ -169,13 +169,15 @@ ISR(TIMER0_COMP_vect)
 			{
 				if(ischanging == 0)
 				{
+					//Cursor on top; Changing the selected variable
 					if(btnblue == 1) ischanging++;
 					else if(btn2 == 1) selsetting = (selsetting == 2) ? 0 : selsetting + 1;
 					else if(btn1 == 1) selsetting = (selsetting == 0) ? 2 : selsetting - 1;	
 				}
 				else if(ischanging == 1)
 				{
-					uint8_t vmax = selsetting == 0 ? 127 : 63;
+					//Cursor on the bottom; Changing the value of the selected variable
+					uint8_t vmax = selsetting == 0 ? 127 : 63; //127 is the max for N_LIMIT, 63 for the rest... Weird
 					if(btnblue == 1) ischanging--;
 					else if(btn2 == 1) vsettings[selsetting] = (vsettings[selsetting] == vmax) ? vmax : vsettings[selsetting] + 1;
 					else if(btn1 == 1) vsettings[selsetting] = (vsettings[selsetting] == 0) ? 0 : vsettings[selsetting] - 1;
@@ -280,9 +282,9 @@ ISR(TIMER0_COMP_vect)
 			if(_errorcode == ERROR_NONE)
 			{
 				if(ttt == 0)
-					data_send16(MC_SET_TORQUE, -gas1perc * 100, MCDR);
+					data_send16(MC_SET_TORQUE, -gas1eng, MCDR); //Right driver should get a negative value to drive forward
 				else if(ttt == 1)
-					data_send16(MC_SET_TORQUE, gas1perc * 100, MCDL);
+					data_send16(MC_SET_TORQUE, gas1eng, MCDL);
 			}//*/
 			break;
 			
