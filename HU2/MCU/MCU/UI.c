@@ -79,8 +79,8 @@ void get_screen(char buffer[4][21], enum uiscreen s)
 			break;
 
 		case SCREEN_START:
-			snprintf(buffer[0], sizeof buffer[0], "Gas1:%4d Gas2:%4d", gas1, gas2);
-			snprintf(buffer[1], sizeof buffer[1], "Brake:%4d          ", brake);
+			snprintf(buffer[0], sizeof buffer[0], "Gas1:%3d%% Gas2:%3d%%", gas1perc, gas2perc);
+			snprintf(buffer[1], sizeof buffer[1], "Brake:%3d%%         ", brakeperc);
 			snprintf(buffer[2], sizeof buffer[2], "                    ");
 			snprintf(buffer[3], sizeof buffer[3], "Press blue to begin ");
 			break;

@@ -63,6 +63,7 @@ uint8_t stimer = 0;
 void debounce(uint8_t* btn, uint8_t val);
 
 uint8_t ttt = 0; //Counter to make sure each node only gets one request at a time
+uint8_t ttt_drive = 0;
 
 ISR(TIMER0_COMP_vect)
 {
@@ -199,9 +200,11 @@ ISR(TIMER0_COMP_vect)
 				else if(stimer == 3) data_send_mc(MC_CURRENT_MAXPK, vsettings[1], 4, MCDL);
 				else if(stimer == 4) data_send_mc(MC_CURRENT_MAXPK, vsettings[1], 4, MCDR);
 				else if(stimer == 5) data_send_mc(MC_CURRENT_CONEFF, vsettings[2], 4, MCDL);
-				else if(stimer == 6) data_send_mc(MC_CURRENT_CONEFF, vsettings[2], 4, MCDR);
-				
-				else if(stimer == 7) change_screen(SCREEN_START);
+				else if(stimer == 6)
+				{
+					data_send_mc(MC_CURRENT_CONEFF, vsettings[2], 4, MCDR);
+					change_screen(SCREEN_START);
+				}
 				
 				stimer++;
 			}
@@ -282,10 +285,14 @@ ISR(TIMER0_COMP_vect)
 			//*
 			if(_errorcode == ERROR_NONE)
 			{
-				if(ttt == 0)
+				//Alternate sending data to the drivers; If sending both at the same time, neither work.
+				//This *does* mean that one of the drivers will be delayed by 1000/500 = 2ms which could theoretically be a problem.
+				if(ttt_drive == 0)
 					data_send16(MC_SET_TORQUE, -gas1eng, MCDR); //Right driver should get a negative value to drive forward
-				else if(ttt == 1)
+				else if(ttt_drive == 1)
 					data_send16(MC_SET_TORQUE, gas1eng, MCDL);
+				
+				ttt_drive = 1 - ttt_drive;
 			}//*/
 			break;
 			
