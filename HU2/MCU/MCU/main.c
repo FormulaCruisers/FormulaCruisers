@@ -56,12 +56,12 @@ uint16_t welcome_anim_ttt = 0;	//Welcome screen timer for when to show the anima
 
 volatile uint8_t selsetting = 0;
 volatile uint8_t vsettings[SETTINGS_COUNT] = {0};
-uint16_t EEMEM ee_MC_N_LIMIT = 127;
-uint16_t EEMEM ee_MC_CURRENT_MAXPK = 6;
-uint16_t EEMEM ee_MC_CURRENT_CONEFF = 6;
+uint16_t EEMEM ee_MC_N_LIMIT = 100;
+uint16_t EEMEM ee_MC_CURRENT_MAXPK = 10;
+uint16_t EEMEM ee_MC_CURRENT_CONEFF = 10;
 uint16_t EEMEM ee_MC_MAX_VAL = 10;
 volatile uint8_t ischanging = 0;
-uint8_t stimer = 0;
+int16_t stimer = 0;
 
 void debounce(uint8_t* btn, uint8_t val);
 
@@ -145,7 +145,8 @@ ISR(TIMER0_COMP_vect)
 			if(btnblue == 1)
 			{
 				data_send_ecu(MOTOR_CONTROLLER, _HIGH);
-				stimer = 1;
+				//After enabling, the motor controller needs some time to start accepting messages. Because of this, add 200*(1000/500) = 400ms delay.
+				stimer = -200;
 				if(_errorcode == ERROR_NONE) change_screen(SCREEN_SAVING);
 			}
 			break;
@@ -164,61 +165,58 @@ ISR(TIMER0_COMP_vect)
 			if(btnblue == 1)
 			{
 				data_send_ecu(MOTOR_CONTROLLER, _HIGH);
-				stimer = 1;
+				//After enabling, the motor controller needs some time to start accepting messages. Because of this, add 200*(1000/500) = 400ms delay.
+				stimer = -200;
 				if(_errorcode == ERROR_NONE) change_screen(SCREEN_SAVING);
 			}
 			break;
 		
 		case SCREEN_SAVING:
-			if (stimer == 200)
+			if (stimer == 10)
 			{
 				change_screen(SCREEN_START);
 				stimer = 0;
 			}
 			else
 			{
-				if(stimer == 191)      data_send_mc(MC_N_LIMIT, vsettings[0], 2, MCDL);
-				else if(stimer == 192) data_send_mc(MC_N_LIMIT, vsettings[0], 2, MCDR);
-				else if(stimer == 193) data_send_mc(MC_CURRENT_MAXPK, vsettings[1], 4, MCDL);
-				else if(stimer == 194) data_send_mc(MC_CURRENT_MAXPK, vsettings[1], 4, MCDR);
-				else if(stimer == 195) data_send_mc(MC_CURRENT_CONEFF, vsettings[2], 4, MCDL);
-				else if(stimer == 196) data_send_mc(MC_CURRENT_CONEFF, vsettings[2], 4, MCDR);
+				if(stimer == 1)      data_send_motor(MC_N_LIMIT, vsettings[0], 0x7FFF, MCDL);
+				else if(stimer == 2) data_send_motor(MC_N_LIMIT, vsettings[0], 0x7FFF, MCDR);
+				else if(stimer == 3) data_send_motor(MC_CURRENT_MAXPK, vsettings[1], 0x3FFF, MCDL);
+				else if(stimer == 4) data_send_motor(MC_CURRENT_MAXPK, vsettings[1], 0x3FFF, MCDR);
+				else if(stimer == 5) data_send_motor(MC_CURRENT_CONEFF, vsettings[2], 0x3FFF, MCDL);
+				else if(stimer == 6) data_send_motor(MC_CURRENT_CONEFF, vsettings[2], 0x3FFF, MCDR);
 				stimer++;
 			}
 			break;
 		
 		//settings screen
 		case SCREEN_SETTINGS:
-			if(stimer == 0)
+			if(ischanging == 0)
 			{
-				if(ischanging == 0)
-				{
-					//Cursor on top; Changing the selected variable
-					if(btnblue == 1) ischanging++;
-					else if(btn2 == 1) selsetting = (selsetting == SETTINGS_COUNT-1) ? 0 : selsetting + 1;
-					else if(btn1 == 1) selsetting = (selsetting == 0) ? SETTINGS_COUNT-1 : selsetting - 1;	
-				}
-				else if(ischanging == 1)
-				{
-					//Cursor on the bottom; Changing the value of the selected variable
-					uint8_t vmax = selsetting == 0 ? 127 : 63; //127 is the max for N_LIMIT, 63 for the rest... Weird
-					if(btnblue == 1) ischanging--;
-					else if(btn2 == 1) vsettings[selsetting] = (vsettings[selsetting] == vmax) ? vmax : vsettings[selsetting] + 1;
-					else if(btn1 == 1) vsettings[selsetting] = (vsettings[selsetting] == 0) ? 0 : vsettings[selsetting] - 1;
-				}
-			
-				if(btngreen == 1)
-				{
-					eeprom_write_word(&ee_MC_N_LIMIT, vsettings[0]);
-					eeprom_write_word(&ee_MC_CURRENT_MAXPK, vsettings[1]);
-					eeprom_write_word(&ee_MC_CURRENT_CONEFF, vsettings[2]);
-					eeprom_write_word(&ee_MC_MAX_VAL, vsettings[3]);
-					ENGINE_MAX = vsettings[3] * 1000;
-					stimer = 1;
-				}
+				//Cursor on top; Changing the selected variable
+				if(btnblue == 1) ischanging++;
+				else if(btn2 == 1) selsetting = (selsetting == SETTINGS_COUNT-1) ? 0 : selsetting + 1;
+				else if(btn1 == 1) selsetting = (selsetting == 0) ? SETTINGS_COUNT-1 : selsetting - 1;	
 			}
-			else
+			else if(ischanging == 1)
 			{
+				//Cursor on the bottom; Changing the value of the selected variable
+				if(btnblue == 1) ischanging--;
+				else if(btn2 == 1) vsettings[selsetting] = (vsettings[selsetting] == 100) ? 100 : vsettings[selsetting] + 1;
+				else if(btn1 == 1) vsettings[selsetting] = (vsettings[selsetting] == 0) ? 0 : vsettings[selsetting] - 1;
+			}
+			
+			if(btngreen == 1)
+			{
+				//Write values back to EEPROM
+				eeprom_write_word(&ee_MC_N_LIMIT, vsettings[0]);
+				eeprom_write_word(&ee_MC_CURRENT_MAXPK, vsettings[1]);
+				eeprom_write_word(&ee_MC_CURRENT_CONEFF, vsettings[2]);
+				eeprom_write_word(&ee_MC_MAX_VAL, vsettings[3]);
+				ENGINE_MAX = vsettings[3] * 1000;
+				
+				//Send values to the motor controller
+				stimer = 0;
 				change_screen(SCREEN_SAVING);
 			}
 			
@@ -366,9 +364,9 @@ int main()
 	vsettings[3] = eeprom_read_word(&ee_MC_MAX_VAL);
 	
 	//In case there is a weird value, reset to defaults.
-	if(vsettings[0] > 127) vsettings[0] = 127;
-	if(vsettings[1] > 63) vsettings[1] = 6;
-	if(vsettings[2] > 63) vsettings[2] = 6;
+	if(vsettings[0] > 100) vsettings[0] = 100;
+	if(vsettings[1] > 100) vsettings[1] = 10;
+	if(vsettings[2] > 100) vsettings[2] = 10;
 	if(vsettings[3] > 31) vsettings[3] = 10;
 	
 	ENGINE_MAX = vsettings[3] * 1000;

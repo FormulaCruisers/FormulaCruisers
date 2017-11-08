@@ -5,16 +5,19 @@
 #include "UI.h"
 #include "Error.h"
 
-extern volatile uint8_t av;
-extern volatile uint8_t anim;
+extern volatile uint8_t anim;	//Actual animation frame number
+extern volatile uint8_t av;		//Normalized animation frame number
 
 char* anim1 = "                      _    _                         ";
 char* anim2 = "                      ]`../ |o_..__                  ";
 char* anim3 = "                    `.,(_)______(_).>                ";
 char* anim4 = "                    .`,(_)______(_).>                ";
 
-char* fsettings[SETTINGS_COUNT] = {"Speed limit (0-127) ","Max pk.current(0-63) ","Current coneff(0-63)","Max engine *1k(0-?) "};
-char cs[2] = "> ";
+char* fsettings[SETTINGS_COUNT] = {	"Speed limit %      ",
+									"Max pkcurrent %    ",
+									"Curr. con-eff %    ",
+									"Max engine *1k(0-?)" };
+char settingcursor[2] = "> ";	//Cursor for settings screen
 
 void lcd_refresh()
 {
@@ -113,8 +116,8 @@ void get_screen(char buffer[4][21], enum uiscreen s)
 			break;
 
 		case SCREEN_SETTINGS:
-			snprintf(buffer[0], sizeof buffer[0], "%c%s", cs[ischanging], fsettings[selsetting]);
-			snprintf(buffer[1], sizeof buffer[1], "%c%5d               ", cs[1-ischanging], vsettings[selsetting]);
+			snprintf(buffer[0], sizeof buffer[0], "%c%s", settingcursor[ischanging], fsettings[selsetting]);
+			snprintf(buffer[1], sizeof buffer[1], "%c%5d               ", settingcursor[1-ischanging], vsettings[selsetting]);
 			snprintf(buffer[2], sizeof buffer[2], "Blue = edit setting ");
 			snprintf(buffer[3], sizeof buffer[3], "Green= save and exit");
 			break;

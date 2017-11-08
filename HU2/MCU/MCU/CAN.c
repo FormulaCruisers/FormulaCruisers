@@ -19,10 +19,10 @@ void data_send16(uint8_t header, uint16_t data, uint16_t node)
 	uint8_t d[] = {data & 255, /*<-- Low byte | High byte -->*/ (data >> 8) & 255};
 	data_send_arr(header, d, node, 2);
 }
-void data_send_mc(uint8_t header, uint8_t data, uint8_t mul, uint16_t node)
+void data_send_motor(uint8_t header, uint8_t data, uint32_t mul, uint16_t node)
 {
-	uint8_t d[] = {data * mul, /*<-- High byte | Low byte -->*/ data};
-	data_send_arr(header, d, node, 2);
+	uint32_t val = (mul * data) / 100;
+	data_send16(header, val, node);
 }
 
 void data_send_arr_nh(uint8_t buffer[], uint16_t node, uint8_t bufferlen)
