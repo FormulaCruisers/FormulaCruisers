@@ -79,7 +79,7 @@ ISR(TIMER0_COMP_vect)
 	debounce(&btn2, PIND & (1<<BUTTON2)); //The button that is above the blue button (i.e. right)
 	
 	//*
-	if(/*!shutdownon || ams_shutdown || imd_shutdown*/ btn1 == 1)
+	if(!shutdownon || ams_shutdown || imd_shutdown)
 	{
 		if(ui_current_screen == SCREEN_PREDISCHARGING || ui_current_screen == SCREEN_DRIVING || ui_current_screen == SCREEN_STATUS)
 		{
@@ -91,14 +91,10 @@ ISR(TIMER0_COMP_vect)
 	switch(ttt)
 	{
 		case 0:
-			data_send8(CAN_REQUEST_DATA, RPM_BACK_LEFT, ECU2ID);
-			wait_for_rx();
 			data_send8(CAN_REQUEST_DATA, RPM_FRONT_LEFT, NODEID1);
 			data_send8(CAN_REQUEST_DATA, GAS_1, NODEID2);
 			break;
 		case 1:
-			data_send8(CAN_REQUEST_DATA, RPM_BACK_RIGHT, ECU2ID);
-			wait_for_rx();
 			data_send8(CAN_REQUEST_DATA, RPM_FRONT_RIGHT, NODEID1);
 			data_send8(CAN_REQUEST_DATA, GAS_2, NODEID2);
 			break;
@@ -364,7 +360,7 @@ int main()
 	if(vsettings[0] > 100) vsettings[0] = 100;
 	if(vsettings[1] > 100) vsettings[1] = 10;
 	if(vsettings[2] > 100) vsettings[2] = 10;
-	if(vsettings[3] > 31) vsettings[3] = 10;
+	if(vsettings[3] > 32) vsettings[3] = 10;
 	
 	ENGINE_MAX = vsettings[3] * 1000;
 	

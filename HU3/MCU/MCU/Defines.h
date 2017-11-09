@@ -4,7 +4,7 @@
 
 #define F_CPU 16000000UL	// Define processor clock speed for compiler
 
-#define SOFTWARE_VERSION			"Software: V0.02"
+#define SOFTWARE_VERSION			"Software: V0.048"
 
 #define DATA_WAIT_TIMEOUT			0xFF //255 cycles
 #define CANTIMEOUT					100	//100 ms

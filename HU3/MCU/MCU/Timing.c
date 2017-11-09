@@ -24,7 +24,7 @@ void init_timers()
 ISR(TIMER0_OVF_vect)
 {
 	TCNT0 = _TM0;
-	for(uint8_t i = 0; i < 0xFF; i++)
+	for(uint8_t i = 0; i < n_funcs; i++)
 	{
 		uint16_t tper = timesper[i];
 		if(tper != 0)

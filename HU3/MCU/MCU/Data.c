@@ -30,7 +30,7 @@ void data_request(uint16_t node, uint8_t num, uint16_t* outputvar, uint8_t wait)
 {
 	//If there's still a request on this node, wait for it
 	uint8_t timeout = DATA_WAIT_TIMEOUT;
-	while(outvars[num] != 0 && timeout-- > 1) ;
+	while(outvars[num] != NULL && timeout-- > 1) ;
 	
 	//If there was a timeout, throw an error
 	if(timeout <= 1) e_throw("Pre-wait timeout");
@@ -42,7 +42,7 @@ void data_request(uint16_t node, uint8_t num, uint16_t* outputvar, uint8_t wait)
 	if(wait)
 	{
 		timeout = DATA_WAIT_TIMEOUT;
-		while(outvars[num] != 0 && timeout-- > 1) ;
+		while(outvars[num] != NULL && timeout-- > 1) ;
 		
 		//If there was a timeout, throw an error
 		if(timeout <= 1) e_throw("Data wait timeout");
