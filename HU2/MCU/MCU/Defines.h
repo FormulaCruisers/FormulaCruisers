@@ -4,7 +4,7 @@
 
 #define F_CPU 16000000UL	// Define processor clock speed for compiler
 
-#define SOFTWARE_VERSION			"Software: V2.048"  //Version should be 2.xxx where xxx is amount of commits(do "git rev-list HEAD --count" to check)
+#define SOFTWARE_VERSION			"Software: V2.049"  //Version should be 2.xxx where xxx is amount of commits(do "git rev-list HEAD --count" to check)
 
 #define RTDS						PC7 //Loud ready beep
 #define RTDS_TIME					2000 //2 seconds
@@ -13,7 +13,7 @@
 #define BUTTON2						PD1
 #define BUTTONBLUE					PD2
 #define BUTTONGREEN					PD3
-#define DEBOUNCE_TIME				8 //8 ms
+#define DEBOUNCE_TIME				8 // 8*(1000/500) = 16 ms
 
 #define _HIGH						0xFF
 #define _LOW						0x00
@@ -90,13 +90,13 @@
 #define MC_SET_TORQUE					0x90
 
 //settings
-#define MC_N_LIMIT						0x34		//Value between 0-127
-#define MC_CURRENT_MAXPK				0xC4		//Value between 0-63	(though it won't go above 85%?!)
-#define MC_CURRENT_CONEFF				0xC5		//Value between 0-63	(though it won't go above 85%?!)
+#define MC_N_LIMIT						0x34		//Value between 0x0000 - 0x7FFF
+#define MC_CURRENT_MAXPK				0xC4		//Value between 0x0000 - 0x3FFF
+#define MC_CURRENT_CONEFF				0xC5		//Value between 0x0000 - 0x3FFF
 
 
 // CAN node IDs
-#define MASTERID	0x317 // Transmit Adress Master
+#define MASTERID	0x317 // Transmit Address Master
 #define NODEID1		0x201 // NODE ID 1: Steering Node
 #define NODEID2		0x202 // NODE ID 2: Pedalbox Node
 #define NODEID3		0x203 // NODE ID 3: Coolant  Node L

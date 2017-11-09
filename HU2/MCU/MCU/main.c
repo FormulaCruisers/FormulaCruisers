@@ -54,15 +54,17 @@ volatile uint8_t av = 0;		//Range normalized of the above
 uint8_t animttt = 0;			//Timer for animation frame incrementation
 uint16_t welcome_anim_ttt = 0;	//Welcome screen timer for when to show the animation
 
-volatile uint8_t selsetting = 0;
-volatile uint8_t vsettings[SETTINGS_COUNT] = {0};
-uint16_t EEMEM ee_MC_N_LIMIT = 100;
-uint16_t EEMEM ee_MC_CURRENT_MAXPK = 10;
-uint16_t EEMEM ee_MC_CURRENT_CONEFF = 10;
-uint16_t EEMEM ee_MC_MAX_VAL = 10;
-volatile uint8_t ischanging = 0;
-int16_t stimer = 0;
-uint8_t errortimer = 0;
+uint8_t errortimer = 0;			//Timer to turn off literally everything when an error occurs
+
+///////////// Settings menu stuff
+volatile uint8_t selsetting = 0;						//The index of the selected variable to change
+volatile uint8_t vsettings[SETTINGS_COUNT] = {0};		//List of all variables
+uint16_t EEMEM ee_MC_N_LIMIT = 100;						//N Limit (Drive 0x34)
+uint16_t EEMEM ee_MC_CURRENT_MAXPK = 10;				//I Max Peak (Drive 0xC4)
+uint16_t EEMEM ee_MC_CURRENT_CONEFF = 10;				//I Continuous Efficiency (Drive 0xC5)
+uint16_t EEMEM ee_MC_MAX_VAL = 10;						//Maximum engine value, multiplied by 1000. (Absolute max should be 32767[thus 32 for this value] -- This is for a signed int16!)
+volatile uint8_t ischanging = 0;						//Whether or not the cursor is on the bottom(changing value) or on the top(changing index)
+int16_t stimer = 0;										//Timer for saving the settings individually
 
 void debounce(uint8_t* btn, uint8_t val);
 
@@ -78,14 +80,13 @@ ISR(TIMER0_COMP_vect)
 	debounce(&btn1, PIND & (1<<BUTTON1)); //The button that is above the green button (i.e. left)
 	debounce(&btn2, PIND & (1<<BUTTON2)); //The button that is above the blue button (i.e. right)
 	
-	//*
 	if(!shutdownon || ams_shutdown || imd_shutdown)
 	{
 		if(ui_current_screen == SCREEN_PREDISCHARGING || ui_current_screen == SCREEN_DRIVING || ui_current_screen == SCREEN_STATUS)
 		{
 			_errorcode = ERROR_SHUTDOWN;
 		}
-	}//*/
+	}
 	
 	//Request gas/brake values
 	switch(ttt)
@@ -104,20 +105,19 @@ ISR(TIMER0_COMP_vect)
 			break;
 	}
 	
-	//*
 	if(_errorcode != ERROR_NONE)
 	{
 		//Reset literally everything possible
 		if(errortimer < 0xFF) errortimer++;
-		if(errortimer == 1) data_send_ecu(MOTOR_CONTROLLER, _LOW);
-		if(errortimer == 2) data_send_ecu(RUN_ENABLE, _LOW);
+		if(errortimer == 1) data_send_ecu(RUN_ENABLE, _LOW);
+		if(errortimer == 2) data_send_ecu(MAIN_RELAIS, _LOW);
 		if(errortimer == 3) data_send_ecu(PREDISCHARGE, _LOW);
-		if(errortimer == 4) data_send_ecu(MAIN_RELAIS, _LOW);
+		if(errortimer == 4) data_send_ecu(MOTOR_CONTROLLER, _LOW);
 		if(errortimer == 5) data_send_ecu(PUMP_ENABLE, _LOW);
 		
 		//Change into error screen
 		change_screen(SCREEN_ERROR);
-	}//*/
+	}
 	
 	switch(ui_current_screen)
 	{
@@ -194,8 +194,8 @@ ISR(TIMER0_COMP_vect)
 			{
 				//Cursor on the bottom; Changing the value of the selected variable
 				if(btnblue == 1) ischanging--;
-				else if(btn2 == 1) vsettings[selsetting] = (vsettings[selsetting] == 100) ? 100 : vsettings[selsetting] + 1;
-				else if(btn1 == 1) vsettings[selsetting] = (vsettings[selsetting] == 0) ? 0 : vsettings[selsetting] - 1;
+				else if(btn2 == 1 || btn2 == 0xFF) vsettings[selsetting] = (vsettings[selsetting] == 100) ? 100 : vsettings[selsetting] + 1;
+				else if(btn1 == 1 || btn1 == 0xFF) vsettings[selsetting] = (vsettings[selsetting] == 0) ? 0 : vsettings[selsetting] - 1;
 			}
 			
 			if(btngreen == 1)
@@ -229,6 +229,7 @@ ISR(TIMER0_COMP_vect)
 			
 				if(_errorcode == ERROR_NONE)
 				{
+					predistimer = PREDISCHARGE_TIMER;
 					data_send_ecu(PREDISCHARGE, _HIGH);
 					change_screen(SCREEN_PREDISCHARGING);
 				
@@ -285,7 +286,6 @@ ISR(TIMER0_COMP_vect)
 				e_checkdiscrepancy();	
 			}
 			
-			//*
 			if(_errorcode == ERROR_NONE)
 			{
 				//Alternate sending data to the drivers; If sending both at the same time, neither work.
@@ -296,11 +296,11 @@ ISR(TIMER0_COMP_vect)
 					data_send16(MC_SET_TORQUE, gas1eng, MCDL);
 				
 				ttt_drive = 1 - ttt_drive;
-			}//*/
+			}
 			break;
 			
 		case SCREEN_ERROR:
-			if(btngreen == 1 && errortimer > 10)
+			if(btngreen == 1 && errortimer == 0xFF)
 			{
 				errortimer = 0;
 				ams_shutdown = 0;
@@ -339,9 +339,11 @@ void debounce(uint8_t* btn, uint8_t val)
 	{
 		if(!val) (*btn) = 0;
 	}
-	else if(*btn > 0)
+	
+	if(*btn > 0)
 	{
-		(*btn)++;
+		if(*btn < 0xFF) (*btn)++;
+		else            (*btn) = 0xE0;
 	}
 	else
 	{
