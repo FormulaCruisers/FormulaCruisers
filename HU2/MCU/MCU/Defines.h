@@ -4,7 +4,7 @@
 
 #define F_CPU 16000000UL	// Define processor clock speed for compiler
 
-#define SOFTWARE_VERSION			"Software: V2.047"  //Version should be 2.xxx where xxx is amount of commits(do "git rev-list HEAD --count" to check)
+#define SOFTWARE_VERSION			"Software: V2.048"  //Version should be 2.xxx where xxx is amount of commits(do "git rev-list HEAD --count" to check)
 
 #define RTDS						PC7 //Loud ready beep
 #define RTDS_TIME					2000 //2 seconds
@@ -24,6 +24,7 @@
 #define PREDISCHARGE_TIMER			5000 //10 seconds
 
 #define CANTIMEOUT					100	//100 ms
+#define RX_WAIT_LIMIT				200 //200 cycles
 
 #define SETTINGS_COUNT				4
 

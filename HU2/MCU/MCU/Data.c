@@ -4,12 +4,12 @@
 #include "Data.h"
 #include "CAN.h"
 
-volatile int8_t waiting = 0;
+volatile uint8_t waiting = 1;
 
 void wait_for_rx()
 {
-	while(++waiting > 0);
-	waiting = 0;
+	while(waiting > 1 && waiting < RX_WAIT_LIMIT) waiting++;
+	waiting = 1;
 }
 
 void data_send_ecu(uint8_t node, uint8_t data)

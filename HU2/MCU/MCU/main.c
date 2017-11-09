@@ -62,6 +62,7 @@ uint16_t EEMEM ee_MC_CURRENT_CONEFF = 10;
 uint16_t EEMEM ee_MC_MAX_VAL = 10;
 volatile uint8_t ischanging = 0;
 int16_t stimer = 0;
+uint8_t errortimer = 0;
 
 void debounce(uint8_t* btn, uint8_t val);
 
@@ -72,19 +73,19 @@ ISR(TIMER0_COMP_vect)
 {
 	data_send8(CAN_REQUEST_DATA, SHUTDOWN, ECU2ID);
 	
+	debounce(&btnblue, PIND & (1<<BUTTONBLUE));
+	debounce(&btngreen, PIND & (1<<BUTTONGREEN));
+	debounce(&btn1, PIND & (1<<BUTTON1)); //The button that is above the green button (i.e. left)
+	debounce(&btn2, PIND & (1<<BUTTON2)); //The button that is above the blue button (i.e. right)
+	
 	//*
-	if(!shutdownon || ams_shutdown || imd_shutdown)
+	if(/*!shutdownon || ams_shutdown || imd_shutdown*/ btn1 == 1)
 	{
 		if(ui_current_screen == SCREEN_PREDISCHARGING || ui_current_screen == SCREEN_DRIVING || ui_current_screen == SCREEN_STATUS)
 		{
 			_errorcode = ERROR_SHUTDOWN;
 		}
 	}//*/
-	
-	debounce(&btnblue, PIND & (1<<BUTTONBLUE));
-	debounce(&btngreen, PIND & (1<<BUTTONGREEN));
-	debounce(&btn1, PIND & (1<<BUTTON1)); //The button that is above the green button (i.e. left)
-	debounce(&btn2, PIND & (1<<BUTTON2)); //The button that is above the blue button (i.e. right)
 	
 	//Request gas/brake values
 	switch(ttt)
@@ -111,17 +112,12 @@ ISR(TIMER0_COMP_vect)
 	if(_errorcode != ERROR_NONE)
 	{
 		//Reset literally everything possible
-		data_send_ecu(MOTOR_CONTROLLER, _LOW);
-		data_send_ecu(RUN_ENABLE, _LOW);
-		data_send_ecu(PREDISCHARGE, _LOW);
-		data_send_ecu(MAIN_RELAIS, _LOW);
-		data_send_ecu(PUMP_ENABLE, _LOW);
-		if(ui_current_screen == SCREEN_DRIVING)
-		{
-			data_send16(CAN_SEND_DATA, 0, MCDR);
-			wait_for_rx();
-			data_send16(CAN_SEND_DATA, 0, MCDL);
-		}
+		if(errortimer < 0xFF) errortimer++;
+		if(errortimer == 1) data_send_ecu(MOTOR_CONTROLLER, _LOW);
+		if(errortimer == 2) data_send_ecu(RUN_ENABLE, _LOW);
+		if(errortimer == 3) data_send_ecu(PREDISCHARGE, _LOW);
+		if(errortimer == 4) data_send_ecu(MAIN_RELAIS, _LOW);
+		if(errortimer == 5) data_send_ecu(PUMP_ENABLE, _LOW);
 		
 		//Change into error screen
 		change_screen(SCREEN_ERROR);
@@ -308,8 +304,9 @@ ISR(TIMER0_COMP_vect)
 			break;
 			
 		case SCREEN_ERROR:
-			if(btngreen == 1)
+			if(btngreen == 1 && errortimer > 10)
 			{
+				errortimer = 0;
 				ams_shutdown = 0;
 				imd_shutdown = 0;
 				_errorcode = ERROR_NONE;
