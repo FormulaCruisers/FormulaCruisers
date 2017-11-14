@@ -1,4 +1,5 @@
 #include <avr/io.h>
+#include <avr/interrupt.h>
 #include <stdio.h>
 #include "Defines.h"
 #include "lcd.h"
@@ -19,8 +20,15 @@ char* fsettings[SETTINGS_COUNT] = {	"Speed limit %      ",
 									"Max engine *1k(0-?)" };
 char settingcursor[2] = "> ";	//Cursor for settings screen
 
+ISR(TIMER2_OVF_vect) //8 Hz
+{
+	//Full refresh LCD
+	lcd_refresh();
+}
+
 void lcd_refresh()
 {
+	TCNT2 = _TM2;
 	get_screen(Linebuffer, ui_current_screen);
 
 	/*	

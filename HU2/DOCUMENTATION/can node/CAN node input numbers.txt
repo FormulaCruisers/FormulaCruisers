@@ -7,7 +7,7 @@ INT 764321
 1:adc1 & pps[3]
 2:adc2 & pps[2]
 3:adc3 & pps[1]
-4:adc0 & pps[1]
+4:       pps[1]
 6:	 pps[0], dir=1
 7:	 pps[0], dir=0
 

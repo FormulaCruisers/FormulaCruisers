@@ -128,8 +128,9 @@ ISR(TIMER0_COMP_vect)
 			{
 				anim--;
 				animttt = 0;
+				av = (anim > 20) ? 20 : anim;
+				lcd_refresh();
 			}
-			av = (anim > 20) ? 20 : anim;
 			
 			//At the end of the animation, switch back to the welcome screen
 			if(anim == 0) change_screen(SCREEN_WELCOME);
@@ -326,13 +327,6 @@ ISR(TIMER0_COMP_vect)
 	TCNT0 = 0;
 }
 
-ISR(TIMER2_OVF_vect) //8 Hz
-{
-	//Reset counter and full refresh LCD
-	TCNT2 = _TM2;
-	lcd_refresh();
-}
-
 void debounce(uint8_t* btn, uint8_t val)
 {
 	if(*btn >= DEBOUNCE_TIME)
@@ -343,7 +337,7 @@ void debounce(uint8_t* btn, uint8_t val)
 	if(*btn > 0)
 	{
 		if(*btn < 0xFF) (*btn)++;
-		else            (*btn) = 0xE0;
+		else            (*btn) = 0xE0; //Reset to E0 so that hold-to-change-faster doesn't go way too fast.
 	}
 	else
 	{
