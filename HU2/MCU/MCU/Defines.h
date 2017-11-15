@@ -9,17 +9,18 @@
 #define RTDS						PC7 //Loud ready beep
 #define RTDS_TIME					2000 //2 seconds
 
+//Dashboard buttons and LEDs
 #define BUTTON1						PD0
 #define BUTTON2						PD1
 #define BUTTONBLUE					PD2
 #define BUTTONGREEN					PD3
-#define DEBOUNCE_TIME				8 // 8*(1000/500) = 16 ms
+#define IMDLED						PE7
+#define AMSLED						PE5
+
+#define DEBOUNCE_TIME				8 // 8*(1000/500) = 16 ms == Time to debounce a button
 
 #define _HIGH						0xFF
 #define _LOW						0x00
-
-#define IMDLED						PE7
-#define AMSLED						PE5
 
 #define PREDISCHARGE_TIMER			5000 //10 seconds
 
@@ -29,6 +30,10 @@
 #define SETTINGS_COUNT				4
 
 #define ENGINE_MAX					0x7FFF //32767
+
+//Brake light switch percentages
+#define BL_SWITCHON					15
+#define BL_SWITCHOFF				10
 
 //Pedal min and max values(with some slack)
 #define GAS1MAX						777
@@ -40,7 +45,6 @@
 #define RANGESLACK					20
 
 #define PUMP_TEMP_MAX				100
-
 #define FLOWMIN						10
 
 #define STEER_MIDDLE				500

@@ -73,9 +73,6 @@ uint8_t ttt = 0; //Counter to make sure each node only gets one request at a tim
 
 bool brakelighton = false;
 
-#define BL_SWITCHON		15
-#define BL_SWITCHOFF	10
-
 ISR(TIMER0_COMP_vect)
 {
 	TCNT0 = 0;
@@ -251,7 +248,7 @@ ISR(TIMER0_COMP_vect)
 			}
 			break;
 		
-		//10 seconds of this screen while predischarging.
+		//5 seconds of this screen while predischarging.
 		//Also checks the pumps to see if they have any flow, otherwise turn off!
 		case SCREEN_PREDISCHARGING:
 			predistimer -= 2;
@@ -383,7 +380,7 @@ int main()
 	if(vsettings[2] > 100) vsettings[2] = 100;
 	if(vsettings[3] > 100) vsettings[3] = 100;
 	
-	engine_max_perc = vsettings[3] * 1000;
+	engine_max_perc = vsettings[3];
 	
 	lcd_init(LCD_DISP_ON);
 	change_screen(SCREEN_WELCOME);
