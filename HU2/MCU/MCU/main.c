@@ -71,6 +71,11 @@ void debounce(uint8_t* btn, uint8_t val);
 uint8_t ttt = 0; //Counter to make sure each node only gets one request at a time
 //uint8_t ttt_drive = 0;
 
+bool brakelighton = false;
+
+#define BL_SWITCHON		15
+#define BL_SWITCHOFF	10
+
 ISR(TIMER0_COMP_vect)
 {
 	TCNT0 = 0;
@@ -116,6 +121,7 @@ ISR(TIMER0_COMP_vect)
 		if(errortimer == 3) data_send_ecu(PREDISCHARGE, _LOW);
 		if(errortimer == 4) data_send_ecu(MOTOR_CONTROLLER, _LOW);
 		if(errortimer == 5) data_send_ecu(PUMP_ENABLE, _LOW);
+		if(errortimer == 6) data_send_ecu(BRAKELIGHT, _LOW);
 		
 		//Change into error screen
 		change_screen(SCREEN_ERROR);
@@ -319,6 +325,18 @@ ISR(TIMER0_COMP_vect)
 			break;
 		default:
 			break;
+	}
+	
+	//Brakelight logic
+	if(brakeperc >= BL_SWITCHON && !brakelighton)
+	{
+		brakelighton = true;
+		data_send_ecu(BRAKELIGHT, _HIGH);
+	}
+	else if(brakeperc < BL_SWITCHOFF && brakelighton)
+	{
+		brakelighton = false;
+		data_send_ecu(BRAKELIGHT, _LOW);
 	}
 	
 	ttt = (ttt + 1) % 3;
