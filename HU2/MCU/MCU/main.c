@@ -22,7 +22,7 @@ volatile uint16_t brake = 0;
 volatile uint16_t gas1perc = 0;
 volatile uint16_t gas2perc = 0;
 volatile uint16_t brakeperc = 0;
-volatile int32_t gas1eng = 0;
+volatile double gas1eng = 0;
 
 volatile uint32_t engine_max_perc = 100;
 
@@ -304,9 +304,9 @@ ISR(TIMER0_COMP_vect)
 				
 				ttt_drive = 1 - ttt_drive;*/
 				
-				data_send_motor(MC_SET_TORQUE, -gas1eng, ENGINE_MAX, MCDR); //Right driver should get a negative value to drive forward
+				data_send_motor_d(MC_SET_TORQUE, -gas1eng, ENGINE_MAX, MCDR); //Right driver should get a negative value to drive forward
 				_delay_us(2);	//Experimental: 2 µs delay between drivers instead of using timer
-				data_send_motor(MC_SET_TORQUE, gas1eng, ENGINE_MAX, MCDL);
+				data_send_motor_d(MC_SET_TORQUE, gas1eng, ENGINE_MAX, MCDL);
 			}
 			break;
 			

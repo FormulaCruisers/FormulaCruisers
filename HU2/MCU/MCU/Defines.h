@@ -4,7 +4,7 @@
 
 #define F_CPU 16000000UL	// Define processor clock speed for compiler
 
-#define SOFTWARE_VERSION			"Software: V2.057    "  //Version should be 2.xxx where xxx is amount of commits(do "git rev-list HEAD --count" to check)
+#define SOFTWARE_VERSION			"Software: V2.058    "  //Version should be 2.xxx where xxx is amount of commits(do "git rev-list HEAD --count" to check)
 
 #define RTDS						PC7 //Loud ready beep
 #define RTDS_TIME					2000 //2 seconds
@@ -41,7 +41,7 @@
 #define GAS2MAX						636
 #define GAS2MIN						545
 #define BRAKEMAX					100
-#define BRAKEMIN					20
+#define BRAKEMIN					21
 #define RANGESLACK					20
 
 #define PUMP_TEMP_MAX				100
@@ -90,11 +90,12 @@
 #define IMDSHUTDOWN					0x99
 #define AMSSHUTDOWN					0x98
 
-/// Motor controller
-#define MC_SET_SPEED					0x31
-#define MC_SET_TORQUE					0x90
+/*********** Motor controller *********/
+// Turning the wheel
+#define MC_SET_SPEED					0x31		//Value between 0x0000 - 0x7FFF
+#define MC_SET_TORQUE					0x90		//Value between 0x0000 - 0x7FFF
 
-//settings
+// Settings
 #define MC_N_LIMIT						0x34		//Value between 0x0000 - 0x7FFF
 #define MC_CURRENT_MAXPK				0xC4		//Value between 0x0000 - 0x3FFF
 #define MC_CURRENT_CONEFF				0xC5		//Value between 0x0000 - 0x3FFF
@@ -108,8 +109,8 @@
 #define NODEID4		0x204 // NODE ID 4: Coolant  Node R
 #define ECU2ID		0x205 // NODE ID 5: ECU 2
 
-#define MCDR		0x211 // Motor driver right
 #define MCDL		0x210 // Motor driver left
+#define MCDR		0x211 // Motor driver right (Should get negative value to drive forward)
 
 #define FUNCTION MASTERID
 

@@ -25,6 +25,11 @@ void data_send_motor(uint8_t header, uint8_t data, int32_t mul, uint16_t node)
 	int32_t val = (mul * data) / 100;
 	data_send16(header, (uint16_t)val, node);
 }
+void data_send_motor_d(uint8_t header, double data, int32_t mul, uint16_t node)
+{
+	int32_t val = (mul * data) / 100;
+	data_send16(header, (uint16_t)val, node);
+}
 
 ISR(CANIT_vect)
 {
@@ -46,7 +51,7 @@ ISR(CANIT_vect)
 			
 				//Bound checking while fixing range
 				gas1perc = (gas1 < GAS1MIN) ? 0 : ((gas1 > GAS1MAX) ? (GAS1MAX - GAS1MIN) : (gas1 - GAS1MIN));
-				gas1eng = (gas1perc * ENGINE_MAX) / (GAS1MAX - GAS1MIN);
+				gas1eng = (gas1perc * engine_max_perc) / (double)(GAS1MAX - GAS1MIN);
 				gas1perc = (gas1perc * 100) / (GAS1MAX - GAS1MIN);
 				break;
 
