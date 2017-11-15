@@ -177,6 +177,7 @@ ISR(TIMER0_COMP_vect)
 			}
 			else
 			{
+				engine_max_perc = vsettings[3];
 				if(stimer == 1)      data_send_motor(MC_N_LIMIT, vsettings[0], 0x7FFF, MCDL);
 				else if(stimer == 2) data_send_motor(MC_N_LIMIT, vsettings[0], 0x7FFF, MCDR);
 				else if(stimer == 3) data_send_motor(MC_CURRENT_MAXPK, vsettings[1], 0x3FFF, MCDL);
@@ -211,7 +212,6 @@ ISR(TIMER0_COMP_vect)
 				eeprom_write_word(&ee_MC_CURRENT_MAXPK, vsettings[1]);
 				eeprom_write_word(&ee_MC_CURRENT_CONEFF, vsettings[2]);
 				eeprom_write_word(&ee_MC_MAX_VAL, vsettings[3]);
-				engine_max_perc = vsettings[3] * 1000;
 				
 				//Send values to the motor controller
 				stimer = 0;
@@ -379,8 +379,6 @@ int main()
 	if(vsettings[1] > 100) vsettings[1] = 100;
 	if(vsettings[2] > 100) vsettings[2] = 100;
 	if(vsettings[3] > 100) vsettings[3] = 100;
-	
-	engine_max_perc = vsettings[3];
 	
 	lcd_init(LCD_DISP_ON);
 	change_screen(SCREEN_WELCOME);
