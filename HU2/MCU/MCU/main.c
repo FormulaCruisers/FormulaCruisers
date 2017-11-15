@@ -60,8 +60,8 @@ uint8_t errortimer = 0;			//Timer to turn off literally everything when an error
 volatile uint8_t selsetting = 0;						//The index of the selected variable to change
 volatile uint8_t vsettings[SETTINGS_COUNT] = {0};		//List of all variables
 uint16_t EEMEM ee_MC_N_LIMIT = 100;						//N Limit (Drive 0x34)
-uint16_t EEMEM ee_MC_CURRENT_MAXPK = 10;				//I Max Peak (Drive 0xC4)
-uint16_t EEMEM ee_MC_CURRENT_CONEFF = 10;				//I Continuous Efficiency (Drive 0xC5)
+uint16_t EEMEM ee_MC_CURRENT_MAXPK = 100;				//I Max Peak (Drive 0xC4)
+uint16_t EEMEM ee_MC_CURRENT_CONEFF = 100;				//I Continuous Efficiency (Drive 0xC5)
 uint16_t EEMEM ee_MC_MAX_VAL = 10;						//Maximum engine value, multiplied by 1000. (Absolute max should be 32767[thus 32 for this value] -- This is for a signed int16!)
 volatile uint8_t ischanging = 0;						//Whether or not the cursor is on the bottom(changing value) or on the top(changing index)
 int16_t stimer = 0;										//Timer for saving the settings individually
@@ -289,6 +289,7 @@ ISR(TIMER0_COMP_vect)
 			
 			if(_errorcode == ERROR_NONE)
 			{
+				/*
 				//Alternate sending data to the drivers; If sending both at the same time, neither work.
 				//This *does* mean that one of the drivers will be delayed by 1000/500 = 2ms which could theoretically be a problem.
 				if(ttt_drive == 0)
@@ -296,7 +297,11 @@ ISR(TIMER0_COMP_vect)
 				else if(ttt_drive == 1)
 					data_send16(MC_SET_TORQUE, gas1eng, MCDL);
 				
-				ttt_drive = 1 - ttt_drive;
+				ttt_drive = 1 - ttt_drive;*/
+				
+				data_send16(MC_SET_TORQUE, -gas1eng, MCDR); //Right driver should get a negative value to drive forward
+				_delay_us(2);	//Experimental: 2 µs delay between drivers instead of using timer
+				data_send16(MC_SET_TORQUE, gas1eng, MCDL);
 			}
 			break;
 			
@@ -354,8 +359,8 @@ int main()
 	
 	//In case there is a weird value, reset to defaults.
 	if(vsettings[0] > 100) vsettings[0] = 100;
-	if(vsettings[1] > 100) vsettings[1] = 10;
-	if(vsettings[2] > 100) vsettings[2] = 10;
+	if(vsettings[1] > 100) vsettings[1] = 100;
+	if(vsettings[2] > 100) vsettings[2] = 100;
 	if(vsettings[3] > 32) vsettings[3] = 10;
 	
 	ENGINE_MAX = vsettings[3] * 1000;
