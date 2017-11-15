@@ -22,6 +22,12 @@ char* get_error(enum _error e)
 		case ERROR_PUMPTEMP:		return "Pump temp too high";
 		
 		case ERROR_SHUTDOWN:		return "Shutdown!";
+		
+		case ERROR_CAN_BIT:			return "CAN bit tx error";
+		case ERROR_CAN_STUFF:		return "CAN stuffing error";
+		case ERROR_CAN_CRC:			return "CAN CRC check error";
+		case ERROR_CAN_FORM:		return "CAN fixed form error";
+		case ERROR_CAN_ACK:			return "CAN no ACK error";
 
 		default:			return "Unknown error?!";
 	}
@@ -50,4 +56,13 @@ void e_checksensors()
 void e_checkflow()
 {
 	if(flowleft < FLOWMIN || flowright < FLOWMIN) _errorcode = ERROR_PUMPFLOW;
+}
+
+void e_checkCAN()
+{
+	if(CANSTMOB & (1<<BERR)) _errorcode = ERROR_CAN_BIT;
+	if(CANSTMOB & (1<<SERR)) _errorcode = ERROR_CAN_STUFF;
+	if(CANSTMOB & (1<<CERR)) _errorcode = ERROR_CAN_CRC;
+	if(CANSTMOB & (1<<FERR)) _errorcode = ERROR_CAN_FORM;
+	if(CANSTMOB & (1<<AERR)) _errorcode = ERROR_CAN_ACK;
 }

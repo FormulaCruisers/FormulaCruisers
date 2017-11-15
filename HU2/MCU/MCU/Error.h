@@ -20,6 +20,12 @@ enum _error
 	ERROR_PUMPTEMP,			//When the pump gets too hot
 	
 	ERROR_SHUTDOWN,			//When a shutdown is called while predischarging or driving
+	
+	ERROR_CAN_BIT,
+	ERROR_CAN_STUFF,		//See AT90CAN128 datasheet page 261/262 for quick descriptions of these CAN errors
+	ERROR_CAN_CRC,
+	ERROR_CAN_FORM,
+	ERROR_CAN_ACK,
 };
 
 extern volatile uint16_t gas1, gas2, brake, gas1perc, gas2perc, brakeperc, flowleft, flowright;

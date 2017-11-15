@@ -69,7 +69,7 @@ int16_t stimer = 0;										//Timer for saving the settings individually
 void debounce(uint8_t* btn, uint8_t val);
 
 uint8_t ttt = 0; //Counter to make sure each node only gets one request at a time
-uint8_t ttt_drive = 0;
+//uint8_t ttt_drive = 0;
 
 ISR(TIMER0_COMP_vect)
 {
