@@ -24,7 +24,7 @@ volatile uint16_t gas2perc = 0;
 volatile uint16_t brakeperc = 0;
 volatile int32_t gas1eng = 0;
 
-volatile uint32_t ENGINE_MAX = 10000;
+volatile uint32_t engine_max_perc = 100;
 
 volatile uint8_t shutdownon = 0;
 
@@ -62,7 +62,7 @@ volatile uint8_t vsettings[SETTINGS_COUNT] = {0};		//List of all variables
 uint16_t EEMEM ee_MC_N_LIMIT = 100;						//N Limit (Drive 0x34)
 uint16_t EEMEM ee_MC_CURRENT_MAXPK = 100;				//I Max Peak (Drive 0xC4)
 uint16_t EEMEM ee_MC_CURRENT_CONEFF = 100;				//I Continuous Efficiency (Drive 0xC5)
-uint16_t EEMEM ee_MC_MAX_VAL = 10;						//Maximum engine value, multiplied by 1000. (Absolute max should be 32767[thus 32 for this value] -- This is for a signed int16!)
+uint16_t EEMEM ee_MC_MAX_VAL = 100;						//Engine percentage
 volatile uint8_t ischanging = 0;						//Whether or not the cursor is on the bottom(changing value) or on the top(changing index)
 int16_t stimer = 0;										//Timer for saving the settings individually
 
@@ -73,6 +73,8 @@ uint8_t ttt = 0; //Counter to make sure each node only gets one request at a tim
 
 ISR(TIMER0_COMP_vect)
 {
+	TCNT0 = 0;
+	
 	data_send8(CAN_REQUEST_DATA, SHUTDOWN, ECU2ID);
 	
 	debounce(&btnblue, PIND & (1<<BUTTONBLUE));
@@ -206,7 +208,7 @@ ISR(TIMER0_COMP_vect)
 				eeprom_write_word(&ee_MC_CURRENT_MAXPK, vsettings[1]);
 				eeprom_write_word(&ee_MC_CURRENT_CONEFF, vsettings[2]);
 				eeprom_write_word(&ee_MC_MAX_VAL, vsettings[3]);
-				ENGINE_MAX = vsettings[3] * 1000;
+				engine_max_perc = vsettings[3] * 1000;
 				
 				//Send values to the motor controller
 				stimer = 0;
@@ -299,9 +301,9 @@ ISR(TIMER0_COMP_vect)
 				
 				ttt_drive = 1 - ttt_drive;*/
 				
-				data_send16(MC_SET_TORQUE, -gas1eng, MCDR); //Right driver should get a negative value to drive forward
+				data_send_motor(MC_SET_TORQUE, -gas1eng, ENGINE_MAX, MCDR); //Right driver should get a negative value to drive forward
 				_delay_us(2);	//Experimental: 2 µs delay between drivers instead of using timer
-				data_send16(MC_SET_TORQUE, gas1eng, MCDL);
+				data_send_motor(MC_SET_TORQUE, gas1eng, ENGINE_MAX, MCDL);
 			}
 			break;
 			
@@ -329,7 +331,7 @@ ISR(TIMER0_COMP_vect)
 		readybeep = 0;
 	}
 	
-	TCNT0 = 0;
+	e_checkCAN();
 }
 
 void debounce(uint8_t* btn, uint8_t val)
@@ -361,9 +363,9 @@ int main()
 	if(vsettings[0] > 100) vsettings[0] = 100;
 	if(vsettings[1] > 100) vsettings[1] = 100;
 	if(vsettings[2] > 100) vsettings[2] = 100;
-	if(vsettings[3] > 32) vsettings[3] = 10;
+	if(vsettings[3] > 100) vsettings[3] = 100;
 	
-	ENGINE_MAX = vsettings[3] * 1000;
+	engine_max_perc = vsettings[3] * 1000;
 	
 	lcd_init(LCD_DISP_ON);
 	change_screen(SCREEN_WELCOME);

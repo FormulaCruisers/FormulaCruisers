@@ -20,6 +20,11 @@ void data_send_ecu(uint8_t node, uint8_t data)
 	
 	wait_for_rx();
 }
+void data_send_motor(uint8_t header, uint8_t data, int32_t mul, uint16_t node)
+{
+	int32_t val = (mul * data) / 100;
+	data_send16(header, (uint16_t)val, node);
+}
 
 ISR(CANIT_vect)
 {

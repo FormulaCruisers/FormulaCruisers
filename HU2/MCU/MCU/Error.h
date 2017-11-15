@@ -36,5 +36,6 @@ void e_checkranges();
 void e_checkdiscrepancy();
 void e_checksensors();
 void e_checkflow();
+void e_checkCAN();
 
 #endif
