@@ -32,7 +32,7 @@ volatile uint16_t rpm_fl = 0;
 volatile uint16_t rpm_fr = 0;
 volatile uint16_t rpm_bl = 0;
 volatile uint16_t rpm_br = 0;
-volatile uint16_t steerpos = 0;
+volatile int16_t steerpos = 0;
 
 volatile uint16_t flowleft = 0;
 volatile uint16_t flowright = 0;
@@ -97,15 +97,15 @@ ISR(TIMER0_COMP_vect)
 	{
 		case 0:
 			data_send8(CAN_REQUEST_DATA, RPM_FRONT_LEFT, NODEID1);
-			data_send8(CAN_REQUEST_DATA, GAS_1, NODEID2);
+			//data_send8(CAN_REQUEST_DATA, GAS_1, NODEID2);
 			break;
 		case 1:
 			data_send8(CAN_REQUEST_DATA, RPM_FRONT_RIGHT, NODEID1);
-			data_send8(CAN_REQUEST_DATA, GAS_2, NODEID2);
+			//data_send8(CAN_REQUEST_DATA, GAS_2, NODEID2);
 			break;
 		case 2:
 			data_send8(CAN_REQUEST_DATA, STEERING_POS, NODEID1);
-			data_send8(CAN_REQUEST_DATA, BRAKE, NODEID2);
+			//data_send8(CAN_REQUEST_DATA, BRAKE, NODEID2);
 			break;
 	}
 	

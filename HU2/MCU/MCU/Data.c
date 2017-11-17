@@ -4,10 +4,11 @@
 #include "Data.h"
 #include "CAN.h"
 
-volatile uint8_t waiting = 1;
+volatile uint16_t waiting = 1;
 
 void wait_for_rx()
 {
+	waiting = 1;
 	while(waiting > 1 && waiting < RX_WAIT_LIMIT) waiting++;
 	waiting = 1;
 }
@@ -88,7 +89,7 @@ ISR(CANIT_vect)
 				break;
 				
 			case STEERING_POS:
-				steerpos = (ReceiveData[1] + (ReceiveData[2] << 8));
+				steerpos = (ReceiveData[1] + (ReceiveData[2] << 8)) - STEER_MIDDLE;
 				break;
 				
 			case FLOW_LEFT:

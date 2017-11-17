@@ -14,6 +14,8 @@
 uint8_t ReceiveData[8];
 uint8_t TransmitData[8];
 
+uint8_t sp = 0;
+
 //***** Reception ISR **********************************
 ISR(CANIT_vect){  	// use interrupts
 	
@@ -37,7 +39,7 @@ ISR(CANIT_vect){  	// use interrupts
 					if (ReceiveData[i] == STUURPOSITIE){ //if Receive data 0x01, Transmit the following data:
 						getADC(2);
 						TransmitData[j++] = ReceiveData[i];
-						TransmitData[j++] = R_L;
+						TransmitData[j++] = R_L;// + sp++;
 						TransmitData[j++] = R_H;
 					}
 					if (ReceiveData[i] == RPM_VOOR_LINKS){

@@ -25,7 +25,7 @@
 #define PREDISCHARGE_TIMER			5000 //10 seconds
 
 #define CANTIMEOUT					100	//100 ms
-#define RX_WAIT_LIMIT				200 //200 cycles
+#define RX_WAIT_LIMIT				20000 //20000 cycles
 
 #define SETTINGS_COUNT				4
 
@@ -47,7 +47,9 @@
 #define PUMP_TEMP_MAX				100
 #define FLOWMIN						10
 
-#define STEER_MIDDLE				500
+#define STEER_MAX					349
+#define STEER_MIN					117
+#define STEER_MIDDLE				(STEER_MAX+STEER_MIN)/2
 
 //Counter values
 #define _TM0						100 //500 Hz
