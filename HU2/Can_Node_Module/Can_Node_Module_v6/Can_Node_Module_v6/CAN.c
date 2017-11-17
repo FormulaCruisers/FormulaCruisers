@@ -28,153 +28,103 @@ ISR(CANIT_vect){  	// use interrupts
 	
 	uint16_t ReceiveAddress = (CANIDT1 << 3) | ((CANIDT2 & 0b11100000) >> 5);
 	
-	if(ReceiveAddress == NODEID1){ //Only receive if address is NODEID1
-		if (ReceiveData[0] == 0x3D) { //if first data received is 3D = General data request
-			uint8_t j = 0;
-			for(uint8_t i = 1; i < length; i++){
-				if (ReceiveData[i] == STUURPOSITIE){ //if Receive data 0x01, Transmit the following data:
-					getADC(2);
-					TransmitData[j++] = ReceiveData[i];
-					TransmitData[j++] = R_L;
-					TransmitData[j++] = R_H;
-				}
-				if (ReceiveData[i] == RPM_VOOR_LINKS){
-					TransmitData[j++] = ReceiveData[i];
-					TransmitData[j++] = PulsePerSec[3];
-					TransmitData[j++] = (PulsePerSec[3] >> 8);
-				}
-				if (ReceiveData[i] == RPM_VOOR_RECHTS){
-					TransmitData[j++] = ReceiveData[i];
-					TransmitData[j++] = PulsePerSec[2];
-					TransmitData[j++] = (PulsePerSec[2] >> 8);
-				}
-			}
-			can_tx(MASTERID, j); //Transmit data depending on the number of message received
-		}
-	}
-	
-
-	if(ReceiveAddress == NODEID2){ //Only receive if Address is NODEID2
-		if (ReceiveData[0] == 0x3D) { //if first data received is 3D = General data request
-			uint8_t j = 0;
-			for(uint8_t i = 1; i < length; i++){
-				if (ReceiveData[i] == GAS_1){
-					getADC(0);
-					TransmitData[j++] = ReceiveData[i];
-					TransmitData[j++] = ADCL;
-					TransmitData[j++] = ADCH;
-				}
-				if (ReceiveData[i] == GAS_2){
-					getADC(1);
-					TransmitData[j++] = ReceiveData[i];
-					TransmitData[j++] = ADCL;
-					TransmitData[j++] = ADCH;
-				}
-				if (ReceiveData[i] == REM){
-					getADC(2);
-					TransmitData[j++] = ReceiveData[i];
-					TransmitData[j++] = ADCL;
-					TransmitData[j++] = ADCH;
-				}
-			}
-			can_tx(MASTERID, j); //Transmit data depending on the number of message received
-		}
-	}
-	
-	if(ReceiveAddress == NODEID3){ //Only receive if Address is NODEID3
-		if (ReceiveData[0] == 0x3D) { //if first data received is 3D = General data request
-			uint8_t j = 0;
-			for(uint8_t i = 1; i < length; i++){
-				if (ReceiveData[i] == FLOW_RICHTING_LINKS){ //if Receive data 0x01, Transmit the following data:
-					TransmitData[j++] = ReceiveData[i];
-					TransmitData[j++] = (PulsePerSec[0] >> 8);
-					TransmitData[j++] = PulsePerSec[0];
-				}
-				if (ReceiveData[i] == TEMP_LINKS){
-					getADC(1);
-					TransmitData[j++] = ReceiveData[i];
-					TransmitData[j++] = ADCL;
-					TransmitData[j++] = ADCH;
-				}
-			}
-			can_tx(MASTERID, j); //Transmit data depending on the number of message received
-		}
-	}
-
-	if(ReceiveAddress == NODEID4){ //Only receive if Address is NODEID4
-		if (ReceiveData[0] == 0x3D) { //if first data received is 3D = General data request
-			uint8_t j = 0;
-			for(uint8_t i = 1; i < length; i++){
-				if (ReceiveData[i] == FLOW_RICHTING_RECHTS){ //if Receive data 0x01, Transmit the following data:
-					TransmitData[j++] = ReceiveData[i];
-					TransmitData[j++] = (PulsePerSec[0] >> 8);
-					TransmitData[j++] = PulsePerSec[0];
-				}
-				if (ReceiveData[i] == TEMP_RECHTS){
-					getADC(1);
-					TransmitData[j++] = ReceiveData[i];
-					TransmitData[j++] = ADCL;
-					TransmitData[j++] = ADCH;
-				}
-			}
-			can_tx(MASTERID, j); //Transmit data depending on the number of message received
-		}
-	}
-
-	if(ReceiveAddress == ECU2ID){ //Only receive if Address is NODEID5
-		for(uint8_t i = 1; i < length; i++){
-			if (ReceiveData[i] == 0x3D) { //if first data received is 3D = General data request
-				i++;
+	if(FUNCTION == NODEID1)
+	{
+		if(ReceiveAddress == NODEID1){ //Only receive if address is NODEID1
+			if (ReceiveData[0] == 0x3D) { //if first data received is 3D = General data request
 				uint8_t j = 0;
-				if (ReceiveData[i] == RPM_LINKS_ACHTER){ //if Receive data 0x01, Transmit the following data:
-					TransmitData[j++] = ReceiveData[i];
-					TransmitData[j++] = (PulsePerSec[2] >> 8);
-					TransmitData[j++] = PulsePerSec[2];
-				}
-				if (ReceiveData[i] == RPM_RECHTS_ACHTER){ //if Receive data 0x01, Transmit the following data:
-					TransmitData[j++] = ReceiveData[i];
-					TransmitData[j++] = (PulsePerSec[1] >> 8);
-					TransmitData[j++] = PulsePerSec[1];
-				}
-				if (ReceiveData[i] == DRAAIRICHTING_LINKS_ACHTER){
-					TransmitData[j++] = ReceiveData[i];
-					TransmitData[j++] = Direction[2];
-				}
-				if (ReceiveData[i] == DRAAIRICHTING_RECHTS_ACHTER){
-					TransmitData[j++] = ReceiveData[i];
-					TransmitData[j++] = Direction[1];
+				for(uint8_t i = 1; i < length; i++){
+					if (ReceiveData[i] == STUURPOSITIE){ //if Receive data 0x01, Transmit the following data:
+						getADC(2);
+						TransmitData[j++] = ReceiveData[i];
+						TransmitData[j++] = R_L;
+						TransmitData[j++] = R_H;
+					}
+					if (ReceiveData[i] == RPM_VOOR_LINKS){
+						TransmitData[j++] = ReceiveData[i];
+						TransmitData[j++] = (uint16_t)PulsePerSec[3];
+						TransmitData[j++] = (((uint16_t)PulsePerSec[3]) >> 8);
+					}
+					if (ReceiveData[i] == RPM_VOOR_RECHTS){
+						TransmitData[j++] = ReceiveData[i];
+						TransmitData[j++] = (uint16_t)PulsePerSec[2];
+						TransmitData[j++] = (((uint16_t)PulsePerSec[2]) >> 8);
+					}
 				}
 				can_tx(MASTERID, j); //Transmit data depending on the number of message received
 			}
-			if (ReceiveData[i] == RUN_ENABLE){
-				i++;
-				DDRC	|= (1 << PC6);
-				if(ReceiveData[i++]){	PORTC	|= (1 << PC6);}
-				else{				PORTC	&= ~(1 << PC6);}
+		}
+	}
+	else if(FUNCTION==NODEID2)
+	{
+		if(ReceiveAddress == NODEID2){ //Only receive if Address is NODEID2
+			if (ReceiveData[0] == 0x3D) { //if first data received is 3D = General data request
+				uint8_t j = 0;
+				for(uint8_t i = 1; i < length; i++){
+					if (ReceiveData[i] == GAS_1){
+						getADC(0);
+						TransmitData[j++] = ReceiveData[i];
+						TransmitData[j++] = ADCL;
+						TransmitData[j++] = ADCH;
+					}
+					if (ReceiveData[i] == GAS_2){
+						getADC(1);
+						TransmitData[j++] = ReceiveData[i];
+						TransmitData[j++] = ADCL;
+						TransmitData[j++] = ADCH;
+					}
+					if (ReceiveData[i] == REM){
+						getADC(2);
+						TransmitData[j++] = ReceiveData[i];
+						TransmitData[j++] = ADCL;
+						TransmitData[j++] = ADCH;
+					}
+				}
+				can_tx(MASTERID, j); //Transmit data depending on the number of message received
 			}
-			if (ReceiveData[i] == MOTOR_CONTROLLER){
-				i++;
-				DDRC	|= (1 << PC1);
-				if(ReceiveData[i++]){	PORTC	|= (1 << PC1);}
-				else{				PORTC	&= ~(1 << PC1);}
+		}
+	}
+	else if(FUNCTION==NODEID3)
+	{
+		if(ReceiveAddress == NODEID3){ //Only receive if Address is NODEID3
+			if (ReceiveData[0] == 0x3D) { //if first data received is 3D = General data request
+				uint8_t j = 0;
+				for(uint8_t i = 1; i < length; i++){
+					if (ReceiveData[i] == FLOW_RICHTING_LINKS){ //if Receive data 0x01, Transmit the following data:
+						TransmitData[j++] = ReceiveData[i];
+						TransmitData[j++] = (((uint16_t)PulsePerSec[0]) >> 8);
+						TransmitData[j++] = (uint16_t)PulsePerSec[0];
+					}
+					if (ReceiveData[i] == TEMP_LINKS){
+						getADC(1);
+						TransmitData[j++] = ReceiveData[i];
+						TransmitData[j++] = ADCL;
+						TransmitData[j++] = ADCH;
+					}
+				}
+				can_tx(MASTERID, j); //Transmit data depending on the number of message received
 			}
-			if (ReceiveData[i] == BRAKELIGHT){
-				i++;
-				DDRC	|= (1 << PC3);
-				if(ReceiveData[i++]){	PORTC	|= (1 << PC3);}
-				else{				PORTC	&= ~(1 << PC3);}
-			}
-			if (ReceiveData[i] == PRE_DISCHARGE){
-				i++;
-				DDRC	|= (1 << PC4);
-				if(ReceiveData[i++]){	PORTC	|= (1 << PC4);}
-				else{				PORTC	&= ~(1 << PC4);}
-			}
-			if (ReceiveData[i] == PUMP){
-				i++;
-				DDRC	|= (1 << PC2);
-				if(ReceiveData[i++]){	PORTC	|= (1 << PC2);}
-				else{				PORTC	&= ~(1 << PC2);}
+		}
+	}
+	else if(FUNCTION==NODEID4)
+	{
+		if(ReceiveAddress == NODEID4){ //Only receive if Address is NODEID4
+			if (ReceiveData[0] == 0x3D) { //if first data received is 3D = General data request
+				uint8_t j = 0;
+				for(uint8_t i = 1; i < length; i++){
+					if (ReceiveData[i] == FLOW_RICHTING_RECHTS){ //if Receive data 0x01, Transmit the following data:
+						TransmitData[j++] = ReceiveData[i];
+						TransmitData[j++] = (((uint16_t)PulsePerSec[0]) >> 8);
+						TransmitData[j++] = (uint16_t)PulsePerSec[0];
+					}
+					if (ReceiveData[i] == TEMP_RECHTS){
+						getADC(1);
+						TransmitData[j++] = ReceiveData[i];
+						TransmitData[j++] = ADCL;
+						TransmitData[j++] = ADCH;
+					}
+				}
+				can_tx(MASTERID, j); //Transmit data depending on the number of message received
 			}
 		}
 	}

@@ -15,7 +15,7 @@
 uint8_t InterruptPairDirection[2] = {0x00,0x00};
 uint16_t InterruptPairTimer[2] = {0x0000,0x0000};
 
-uint16_t PulsePerSec[4] = {0,0,0,0};
+double PulsePerSec[4] = {0,0,0,0};
 uint8_t Direction[2] = {1,1};
 
 
@@ -90,7 +90,7 @@ ISR(INT6_vect){   //Should be INT6 on node1, INT1 everywhere else... Dangit rens
 	TCNT1H = 0x00;
 	TCNT1L = 0x00;
 	
-	PulsePerSec[3] = 15625 * 120 / InterruptPairTimerTemp;
+	PulsePerSec[3] = (15625 / (double)InterruptPairTimerTemp) * 120;
 	
 	//TransmitData[0] = (PulsePerSec[3] << 8);
 	//TransmitData[1] = PulsePerSec[3];
@@ -106,7 +106,7 @@ ISR(INT7_vect){  //Should be INT7 on node1, INT2 everywhere else... Dangit rens
 	TCNT3H = 0x00;
 	TCNT3L = 0x00;
 	
-	PulsePerSec[2] = 15625 * 120 / InterruptPairTimerTemp;
+	PulsePerSec[2] = (15625 / (double)InterruptPairTimerTemp) * 120;
 	
 	//TransmitData[0] = (PulsePerSec[2] << 8);
 	//TransmitData[1] = PulsePerSec[2];
@@ -188,7 +188,7 @@ ISR(INT1_vect){ //Should be INT1 on node1, INT6 everywhere else... Dangit rens
 		TCNT1H = 0x00;
 		TCNT1L = 0x00;
 		
-		PulsePerSec[0] = 15625 / InterruptPairTimer[0];
+		PulsePerSec[0] = 15625 / (double)InterruptPairTimer[0];
 		Direction[0] = 1;
 		
 		InterruptPairDirection[0] = 0;
@@ -219,7 +219,7 @@ ISR(INT2_vect){ //Should be INT2 on node1, INT7 everywhere else... Dangit rens
 		TCNT1H = 0x00;
 		TCNT1L = 0x00;
 		
-		PulsePerSec[0] = 15625 / InterruptPairTimer[0];
+		PulsePerSec[0] = 15625 / (double)InterruptPairTimer[0];
 		Direction[0] = 0;
 		
 		InterruptPairDirection[0] = 0;

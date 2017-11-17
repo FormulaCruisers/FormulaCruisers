@@ -335,7 +335,8 @@ ISR(TIMER0_COMP_vect)
 		brakelighton = false;
 		data_send_ecu(BRAKELIGHT, _LOW);
 	}
-	
+
+	//mod-3 timer increase
 	ttt = (ttt + 1) % 3;
 	
 	if(readybeep > 1) readybeep--;
@@ -346,6 +347,7 @@ ISR(TIMER0_COMP_vect)
 		readybeep = 0;
 	}
 	
+	//Check for any CAN errors at the end of the loop
 	e_checkCAN();
 }
 
