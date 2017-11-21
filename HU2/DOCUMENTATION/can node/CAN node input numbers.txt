@@ -1,30 +1,42 @@
-from left to right: (left being where the 5V, GND and IN labels are)
+On the PCB from left to right: (left being where the 5V, GND and IN labels are)
 
 ADC xx0321
 INT 764321
 
-0:adc0
 1:adc1 & pps[3]
 2:adc2 & pps[2]
-3:adc3 & pps[1]
-4:       pps[1]
+3:adc3 & pps[1]		Does NOT have a 5v pin!
+4:adc0 & pps[1]		Does NOT have a 5v pin!
 6:	 pps[0], dir=1
 7:	 pps[0], dir=0
 
+  Because of a lack of 5V pins on 3&4:
+  PPS1, ADC3, and ADC0 should generally be avoided.
+
+
+Currently this is how it should be set up:
+
 NODE1:
-	2 - Steerpos
-	6 - RPM left
-	7 - RPM right
+	ADC3 - Steerpos
+	PPS3 - RPM left
+	PPS2 - RPM right
 
 NODE2:
-	0 - Gas 1
-	1 - Gas 2
-	2 - Brake
+	ADC0 - Gas 1
+	ADC1 - Gas 2
+	ADC2 - Brake
 
 NODE3:
-	7 - Flow left
-	1 - Temp left
+	PPS0 - Flow left
+	ADC1 - Temp left
 
 NODE4:
-	7 - Flow right
-	1 - Temp right
+	PPS0 - Flow right
+	ADC1 - Temp right
+
+
+To request these values in the MCU, send 0x3D message to the node with as body:
+0xAB
+where	A = node id
+	B = Requested value(pps or adc, so 0-3). Add 8 if it's an ADC value
+The first time a node gets this value, it will set up the internal registers to start reading this value
