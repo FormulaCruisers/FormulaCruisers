@@ -11,8 +11,8 @@
 #include "ADC.h"
 #include "ExternalInterrupt.h"
 
-uint8_t ReceiveData[8];
-uint8_t TransmitData[8];
+uint8_t ReceiveData[64];
+uint8_t TransmitData[64];
 
 uint8_t sp = 0;
 
@@ -24,8 +24,20 @@ ISR(CANIT_vect){  	// use interrupts
 	CANPAGE = ( 0 << MOBNB3 ) | ( 0 << MOBNB2 ) | ( 0 << MOBNB1 ) | ( 1 << MOBNB0 ); // select CANMOB 0001 = MOB1
 
 	length = ( CANCDMOB & 0x0F );	// DLC, number of bytes to be received
-	for ( int8_t i = 0; i < length; i++ ){
-		ReceiveData[i] = CANMSG; // Get data, INDX auto increments CANMSG
+	//for ( int8_t i = 0; i < length; i++ ){
+	//	ReceiveData[i] = CANMSG; // Get data, INDX auto increments CANMSG
+	//}
+	//Loop unrolling
+	ReceiveData[0] = CANMSG;
+	if(length > 1)
+	{
+		ReceiveData[1] = CANMSG;
+		if(length > 2)
+		{
+			//Only should happen in multi-request messages
+			for (uint8_t i = 3; i < length; i++)
+			ReceiveData[i] = CANMSG;
+		}
 	}
 	
 	uint16_t ReceiveAddress = (CANIDT1 << 3) | ((CANIDT2 & 0b11100000) >> 5);
@@ -35,6 +47,8 @@ ISR(CANIT_vect){  	// use interrupts
 		if(ReceiveAddress == NODEID1){ //Only receive if address is NODEID1
 			if (ReceiveData[0] == 0x3D) { //if first data received is 3D = General data request
 				uint8_t j = 0;
+				
+				//Allow for multiple requests to be sent at once
 				for(uint8_t i = 1; i < length; i++){
 					if (ReceiveData[i] == STUURPOSITIE){ //if Receive data 0x01, Transmit the following data:
 						getADC(2);
@@ -130,13 +144,7 @@ ISR(CANIT_vect){  	// use interrupts
 			}
 		}
 	}
-
-	for (int8_t i = 0; i < 8; i++){
-		ReceiveData[i] = 0; //Resetting Receive Data
-		TransmitData[i] = 0; //Resetting Transmit Data
-	}
-
-
+	
 	CANSTMOB = 0x00; // Clear RXOK flag
 	CANCDMOB = (( 1 << CONMOB1 ) | ( 0 << IDE ) | ( 3 << DLC0)); //CAN MOb Control and DLC Register: (1<<CONMOB1) = enable reception. (0<<IDE) = can standard rev 2.0A ( id length = 11 bits), (3 << DLC0) 3 Bytes in the data field of the message.
 

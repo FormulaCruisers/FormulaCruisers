@@ -96,16 +96,10 @@ ISR(TIMER0_COMP_vect)
 	switch(ttt)
 	{
 		case 0:
-			data_send8(CAN_REQUEST_DATA, RPM_FRONT_LEFT, NODEID1);
-			//data_send8(CAN_REQUEST_DATA, GAS_1, NODEID2);
+			data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){RPM_FRONT_LEFT, RPM_FRONT_RIGHT, STEERING_POS}, NODEID1, 3);
 			break;
 		case 1:
-			data_send8(CAN_REQUEST_DATA, RPM_FRONT_RIGHT, NODEID1);
-			//data_send8(CAN_REQUEST_DATA, GAS_2, NODEID2);
-			break;
-		case 2:
-			data_send8(CAN_REQUEST_DATA, STEERING_POS, NODEID1);
-			//data_send8(CAN_REQUEST_DATA, BRAKE, NODEID2);
+			data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){GAS_1, GAS_2, BRAKE}, NODEID2, 3);
 			break;
 	}
 	
@@ -113,12 +107,12 @@ ISR(TIMER0_COMP_vect)
 	{
 		//Reset literally everything possible
 		if(errortimer < 0xFF) errortimer++;
-		if(errortimer == 1) data_send_ecu(RUN_ENABLE, _LOW);
-		if(errortimer == 2) data_send_ecu(MAIN_RELAIS, _LOW);
-		if(errortimer == 3) data_send_ecu(PREDISCHARGE, _LOW);
-		if(errortimer == 4) data_send_ecu(MOTOR_CONTROLLER, _LOW);
-		if(errortimer == 5) data_send_ecu(PUMP_ENABLE, _LOW);
-		if(errortimer == 6) data_send_ecu(BRAKELIGHT, _LOW);
+		if(errortimer == 1) data_send_ecu_a(6, (uint8_t[]){	RUN_ENABLE, _LOW,
+															MAIN_RELAIS, _LOW,
+															PREDISCHARGE, _LOW,
+															MOTOR_CONTROLLER, _LOW,
+															PUMP_ENABLE,   _LOW,
+															BRAKELIGHT, _LOW});
 		
 		//Change into error screen
 		change_screen(SCREEN_ERROR);
@@ -336,8 +330,8 @@ ISR(TIMER0_COMP_vect)
 		data_send_ecu(BRAKELIGHT, _LOW);
 	}
 
-	//mod-3 timer increase
-	ttt = (ttt + 1) % 3;
+	//mod-2 timer increase
+	ttt = 1-ttt;
 	
 	if(readybeep > 1) readybeep--;
 	else if(readybeep == 1)

@@ -11,8 +11,8 @@
 #include "CAN.h"
 #include "ExternalInterrupt.h"
 
-uint8_t ReceiveData[8];
-uint8_t TransmitData[8];
+uint8_t ReceiveData[64];
+uint8_t TransmitData[64];
 
 bool predison = false;
 
@@ -39,14 +39,15 @@ ISR(CANIT_vect){  	// use interrupts
 			ReceiveData[1] = CANMSG;
 			if(length > 2)
 			{
-				//Should never happen but just in case
+				//Should only happen in multi-request messages
 				for (uint8_t i = 3; i < length; i++)
 				ReceiveData[i] = CANMSG;
 			}
 		}
 		
-		if (ReceiveData[0] == 0x3D) { //if first data received is 3D = General data request
-			uint8_t j = 0;
+		uint8_t j = 0;
+		if (ReceiveData[0] == 0x3D)
+		{ //if first data received is 3D = General data request
 			if (ReceiveData[1] == RPM_LINKS_ACHTER)
 			{
 				TransmitData[j++] = ReceiveData[1];
@@ -83,100 +84,91 @@ ISR(CANIT_vect){  	// use interrupts
 					TransmitData[j++] = 0x00;
 				}
 			}
-			can_tx(MASTERID, j); //Transmit data depending on the number of message received
 		}
-		if (ReceiveData[0] == RUN_ENABLE)
+		
+		for(uint8_t i = 0; i < length; i++)
 		{
-			DDRC	|= (1 << PC0);
-			if(ReceiveData[1])
+			if (ReceiveData[i] == RUN_ENABLE)
 			{
-				PORTC	|= (1 << PC0);
+				DDRC	|= (1 << PC0);
+				if(ReceiveData[i+1])
+				{
+					PORTC	|= (1 << PC0);
+				}
+				else
+				{
+					PORTC	&= ~(1 << PC0);
+				}
+				TransmitData[j++] = RUN_ENABLE;
 			}
-			else
+			if (ReceiveData[i] == MOTOR_CONTROLLER)
 			{
-				PORTC	&= ~(1 << PC0);
+				DDRC	|= (1 << PC1);
+				if(ReceiveData[i+1])
+				{
+					PORTC	|= (1 << PC1);
+				}
+				else
+				{
+					PORTC	&= ~(1 << PC1);
+				}
+				TransmitData[j++] = MOTOR_CONTROLLER;
 			}
-			_delay_ms(1);
+			if (ReceiveData[i] == BRAKELIGHT)
+			{
+				DDRC	|= (1 << PC4);
+				if(ReceiveData[i+1])
+				{
+					PORTC	|= (1 << PC4);
+				}
+				else
+				{
+					PORTC	&= ~(1 << PC4);
+				}
+				TransmitData[j++] = BRAKELIGHT;
+			}
+			if (ReceiveData[i] == PRE_DISCHARGE)
+			{
+				DDRC |= (1 << PC3);
 				
-			TransmitData[0] = RUN_ENABLE;
-			can_tx(MASTERID, 1); //Transmit data depending on the number of message received
+				if(ReceiveData[i+1])
+				{
+					predison = true;
+					PORTC	|= (1 << PC3);
+				}
+				else
+				{
+					predison = false;
+					PORTC	&= ~(1 << PC3);
+				}
+				TransmitData[j++] = PRE_DISCHARGE;
+			}
+			if (ReceiveData[i] == MAINRELAIS)
+			{
+				DDRC	|= (1 << PC2);
+				if(ReceiveData[i+1] && predison)
+				{
+					PORTC	|= (1 << PC2);
+				}
+				else
+				{
+					PORTC	&= ~(1 << PC2);
+				}
+				TransmitData[j++] = MAINRELAIS;
+			}
+			if (ReceiveData[i] == PUMP)
+			{
+				DDRC	|= (1 << PC5);
+				if(ReceiveData[i+1]){
+					PORTC	|= (1 << PC5);
+				}
+				else{
+					PORTC	&= ~(1 << PC5);
+				}
+				TransmitData[j++] = PUMP;
+			}
 		}
-		if (ReceiveData[0] == MOTOR_CONTROLLER)
-		{
-			DDRC	|= (1 << PC1);
-			if(ReceiveData[1])
-			{
-				PORTC	|= (1 << PC1);
-			}
-			else
-			{
-				PORTC	&= ~(1 << PC1);
-			}
-			_delay_ms(1);
-			TransmitData[0] = MOTOR_CONTROLLER;
-			can_tx(MASTERID, 1); //Transmit data depending on the number of message received
-		}
-		if (ReceiveData[0] == BRAKELIGHT)
-		{
-			DDRC	|= (1 << PC4);
-			if(ReceiveData[1])
-			{
-				PORTC	|= (1 << PC4);
-			}
-			else
-			{
-				PORTC	&= ~(1 << PC4);
-			}
-			_delay_ms(1);
-			TransmitData[0] = BRAKELIGHT;
-			can_tx(MASTERID, 1); //Transmit data depending on the number of message received
-		}
-		if (ReceiveData[0] == PRE_DISCHARGE)
-		{
-			DDRC |= (1 << PC3);
-				
-			if(ReceiveData[1])
-			{
-				predison = true;
-				PORTC	|= (1 << PC3);
-			}
-			else
-			{
-				predison = false;
-				PORTC	&= ~(1 << PC3);
-			}
-			_delay_ms(1);
-			TransmitData[0] = PRE_DISCHARGE;
-			can_tx(MASTERID, 1); //Transmit data depending on the number of message received
-		}
-		if (ReceiveData[0] == MAINRELAIS)
-		{
-			DDRC	|= (1 << PC2);
-			if(ReceiveData[1] && predison)
-			{
-				PORTC	|= (1 << PC2);
-			}
-			else
-			{
-				PORTC	&= ~(1 << PC2);
-			}
-			_delay_ms(1);
-			TransmitData[0] = MAINRELAIS;
-			can_tx(MASTERID, 1); //Transmit data depending on the number of message received
-		}
-		if (ReceiveData[0] == PUMP)
-		{
-			DDRC	|= (1 << PC5);
-			if(ReceiveData[1]){
-				PORTC	|= (1 << PC5);
-			}
-			else{
-				PORTC	&= ~(1 << PC5);
-			}
-			_delay_ms(1);
-			TransmitData[0] = PUMP;
-			can_tx(MASTERID, 1); //Transmit data depending on the number of message received
-		}
+		can_tx(MASTERID, j); //Transmit data depending on the number of message received
 	}
 	
 	CANSTMOB = 0x00; // Clear RXOK flag

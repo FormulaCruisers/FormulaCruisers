@@ -17,7 +17,7 @@ void can_init();
 void can_rx(uint16_t NODE_ID);
 void can_tx(uint16_t Address, uint8_t DLC);
 
-uint8_t ReceiveData[8];
-uint8_t TransmitData[8];
+uint8_t ReceiveData[64];
+uint8_t TransmitData[64];
 
 #endif
