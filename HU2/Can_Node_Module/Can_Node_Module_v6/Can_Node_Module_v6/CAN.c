@@ -14,6 +14,8 @@
 uint8_t ReceiveData[64];
 uint8_t TransmitData[64];
 
+uint8_t is_enabled[16] = {0};
+
 uint8_t sp = 0;
 
 //***** Reception ISR **********************************
@@ -42,106 +44,65 @@ ISR(CANIT_vect){  	// use interrupts
 	
 	uint16_t ReceiveAddress = (CANIDT1 << 3) | ((CANIDT2 & 0b11100000) >> 5);
 	
-	if(FUNCTION == NODEID1)
+	if(ReceiveAddress == FUNCTION)
 	{
-		if(ReceiveAddress == NODEID1){ //Only receive if address is NODEID1
-			if (ReceiveData[0] == 0x3D) { //if first data received is 3D = General data request
-				uint8_t j = 0;
+		if(ReceiveData[0] == 0x3D)
+		{
+			uint8_t j = 0;
+			
+			//Allow for multiple requests to be sent at once
+			for(uint8_t i = 1; i < length; i++)
+			{
+				uint8_t message = ReceiveData[i];
+				TransmitData[j++] = message;
 				
-				//Allow for multiple requests to be sent at once
-				for(uint8_t i = 1; i < length; i++){
-					if (ReceiveData[i] == STUURPOSITIE){ //if Receive data 0x01, Transmit the following data:
-						getADC(2);
-						TransmitData[j++] = ReceiveData[i];
-						TransmitData[j++] = R_L;// + sp++;
-						TransmitData[j++] = R_H;
+				//Split the received message
+				uint8_t req = message & 0x07;
+				uint8_t is_adc = (message & 0x08) > 0;
+				
+				if(!is_enabled[message])
+				{
+					if(!is_adc)
+					{
+						if(req == 0)
+						{
+							EIMSK |= (1<<INT7) || (1<<INT6);	//PPS0 is INT7 and INT6
+							PORTE	|= 0b10000000; // Input 5   INT7   PullUp
+							PORTE	|= 0b01000000; // Input 6   INT6   PullUp
+						}
+						if(req == 1)
+						{
+							EIMSK |= (1<<INT4) || (1<<INT3);	//PPS1 is INT4 and INT3
+							PORTD	|= 0b00001000; // Input 3   INT3   PullUp
+							PORTE	|= 0b00010000; // Input 4   INT4   PullUp
+						}
+						if(req == 2)
+						{
+							EIMSK |= (1<<INT2);				//PPS2 is INT2
+							PORTD	|= 0b00000100; // Input 2   INT2   PullUp
+						}
+						if(req == 3)
+						{
+							EIMSK |= (1<<INT1);				//PPS3 is INT1
+							PORTD	|= 0b00000010; // Input 1   INT1   PullUp
+						}
 					}
-					if (ReceiveData[i] == RPM_VOOR_LINKS){
-						TransmitData[j++] = ReceiveData[i];
-						TransmitData[j++] = (uint16_t)PulsePerSec[3];
-						TransmitData[j++] = (((uint16_t)PulsePerSec[3]) >> 8);
-					}
-					if (ReceiveData[i] == RPM_VOOR_RECHTS){
-						TransmitData[j++] = ReceiveData[i];
-						TransmitData[j++] = (uint16_t)PulsePerSec[2];
-						TransmitData[j++] = (((uint16_t)PulsePerSec[2]) >> 8);
-					}
+					is_enabled[message] = 1;
 				}
-				can_tx(MASTERID, j); //Transmit data depending on the number of message received
-			}
-		}
-	}
-	else if(FUNCTION==NODEID2)
-	{
-		if(ReceiveAddress == NODEID2){ //Only receive if Address is NODEID2
-			if (ReceiveData[0] == 0x3D) { //if first data received is 3D = General data request
-				uint8_t j = 0;
-				for(uint8_t i = 1; i < length; i++){
-					if (ReceiveData[i] == GAS_1){
-						getADC(0);
-						TransmitData[j++] = ReceiveData[i];
-						TransmitData[j++] = ADCL;
-						TransmitData[j++] = ADCH;
-					}
-					if (ReceiveData[i] == GAS_2){
-						getADC(1);
-						TransmitData[j++] = ReceiveData[i];
-						TransmitData[j++] = ADCL;
-						TransmitData[j++] = ADCH;
-					}
-					if (ReceiveData[i] == REM){
-						getADC(2);
-						TransmitData[j++] = ReceiveData[i];
-						TransmitData[j++] = ADCL;
-						TransmitData[j++] = ADCH;
-					}
+				
+				if(is_adc)
+				{
+					getADC(req);
+					TransmitData[j++] = R_L;
+					TransmitData[j++] = R_H;
 				}
-				can_tx(MASTERID, j); //Transmit data depending on the number of message received
-			}
-		}
-	}
-	else if(FUNCTION==NODEID3)
-	{
-		if(ReceiveAddress == NODEID3){ //Only receive if Address is NODEID3
-			if (ReceiveData[0] == 0x3D) { //if first data received is 3D = General data request
-				uint8_t j = 0;
-				for(uint8_t i = 1; i < length; i++){
-					if (ReceiveData[i] == FLOW_RICHTING_LINKS){ //if Receive data 0x01, Transmit the following data:
-						TransmitData[j++] = ReceiveData[i];
-						TransmitData[j++] = (((uint16_t)PulsePerSec[0]) >> 8);
-						TransmitData[j++] = (uint16_t)PulsePerSec[0];
-					}
-					if (ReceiveData[i] == TEMP_LINKS){
-						getADC(1);
-						TransmitData[j++] = ReceiveData[i];
-						TransmitData[j++] = ADCL;
-						TransmitData[j++] = ADCH;
-					}
+				else
+				{
+					TransmitData[j++] = (uint16_t)PulsePerSec[req];
+					TransmitData[j++] = (((uint16_t)PulsePerSec[req]) >> 8);
 				}
-				can_tx(MASTERID, j); //Transmit data depending on the number of message received
 			}
-		}
-	}
-	else if(FUNCTION==NODEID4)
-	{
-		if(ReceiveAddress == NODEID4){ //Only receive if Address is NODEID4
-			if (ReceiveData[0] == 0x3D) { //if first data received is 3D = General data request
-				uint8_t j = 0;
-				for(uint8_t i = 1; i < length; i++){
-					if (ReceiveData[i] == FLOW_RICHTING_RECHTS){ //if Receive data 0x01, Transmit the following data:
-						TransmitData[j++] = ReceiveData[i];
-						TransmitData[j++] = (((uint16_t)PulsePerSec[0]) >> 8);
-						TransmitData[j++] = (uint16_t)PulsePerSec[0];
-					}
-					if (ReceiveData[i] == TEMP_RECHTS){
-						getADC(1);
-						TransmitData[j++] = ReceiveData[i];
-						TransmitData[j++] = ADCL;
-						TransmitData[j++] = ADCH;
-					}
-				}
-				can_tx(MASTERID, j); //Transmit data depending on the number of message received
-			}
+			can_tx(MASTERID, j); //Transmit data depending on the number of message received
 		}
 	}
 	
@@ -149,7 +110,6 @@ ISR(CANIT_vect){  	// use interrupts
 	CANCDMOB = (( 1 << CONMOB1 ) | ( 0 << IDE ) | ( 3 << DLC0)); //CAN MOb Control and DLC Register: (1<<CONMOB1) = enable reception. (0<<IDE) = can standard rev 2.0A ( id length = 11 bits), (3 << DLC0) 3 Bytes in the data field of the message.
 
 	CANPAGE = ( 0 << MOBNB3 ) | ( 0 << MOBNB2 ) | ( 0 << MOBNB1 ) | ( 0 << MOBNB0 ); // select 0000 = CANMOB0
-	
 }
 
 

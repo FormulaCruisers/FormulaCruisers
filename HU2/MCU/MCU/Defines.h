@@ -56,22 +56,22 @@
 #define _TM2						192 //8 Hz
 
 /*************** Node 1 ***************/
-#define STEERING_POS				0x11
-#define RPM_FRONT_LEFT				0x12
-#define RPM_FRONT_RIGHT				0x13
+#define STEERING_POS				0x1B //ADC3
+#define RPM_FRONT_LEFT				0x13 //PPS3
+#define RPM_FRONT_RIGHT				0x12 //PPS2
 
 /*************** Node 2 ***************/
-#define GAS_1						0x21
-#define GAS_2						0x22
-#define BRAKE						0x23
+#define GAS_1						0x28 //ADC0
+#define GAS_2						0x29 //ADC1
+#define BRAKE						0x2A //ADC2
 
 /*************** Node 3 ***************/
-#define FLOW_LEFT					0x31
-#define TEMP_LEFT					0x32
+#define FLOW_LEFT					0x30 //PPS0
+#define TEMP_LEFT					0x39 //ADC1
 
 /*************** Node 4 ***************/
-#define FLOW_RIGHT					0x41
-#define TEMP_RIGHT					0x42
+#define FLOW_RIGHT					0x40 //PPS0
+#define TEMP_RIGHT					0x49 //ADC1
 
 /*************** ECU 2  ***************/
 // Data request
