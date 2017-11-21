@@ -3,6 +3,7 @@
 #include "Defines.h"
 #include "Data.h"
 #include "CAN.h"
+#include "Error.h"
 
 volatile uint16_t waiting = 1;
 
@@ -10,7 +11,6 @@ void wait_for_rx()
 {
 	waiting = 1;
 	while(waiting > 1 && waiting < RX_WAIT_LIMIT) waiting++;
-	waiting = 1;
 }
 
 void data_send_ecu(uint8_t node, uint8_t data)
@@ -34,17 +34,35 @@ void data_send_motor_d(uint8_t header, double data, int32_t mul, uint16_t node)
 
 ISR(CANIT_vect)
 {
-	waiting = 0;
-	
 	CANPAGE = ( 0 << MOBNB3 ) | ( 0 << MOBNB2 ) | ( 0 << MOBNB1 ) | ( 1 << MOBNB0 ); // select CANMOB 0001 = MOB1
 
-	uint8_t length = ( CANCDMOB & 0x0F );
-	for ( int8_t i = 0; i < length; i++ ) ReceiveData[i] = CANMSG;
-	
 	uint16_t ReceiveAddress = (CANIDT1 << 3) | ((CANIDT2 & 0b11100000) >> 5);
-	
+
 	if(ReceiveAddress == MASTERID)
 	{
+		waiting = 0;
+		
+		uint8_t length = ( CANCDMOB & 0x0F );
+		
+		//for ( int8_t i = 0; i < length; i++ ) ReceiveData[i] = CANMSG;
+		//Loop unrolling
+		ReceiveData[0] = CANMSG;
+		if(length > 1)
+		{
+			ReceiveData[1] = CANMSG;
+			if(length > 2)
+			{
+				ReceiveData[2] = CANMSG;
+				if(length > 3)
+				{
+					//Should never happen but just in case
+					for (uint8_t i = 3; i < length; i++)
+						ReceiveData[i] = CANMSG;
+					_errorcode = ERROR_UNKNOWN;
+				}
+			}
+		}
+		
 		switch(ReceiveData[0])
 		{
 			case GAS_1:
@@ -73,11 +91,13 @@ ISR(CANIT_vect)
 				break;
 				
 			case RPM_FRONT_LEFT:
-				rpm_fl = (ReceiveData[1] + (ReceiveData[2] << 8));
+				//rpm_fl = (ReceiveData[1] + (ReceiveData[2] << 8));
+				rpm_fl++;
 				break;
 				
 			case RPM_FRONT_RIGHT:
-				rpm_fr = (ReceiveData[1] + (ReceiveData[2] << 8));
+				//rpm_fr = (ReceiveData[1] + (ReceiveData[2] << 8));
+				rpm_fr++;
 				break;
 				
 			case RPM_BACK_LEFT:
@@ -110,9 +130,6 @@ ISR(CANIT_vect)
 		}
 	}
 	
-	for (int8_t i = 0; i < 8; i++) ReceiveData[i] = 0;
-
-
 	CANSTMOB = 0x00; // Clear RXOK flag
 	CANCDMOB = (( 1 << CONMOB1 ) | ( 0 << IDE ) | ( 3 << DLC0)); //CAN MOb Control and DLC Register: (1<<CONMOB1) = enable reception. (0<<IDE) = can standard rev 2.0A ( id length = 11 bits), (3 << DLC0) 3 Bytes in the data field of the message.
 

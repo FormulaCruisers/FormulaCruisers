@@ -28,7 +28,8 @@ char* get_error(enum _error e)
 		case ERROR_CAN_CRC:			return "CAN CRC check error";
 		case ERROR_CAN_FORM:		return "CAN fixed form error";
 		case ERROR_CAN_ACK:			return "CAN no ACK error";
-
+	
+		case ERROR_UNKNOWN:
 		default:			return "Unknown error?!";
 	}
 }

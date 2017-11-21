@@ -12,5 +12,6 @@ extern volatile uint16_t rpm_fl, rpm_fr, rpm_br, rpm_bl, flowleft, flowright;
 extern volatile uint8_t shutdownon, ams_shutdown, imd_shutdown;
 extern volatile uint32_t engine_max_perc;
 extern volatile int16_t steerpos;
+extern volatile enum _error _errorcode;
 
 #endif

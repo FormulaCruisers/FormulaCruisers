@@ -26,6 +26,8 @@ enum _error
 	ERROR_CAN_CRC,
 	ERROR_CAN_FORM,
 	ERROR_CAN_ACK,
+	
+	ERROR_UNKNOWN,			//For unknown errors
 };
 
 extern volatile uint16_t gas1, gas2, brake, gas1perc, gas2perc, brakeperc, flowleft, flowright;
