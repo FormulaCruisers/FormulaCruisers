@@ -15,15 +15,15 @@
 uint8_t InterruptPairDirection[2] = {0x00,0x00};
 uint16_t InterruptPairTimer[2] = {0x0000,0x0000};
 
-double PulsePerSec[4] = {0,0,0,0};
+uint16_t PulsePerSec[4] = {0,0,0,0};
 uint8_t Direction[2] = {1,1};
 
 
 //***** ADC CODE ***********************************************
 void int_ExternalInterrupt(void)
 {	
-	TCCR1B |= ( 1 << CS12 ) | (1 << CS10); // 16000000 / 1024 = 15625 counts/second
-	TCCR3B |= ( 1 << CS32 ) | (1 << CS30); // 16000000 / 1024 = 15625 counts/second
+	TCCR1B |= ( 1 << CS11 ) | (1 << CS10); // 16000000 / 64 = 250000 counts/second
+	TCCR3B |= ( 1 << CS31 ) | (1 << CS30); // 16000000 / 64 = 250000 counts/second
 	TIMSK1 |= ( 1 << TOIE1);
 	TIMSK3 |= ( 1 << TOIE3);
 	EICRA =	0xFF;
@@ -45,7 +45,7 @@ ISR(INT1_vect)
 	TCNT1H = 0x00;
 	TCNT1L = 0x00;
 	
-	PulsePerSec[3] = (15625 / (double)InterruptPairTimerTemp) * 120;
+	PulsePerSec[3] = InterruptPairTimerTemp;
 }
 
 ISR(INT2_vect)
@@ -58,7 +58,7 @@ ISR(INT2_vect)
 	TCNT3H = 0x00;
 	TCNT3L = 0x00;
 	
-	PulsePerSec[2] = (15625 / (double)InterruptPairTimerTemp) * 120;
+	PulsePerSec[2] = InterruptPairTimerTemp;
 }
 
 ISR(INT3_vect)
@@ -71,7 +71,7 @@ ISR(INT3_vect)
 		TCNT3H = 0x00;
 		TCNT3L = 0x00;
 		
-		PulsePerSec[1] = 15625 / InterruptPairTimer[1];
+		PulsePerSec[1] = InterruptPairTimer[1];
 		Direction[1] = 1;
 		
 		InterruptPairDirection[1] = 0;
@@ -106,7 +106,7 @@ ISR(INT4_vect)
 		TCNT3H = 0x00;
 		TCNT3L = 0x00;
 		
-		PulsePerSec[1] = 15625 / InterruptPairTimer[1];
+		PulsePerSec[1] = InterruptPairTimer[1];
 		Direction[1] = 0;
 		
 		InterruptPairDirection[1] = 0;
@@ -141,7 +141,7 @@ ISR(INT6_vect)
 		TCNT1H = 0x00;
 		TCNT1L = 0x00;
 		
-		PulsePerSec[0] = 15625 / (double)InterruptPairTimer[0];
+		PulsePerSec[0] = InterruptPairTimer[0];
 		Direction[0] = 1;
 		
 		InterruptPairDirection[0] = 0;
@@ -176,7 +176,7 @@ ISR(INT7_vect)
 		TCNT1H = 0x00;
 		TCNT1L = 0x00;
 		
-		PulsePerSec[0] = 15625 / (double)InterruptPairTimer[0];
+		PulsePerSec[0] = InterruptPairTimer[0];
 		Direction[0] = 0;
 		
 		InterruptPairDirection[0] = 0;
@@ -204,8 +204,8 @@ ISR(INT7_vect)
 
 ISR(TIMER1_OVF_vect)
 {
-	PulsePerSec[0] = 0;
-	PulsePerSec[3] = 0;
+	PulsePerSec[0] = -1;
+	PulsePerSec[3] = -1;
 	
 	Direction[0] = 1;
 }
@@ -213,8 +213,8 @@ ISR(TIMER1_OVF_vect)
 
 ISR(TIMER3_OVF_vect)
 {
-	PulsePerSec[2] = 0;
-	PulsePerSec[1] = 0;
+	PulsePerSec[2] = -1;
+	PulsePerSec[1] = -1;
 	
 	Direction[1] = 1;
 }

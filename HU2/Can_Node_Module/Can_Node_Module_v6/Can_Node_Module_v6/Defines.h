@@ -15,6 +15,6 @@
 #define MCDL		0x210
 #define MCDR		0x211
 
-#define FUNCTION NODEID2
+#define FUNCTION NODEID1
 
 #endif

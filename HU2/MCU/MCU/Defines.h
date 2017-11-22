@@ -36,19 +36,19 @@
 #define BL_SWITCHOFF				10
 
 //Pedal min and max values(with some slack)
-#define GAS1MAX						777
-#define GAS1MIN						693
-#define GAS2MAX						636
-#define GAS2MIN						545
-#define BRAKEMAX					100
-#define BRAKEMIN					21
+#define GAS1MAX						0x343
+#define GAS1MIN						0x302
+#define GAS2MAX						0x209
+#define GAS2MIN						0x252
+#define BRAKEMAX					0x100
+#define BRAKEMIN					0x050  //Value yet unknown because of stupidity
 #define RANGESLACK					20
 
 #define PUMP_TEMP_MAX				100
 #define FLOWMIN						10
 
-#define STEER_MAX					349
-#define STEER_MIN					117
+#define STEER_MAX					335
+#define STEER_MIN					407
 #define STEER_MIDDLE				(STEER_MAX+STEER_MIN)/2
 
 //Counter values

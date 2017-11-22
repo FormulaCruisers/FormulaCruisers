@@ -4,7 +4,7 @@
 
 void int_ExternalInterrupt(void);
 
-extern double PulsePerSec[4];
+extern uint16_t PulsePerSec[4];
 extern uint8_t Direction[2];
 
 uint8_t InterruptPairDirection[2];
