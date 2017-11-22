@@ -28,7 +28,7 @@ extern volatile uint8_t selsetting, ischanging, vsettings[SETTINGS_COUNT];
 extern volatile int16_t steerpos;
 
 extern volatile uint8_t test_sensor;
-extern volatile uint16_t test_value;
+extern volatile uint32_t test_value;
 
 void lcd_refresh();
 void lcd_quickrefresh();

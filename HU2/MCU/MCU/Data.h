@@ -15,7 +15,7 @@ extern volatile uint8_t shutdownon, ams_shutdown, imd_shutdown;
 extern volatile uint32_t engine_max_perc;
 extern volatile int16_t steerpos;
 extern volatile uint8_t test_sensor;
-extern volatile uint16_t test_value;
+extern volatile uint32_t test_value;
 
 extern volatile enum _error _errorcode;
 extern volatile enum uiscreen ui_current_screen;

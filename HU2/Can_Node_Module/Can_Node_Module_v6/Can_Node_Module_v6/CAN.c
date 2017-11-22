@@ -95,8 +95,8 @@ ISR(CANIT_vect){  	// use interrupts
 				}
 				else
 				{
-					TransmitData[j++] = (uint16_t)PulsePerSec[req];
-					TransmitData[j++] = (((uint16_t)PulsePerSec[req]) >> 8);
+					TransmitData[j++] = PulsePerSec[req];
+					TransmitData[j++] = (PulsePerSec[req] >> 8);
 				}
 			}
 			can_tx(MASTERID, j); //Transmit data depending on the number of message received

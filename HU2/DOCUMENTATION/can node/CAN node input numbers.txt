@@ -17,14 +17,14 @@ INT 764321
 Currently this is how it should be set up:
 
 NODE1:
-	ADC3 - Steerpos
+	ADC0 - Steerpos
 	PPS3 - RPM left
 	PPS2 - RPM right
 
 NODE2:
-	ADC0 - Gas 1
-	ADC1 - Gas 2
-	ADC2 - Brake
+	ADC1 - Gas 1
+	ADC2 - Gas 2
+	ADC3 - Brake
 
 NODE3:
 	PPS0 - Flow left
