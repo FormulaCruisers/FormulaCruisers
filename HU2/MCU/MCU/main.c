@@ -73,6 +73,10 @@ uint8_t ttt = 0; //Counter to make sure each node only gets one request at a tim
 
 bool brakelighton = false;
 
+//Sensor test screen variables
+volatile uint8_t test_sensor = 0x10;
+volatile uint16_t test_value = 0x0000;
+
 ISR(TIMER0_COMP_vect)
 {
 	TCNT0 = 0;
@@ -93,14 +97,17 @@ ISR(TIMER0_COMP_vect)
 	}
 	
 	//Request gas/brake values
-	switch(ttt)
+	if(ui_current_screen != SCREEN_TEST)
 	{
-		case 0:
-			data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){RPM_FRONT_LEFT, RPM_FRONT_RIGHT, STEERING_POS}, NODEID1, 3);
-			break;
-		case 1:
-			data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){GAS_1, GAS_2, BRAKE}, NODEID2, 3);
-			break;
+		switch(ttt)
+		{
+			case 0:
+				data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){RPM_FRONT_LEFT, RPM_FRONT_RIGHT, STEERING_POS}, NODEID1, 3);
+				break;
+			case 1:
+				data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){GAS_1, GAS_2, BRAKE}, NODEID2, 3);
+				break;
+		}
 	}
 	
 	if(_errorcode != ERROR_NONE)
@@ -134,24 +141,20 @@ ISR(TIMER0_COMP_vect)
 			//At the end of the animation, switch back to the welcome screen
 			if(anim == 0) change_screen(SCREEN_WELCOME);
 			
-			if(btnblue == 1)
-			{
-				data_send_ecu(MOTOR_CONTROLLER, _HIGH);
-				//After enabling, the motor controller needs some time to start accepting messages. Because of this, add 200*(1000/500) = 400ms delay.
-				stimer = -200;
-				if(_errorcode == ERROR_NONE) change_screen(SCREEN_SAVING);
-			}
-			break;
+			//Purposefully fall through to the next label. Do not add a break here.
 		
 		case SCREEN_WELCOME:
 			//Animation timer
-			welcome_anim_ttt++;
-			if(welcome_anim_ttt > 2000)
+			if(anim == 0)
 			{
-				//Start animation
-				welcome_anim_ttt = 0;
-				anim = 27;
-				change_screen(SCREEN_ANIMATION);
+				welcome_anim_ttt++;
+				if(welcome_anim_ttt > 2000)
+				{
+					//Start animation
+					welcome_anim_ttt = 0;
+					anim = 27;
+					change_screen(SCREEN_ANIMATION);
+				}
 			}
 			
 			if(btnblue == 1)
@@ -161,8 +164,38 @@ ISR(TIMER0_COMP_vect)
 				stimer = -200;
 				if(_errorcode == ERROR_NONE) change_screen(SCREEN_SAVING);
 			}
+			
+			if(btn1 && btn2)
+			{
+				change_screen(SCREEN_TEST);
+			}
+			break;
+			
+			
+		//sensor testing screen
+		case SCREEN_TEST:
+			if(btnblue == 1 || btnblue == 0xFF) test_sensor += 0x10;
+			else if(btn2 == 1 || btn2 == 0xFF) test_sensor = ((test_sensor + 0x01) & 0x0F) + (test_sensor & 0xF0);
+			else if(btn1 == 1 || btn1 == 0xFF) test_sensor = ((test_sensor - 0x01) & 0x0F) + (test_sensor & 0xF0);
+			
+			//Skip 4-7 and 12-15 because those are never used
+			if((test_sensor & 0x04) > 0) test_sensor ^= 0x04;
+			
+			//Return button
+			if(btngreen == 1) change_screen(SCREEN_WELCOME);
+			
+			//Figure out which node to send it to
+			uint8_t tnode = (test_sensor & 0xF0);
+			uint16_t actualnode;
+			if(tnode == 0x10) actualnode = NODEID1;
+			else if(tnode == 0x20) actualnode = NODEID2;
+			else if(tnode == 0x30) actualnode = NODEID3;
+			else if(tnode == 0x40) actualnode = NODEID4;
+			else break;
+			data_send8(CAN_REQUEST_DATA, test_sensor, actualnode);
 			break;
 		
+		//Saving for the settings of the motor controller
 		case SCREEN_SAVING:
 			if (stimer == 10)
 			{

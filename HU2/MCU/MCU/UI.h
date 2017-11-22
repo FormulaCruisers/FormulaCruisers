@@ -15,6 +15,8 @@ enum uiscreen
 	
 	SCREEN_SETTINGS,
 	SCREEN_SAVING,
+	
+	SCREEN_TEST,
 };
 
 volatile enum uiscreen ui_current_screen;
@@ -24,6 +26,10 @@ extern volatile uint16_t gas1perc, gas2perc, brakeperc, predistimer, flowleft, f
 extern volatile uint8_t shutdownon, ams_shutdown, imd_shutdown;
 extern volatile uint8_t selsetting, ischanging, vsettings[SETTINGS_COUNT];
 extern volatile int16_t steerpos;
+
+extern volatile uint8_t test_sensor;
+extern volatile uint16_t test_value;
+
 void lcd_refresh();
 void lcd_quickrefresh();
 void change_screen(enum uiscreen s);

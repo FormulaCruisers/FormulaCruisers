@@ -1,5 +1,6 @@
 #ifndef _DATA_H
 #define _DATA_H
+#include "UI.h"
 
 void data_send_ecu(uint8_t node, uint8_t data);
 void data_send_ecu_a(uint8_t count, uint8_t ndarr[]);
@@ -13,6 +14,10 @@ extern volatile uint16_t rpm_fl, rpm_fr, rpm_br, rpm_bl, flowleft, flowright;
 extern volatile uint8_t shutdownon, ams_shutdown, imd_shutdown;
 extern volatile uint32_t engine_max_perc;
 extern volatile int16_t steerpos;
+extern volatile uint8_t test_sensor;
+extern volatile uint16_t test_value;
+
 extern volatile enum _error _errorcode;
+extern volatile enum uiscreen ui_current_screen;
 
 #endif

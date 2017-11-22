@@ -76,81 +76,89 @@ ISR(CANIT_vect)
 		{
 			switch(ReceiveData[i])
 			{
-				case GAS_1:
-					gas1 = (ReceiveData[i+1] +  (ReceiveData[i+2] << 8));
-			
-					//Bound checking while fixing range
-					gas1perc = (gas1 < GAS1MIN) ? 0 : ((gas1 > GAS1MAX) ? (GAS1MAX - GAS1MIN) : (gas1 - GAS1MIN));
-					gas1eng = (gas1perc * engine_max_perc) / (double)(GAS1MAX - GAS1MIN);
-					gas1perc = (gas1perc * 100) / (GAS1MAX - GAS1MIN);
+				if(ui_current_screen == SCREEN_TEST)
+				{
+					test_value = (ReceiveData[i+1] +  (ReceiveData[i+2] << 8));
 					i+=2;
-					break;
+				}
+				else
+				{
+					case GAS_1:
+						gas1 = (ReceiveData[i+1] +  (ReceiveData[i+2] << 8));
+			
+						//Bound checking while fixing range
+						gas1perc = (gas1 < GAS1MIN) ? 0 : ((gas1 > GAS1MAX) ? (GAS1MAX - GAS1MIN) : (gas1 - GAS1MIN));
+						gas1eng = (gas1perc * engine_max_perc) / (double)(GAS1MAX - GAS1MIN);
+						gas1perc = (gas1perc * 100) / (GAS1MAX - GAS1MIN);
+						i+=2;
+						break;
 
-				case GAS_2:
-					gas2 = (ReceiveData[i+1] + (ReceiveData[i+2] << 8));
-					gas2perc = (gas2 < GAS2MIN) ? 0 : ((gas2 > GAS2MAX) ? (GAS2MAX - GAS2MIN) : (gas2 - GAS2MIN));
-					gas2perc = (gas2perc * 100) / (GAS2MAX - GAS2MIN);
-					i+=2;
-					break;
+					case GAS_2:
+						gas2 = (ReceiveData[i+1] + (ReceiveData[i+2] << 8));
+						gas2perc = (gas2 < GAS2MIN) ? 0 : ((gas2 > GAS2MAX) ? (GAS2MAX - GAS2MIN) : (gas2 - GAS2MIN));
+						gas2perc = (gas2perc * 100) / (GAS2MAX - GAS2MIN);
+						i+=2;
+						break;
 
-				case BRAKE:
-					brake = (ReceiveData[i+1] + (ReceiveData[i+2] << 8));
-					brakeperc = (brake < BRAKEMIN) ? 0 : ((brake > BRAKEMAX) ? (BRAKEMAX - BRAKEMIN) : (brake - BRAKEMIN));
-					brakeperc = (brakeperc * 100) / (BRAKEMAX - BRAKEMIN);
-					i+=2;
-					break;
+					case BRAKE:
+						brake = (ReceiveData[i+1] + (ReceiveData[i+2] << 8));
+						brakeperc = (brake < BRAKEMIN) ? 0 : ((brake > BRAKEMAX) ? (BRAKEMAX - BRAKEMIN) : (brake - BRAKEMIN));
+						brakeperc = (brakeperc * 100) / (BRAKEMAX - BRAKEMIN);
+						i+=2;
+						break;
 			
-				case SHUTDOWN:
-					shutdownon = ReceiveData[i+1] ? 1 : 0;
-					i++;
-					break;
+					case SHUTDOWN:
+						shutdownon = ReceiveData[i+1] ? 1 : 0;
+						i++;
+						break;
 				
-				case RPM_FRONT_LEFT:
-					rpm_fl = (ReceiveData[i+1] + (ReceiveData[i+2] << 8));
-					//rpm_fl++;
-					i+=2;
-					break;
+					case RPM_FRONT_LEFT:
+						rpm_fl = (ReceiveData[i+1] + (ReceiveData[i+2] << 8));
+						//rpm_fl++;
+						i+=2;
+						break;
 				
-				case RPM_FRONT_RIGHT:
-					rpm_fr = (ReceiveData[i+1] + (ReceiveData[i+2] << 8));
-					//rpm_fr++;
-					i+=2;
-					break;
+					case RPM_FRONT_RIGHT:
+						rpm_fr = (ReceiveData[i+1] + (ReceiveData[i+2] << 8));
+						//rpm_fr++;
+						i+=2;
+						break;
 				
-				case RPM_BACK_LEFT:
-					rpm_bl = (ReceiveData[i+1] + (ReceiveData[i+2] << 8));
-					//rpm_bl++;
-					i+=2;
-					break;
+					case RPM_BACK_LEFT:
+						rpm_bl = (ReceiveData[i+1] + (ReceiveData[i+2] << 8));
+						//rpm_bl++;
+						i+=2;
+						break;
 				
-				case RPM_BACK_RIGHT:
-					rpm_br = (ReceiveData[i+1] + (ReceiveData[i+2] << 8));
-					//rpm_br++;
-					i+=2;
-					break;
+					case RPM_BACK_RIGHT:
+						rpm_br = (ReceiveData[i+1] + (ReceiveData[i+2] << 8));
+						//rpm_br++;
+						i+=2;
+						break;
 				
-				case STEERING_POS:
-					steerpos = (ReceiveData[i+1] + (ReceiveData[i+2] << 8)) - STEER_MIDDLE;
-					i+=2;
-					break;
+					case STEERING_POS:
+						steerpos = (ReceiveData[i+1] + (ReceiveData[i+2] << 8)) - STEER_MIDDLE;
+						i+=2;
+						break;
 				
-				case FLOW_LEFT:
-					flowleft = (ReceiveData[i+1] + (ReceiveData[i+2] << 8));
-					i+=2;
-					break;
+					case FLOW_LEFT:
+						flowleft = (ReceiveData[i+1] + (ReceiveData[i+2] << 8));
+						i+=2;
+						break;
 				
-				case FLOW_RIGHT:
-					flowleft = (ReceiveData[i+1] + (ReceiveData[i+2] << 8));
-					i+=2;
-					break;
+					case FLOW_RIGHT:
+						flowleft = (ReceiveData[i+1] + (ReceiveData[i+2] << 8));
+						i+=2;
+						break;
 				
-				case AMSSHUTDOWN:
-					ams_shutdown = _HIGH;
-					break;
+					case AMSSHUTDOWN:
+						ams_shutdown = _HIGH;
+						break;
 			
-				case IMDSHUTDOWN:
-					imd_shutdown = _HIGH;
-					break;
+					case IMDSHUTDOWN:
+						imd_shutdown = _HIGH;
+						break;
+				}
 			}
 		}
 	}
