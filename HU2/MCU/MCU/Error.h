@@ -26,6 +26,12 @@ enum _error
 	ERROR_CAN_CRC,
 	ERROR_CAN_FORM,
 	ERROR_CAN_ACK,
+
+	ERROR_SD_INIT,			//When the SD card could not be initialized
+	ERROR_SD_BLOCK,			//When a block error occurs
+	ERROR_SD_NOTREADY,		//When the SD card is not ready
+	ERROR_SD_READ,			//When an SD read error occurs
+	ERROR_SD_WRITE,			//When an SD write error occurs
 	
 	ERROR_UNKNOWN,			//For unknown errors
 };

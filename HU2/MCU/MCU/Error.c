@@ -28,6 +28,12 @@ char* get_error(enum _error e)
 		case ERROR_CAN_CRC:			return "CAN CRC check error";
 		case ERROR_CAN_FORM:		return "CAN fixed form error";
 		case ERROR_CAN_ACK:			return "CAN no ACK error";
+
+		case ERROR_SD_INIT:			return "SD Init error";
+		case ERROR_SD_BLOCK:		return "SD Block error";
+		case ERROR_SD_NOTREADY:		return "SD not ready";
+		case ERROR_SD_READ:			return "SD Read error";
+		case ERROR_SD_WRITE:		return "SD Write error";
 	
 		case ERROR_UNKNOWN:
 		default:			return "Unknown error?!";

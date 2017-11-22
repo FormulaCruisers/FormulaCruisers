@@ -185,6 +185,12 @@
     <Compile Include="main.c">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="sd_raw.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="sd_raw.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="UI.c">
       <SubType>compile</SubType>
     </Compile>

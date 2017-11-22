@@ -42,6 +42,7 @@ C_SRCS +=  \
 ../Error.c \
 ../lcd.c \
 ../main.c \
+../sd_raw.c \
 ../UI.c
 
 
@@ -57,6 +58,7 @@ Data.o \
 Error.o \
 lcd.o \
 main.o \
+sd_raw.o \
 UI.o
 
 OBJS_AS_ARGS +=  \
@@ -65,6 +67,7 @@ Data.o \
 Error.o \
 lcd.o \
 main.o \
+sd_raw.o \
 UI.o
 
 C_DEPS +=  \
@@ -73,6 +76,7 @@ Data.d \
 Error.d \
 lcd.d \
 main.d \
+sd_raw.d \
 UI.d
 
 C_DEPS_AS_ARGS +=  \
@@ -81,6 +85,7 @@ Data.d \
 Error.d \
 lcd.d \
 main.d \
+sd_raw.d \
 UI.d
 
 OUTPUT_FILE_PATH +=MCU.elf
@@ -97,6 +102,8 @@ LINKER_SCRIPT_DEP+=
 
 
 # AVR32/GNU C Compiler
+
+
 
 
 

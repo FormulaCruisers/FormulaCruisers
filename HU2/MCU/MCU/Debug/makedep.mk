@@ -12,5 +12,7 @@ lcd.c
 
 main.c
 
+sd_raw.c
+
 UI.c
 
