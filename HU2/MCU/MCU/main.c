@@ -253,8 +253,8 @@ ISR(TIMER0_COMP_vect)
 			}
 			else if(predistimer == PREDISCHARGE_TIMER - 1900)
 			{
-				data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){FLOW_LEFT, TEMP_LEFT}, NODEID3);
-				data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){FLOW_RIGHT, TEMP_RIGHT}, NODEID4);
+				data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){FLOW_LEFT, TEMP_LEFT}, NODEID3, 2);
+				data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){FLOW_RIGHT, TEMP_RIGHT}, NODEID4, 2);
 			}
 			else if(predistimer == PREDISCHARGE_TIMER - 2000)
 			{
@@ -275,8 +275,8 @@ ISR(TIMER0_COMP_vect)
 		case SCREEN_DRIVING:
 			if(ttt == 1)
 			{
-				data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){FLOW_LEFT, TEMP_LEFT}, NODEID3);
-				data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){FLOW_RIGHT, TEMP_RIGHT}, NODEID4);
+				data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){FLOW_LEFT, TEMP_LEFT}, NODEID3, 2);
+				data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){FLOW_RIGHT, TEMP_RIGHT}, NODEID4, 2);
 			}
 			if(ttt == 3)
 			{
