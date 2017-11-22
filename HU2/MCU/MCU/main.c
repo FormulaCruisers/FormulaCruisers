@@ -75,13 +75,13 @@ bool brakelighton = false;
 
 //Sensor test screen variables
 volatile uint8_t test_sensor = 0x10;
-volatile uint16_t test_value = 0x0000;
+volatile uint32_t test_value = 0x00000000;
 
 ISR(TIMER0_COMP_vect)
 {
 	TCNT0 = 0;
 	
-	data_send8(CAN_REQUEST_DATA, SHUTDOWN, ECU2ID);
+	if(ui_current_screen != SCREEN_TEST) data_send8(CAN_REQUEST_DATA, SHUTDOWN, ECU2ID);
 	
 	debounce(&btnblue, PIND & (1<<BUTTONBLUE));
 	debounce(&btngreen, PIND & (1<<BUTTONGREEN));

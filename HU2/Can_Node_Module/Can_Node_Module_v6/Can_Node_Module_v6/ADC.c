@@ -37,11 +37,11 @@ void getADC(uint8_t ADC_pin){
 	ADCSRA |= (1<<ADSC) | (1<<ADEN);                 
 	while (ADCSRA & (1<<ADSC));
 	
-	if(ADCL > 50 || ADCH > 0)
-	{
+	//if(ADCL > 50 || ADCH > 0)
+	//{
 		R_L = ADCL;
 		R_H = ADCH;	
-	}
+	//}
 }
 
 #endif
