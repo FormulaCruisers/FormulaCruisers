@@ -11,8 +11,8 @@
 #include "ADC.h"
 #include "ExternalInterrupt.h"
 
-uint8_t ReceiveData[64];
-uint8_t TransmitData[64];
+uint8_t ReceiveData[8];
+uint8_t TransmitData[8];
 
 uint8_t is_enabled[16] = {0};
 
@@ -40,13 +40,12 @@ ISR(CANIT_vect){  	// use interrupts
 		if(length > 2)
 		{
 			//Only should happen in multi-request messages
-			for (uint8_t i = 3; i < length; i++)
+			for (uint8_t i = 2; i < length; i++)
 			ReceiveData[i] = CANMSG;
 		}
+		uint8_t j = 0;
 		if(ReceiveData[0] == 0x3D)
-		{
-			uint8_t j = 0;
-			
+		{	
 			//Allow for multiple requests to be sent at once
 			for(uint8_t i = 1; i < length; i++)
 			{

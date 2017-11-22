@@ -93,7 +93,7 @@ void get_screen(char buffer[4][21], enum uiscreen s)
 			snprintf(buffer[0], sizeof buffer[0], "Gas1:%3d%% Gas2:%3d%% ", gas1perc, gas2perc);
 			snprintf(buffer[1], sizeof buffer[1], "Brake:%3d%%          ", brakeperc);
 			snprintf(buffer[2], sizeof buffer[2], "Steerpos:%5d      ", steerpos);
-			snprintf(buffer[3], sizeof buffer[3], "Rpm: FL%5d FR%5d", rpm_fl, rpm_fr);
+			snprintf(buffer[3], sizeof buffer[3], "Rpm: FL%5u FR%5u", rpm_fl, rpm_fr);
 			//snprintf(buffer[3], sizeof buffer[3], "Press blue to begin ");
 			break;
 
@@ -101,13 +101,13 @@ void get_screen(char buffer[4][21], enum uiscreen s)
 			snprintf(buffer[0], sizeof buffer[0], "Gas1:%3d%% Gas2:%3d%% ", gas1perc, gas2perc);
 			snprintf(buffer[1], sizeof buffer[1], "Brake:%3d%%          ", brakeperc);
 			snprintf(buffer[2], sizeof buffer[2], "                    ");
-			snprintf(buffer[3], sizeof buffer[3], "                    ");
+			snprintf(buffer[3], sizeof buffer[3], "Battery: 101%%       ");
 			break;
 
 		case SCREEN_STATUS:
-			snprintf(buffer[0], sizeof buffer[0], "Flow: L%5d  R%5d", flowleft, flowright);
-			snprintf(buffer[1], sizeof buffer[1], "Rpm: FL%5d FR%5d", rpm_fl, rpm_fr);
-			snprintf(buffer[2], sizeof buffer[2], "Gas1:%3d%% Gas2:%3d%% ", gas1perc, gas2perc);
+			snprintf(buffer[0], sizeof buffer[0], "Flow: L%5u  R%5u", flowleft, flowright);
+			snprintf(buffer[1], sizeof buffer[1], "Rpm: FL%5u FR%5u", rpm_fl, rpm_fr);
+			snprintf(buffer[2], sizeof buffer[2], "Gas1:%3u%% Gas2:%3u%% ", gas1perc, gas2perc);
 			snprintf(buffer[3], sizeof buffer[3], "Steerpos: %5d     ", steerpos);
 			break;
 			

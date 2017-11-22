@@ -81,7 +81,7 @@ ISR(TIMER0_COMP_vect)
 {
 	TCNT0 = 0;
 	
-	if(ui_current_screen != SCREEN_TEST) data_send8(CAN_REQUEST_DATA, SHUTDOWN, ECU2ID);
+	//if(ui_current_screen != SCREEN_TEST) data_send8(CAN_REQUEST_DATA, SHUTDOWN, ECU2ID);
 	
 	debounce(&btnblue, PIND & (1<<BUTTONBLUE));
 	debounce(&btngreen, PIND & (1<<BUTTONGREEN));
@@ -102,10 +102,12 @@ ISR(TIMER0_COMP_vect)
 		switch(ttt)
 		{
 			case 0:
-				data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){RPM_FRONT_LEFT, RPM_FRONT_RIGHT, STEERING_POS}, NODEID1, 3);
+				data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){RPM_FRONT_RIGHT, RPM_FRONT_LEFT}, NODEID1, 2);
+				data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){BRAKE}, NODEID2, 1);
 				break;
 			case 1:
-				data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){GAS_1, GAS_2, BRAKE}, NODEID2, 3);
+				data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){STEERING_POS}, NODEID1, 1);
+				data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){GAS_1, GAS_2}, NODEID2, 2);
 				break;
 		}
 	}

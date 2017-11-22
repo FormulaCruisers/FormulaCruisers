@@ -43,7 +43,7 @@ void data_send_motor_d(uint8_t header, double data, int32_t mul, uint16_t node)
 }
 
 ISR(CANIT_vect)
-{
+{	
 	CANPAGE = ( 0 << MOBNB3 ) | ( 0 << MOBNB2 ) | ( 0 << MOBNB1 ) | ( 1 << MOBNB0 ); // select CANMOB 0001 = MOB1
 
 	uint16_t ReceiveAddress = (CANIDT1 << 3) | ((CANIDT2 & 0b11100000) >> 5);
@@ -56,6 +56,7 @@ ISR(CANIT_vect)
 		
 		//for ( int8_t i = 0; i < length; i++ ) ReceiveData[i] = CANMSG;
 		//Loop unrolling
+		uint8_t ReceiveData[8];
 		ReceiveData[0] = CANMSG;
 		if(length > 1)
 		{
@@ -82,7 +83,9 @@ ISR(CANIT_vect)
 		}
 		else
 		{
-			for(int i = 0; i < length; i++)
+			test_value = ((uint32_t)length << 24) + ((uint32_t)ReceiveData[3] << 16) + ((uint32_t)ReceiveData[4] << 8) + (ReceiveData[5]);
+			uint8_t i = 0;
+			while(i < length)
 			{
 				switch(ReceiveData[i])
 				{
@@ -93,73 +96,77 @@ ISR(CANIT_vect)
 						gas1perc = (gas1 < GAS1MIN) ? 0 : ((gas1 > GAS1MAX) ? (GAS1MAX - GAS1MIN) : (gas1 - GAS1MIN));
 						gas1eng = (gas1perc * engine_max_perc) / (double)(GAS1MAX - GAS1MIN);
 						gas1perc = (gas1perc * 100) / (GAS1MAX - GAS1MIN);
-						i+=2;
+						i+=3;
 						break;
 
 					case GAS_2:
 						gas2 = (ReceiveData[i+1] + (ReceiveData[i+2] << 8));
 						gas2perc = (gas2 < GAS2MIN) ? 0 : ((gas2 > GAS2MAX) ? (GAS2MAX - GAS2MIN) : (gas2 - GAS2MIN));
 						gas2perc = (gas2perc * 100) / (GAS2MAX - GAS2MIN);
-						i+=2;
+						i+=3;
 						break;
 
 					case BRAKE:
 						brake = (ReceiveData[i+1] + (ReceiveData[i+2] << 8));
 						brakeperc = (brake < BRAKEMIN) ? 0 : ((brake > BRAKEMAX) ? (BRAKEMAX - BRAKEMIN) : (brake - BRAKEMIN));
 						brakeperc = (brakeperc * 100) / (BRAKEMAX - BRAKEMIN);
-						i+=2;
+						i+=3;
 						break;
 			
 					case SHUTDOWN:
 						shutdownon = ReceiveData[i+1] ? 1 : 0;
-						i++;
+						i+=2;
 						break;
 				
 					case RPM_FRONT_LEFT:
-						rpm_fl = (ReceiveData[i+1] + (ReceiveData[i+2] << 8));
-						//rpm_fl++;
-						i+=2;
+						rpm_fl = (uint16_t)(250000.d / (double)(ReceiveData[i+1] + (ReceiveData[i+2] << 8)));
+						if(rpm_fl > 10000) rpm_fl = 0;
+						i+=3;
 						break;
 				
 					case RPM_FRONT_RIGHT:
-						rpm_fr = (ReceiveData[i+1] + (ReceiveData[i+2] << 8));
-						//rpm_fr++;
-						i+=2;
+						rpm_fr = (uint16_t)(250000.d / (double)(ReceiveData[i+1] + (ReceiveData[i+2] << 8)));
+						if(rpm_fr > 10000) rpm_fr = 0;
+						i+=3;
 						break;
 				
 					case RPM_BACK_LEFT:
 						rpm_bl = (ReceiveData[i+1] + (ReceiveData[i+2] << 8));
-						//rpm_bl++;
-						i+=2;
+						i+=3;
 						break;
 				
 					case RPM_BACK_RIGHT:
 						rpm_br = (ReceiveData[i+1] + (ReceiveData[i+2] << 8));
-						//rpm_br++;
-						i+=2;
+						i+=3;
 						break;
 				
 					case STEERING_POS:
 						steerpos = (ReceiveData[i+1] + (ReceiveData[i+2] << 8)) - STEER_MIDDLE;
-						i+=2;
+						i+=3;
 						break;
 				
 					case FLOW_LEFT:
 						flowleft = (ReceiveData[i+1] + (ReceiveData[i+2] << 8));
-						i+=2;
+						i+=3;
 						break;
 				
 					case FLOW_RIGHT:
 						flowleft = (ReceiveData[i+1] + (ReceiveData[i+2] << 8));
-						i+=2;
+						i+=3;
 						break;
 				
 					case AMSSHUTDOWN:
 						ams_shutdown = _HIGH;
+						i++;
 						break;
 			
 					case IMDSHUTDOWN:
 						imd_shutdown = _HIGH;
+						i++;
+						break;
+						
+					default:
+						i++;
 						break;
 				}
 			}
