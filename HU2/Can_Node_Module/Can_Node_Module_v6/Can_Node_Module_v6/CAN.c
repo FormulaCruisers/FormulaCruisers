@@ -26,26 +26,23 @@ ISR(CANIT_vect){  	// use interrupts
 	CANPAGE = ( 0 << MOBNB3 ) | ( 0 << MOBNB2 ) | ( 0 << MOBNB1 ) | ( 1 << MOBNB0 ); // select CANMOB 0001 = MOB1
 
 	length = ( CANCDMOB & 0x0F );	// DLC, number of bytes to be received
-	//for ( int8_t i = 0; i < length; i++ ){
-	//	ReceiveData[i] = CANMSG; // Get data, INDX auto increments CANMSG
-	//}
-	//Loop unrolling
-	ReceiveData[0] = CANMSG;
-	if(length > 1)
+	
+	uint16_t ReceiveAddress = (CANIDT1 << 3) | ((CANIDT2 & 0b11100000) >> 5);
+	
+	if(ReceiveAddress == FUNCTION)
 	{
-		ReceiveData[1] = CANMSG;
+		//for ( int8_t i = 0; i < length; i++ ){
+		//	ReceiveData[i] = CANMSG; // Get data, INDX auto increments CANMSG
+		//}
+		//Loop unrolling
+		ReceiveData[0] = CANMSG;
+		ReceiveData[1] = CANMSG; //CAN nodes should *always* receive at least two bytes of data. This assumes that that is indeed the case.
 		if(length > 2)
 		{
 			//Only should happen in multi-request messages
 			for (uint8_t i = 3; i < length; i++)
 			ReceiveData[i] = CANMSG;
 		}
-	}
-	
-	uint16_t ReceiveAddress = (CANIDT1 << 3) | ((CANIDT2 & 0b11100000) >> 5);
-	
-	if(ReceiveAddress == FUNCTION)
-	{
 		if(ReceiveData[0] == 0x3D)
 		{
 			uint8_t j = 0;

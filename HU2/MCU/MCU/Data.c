@@ -106,24 +106,26 @@ ISR(CANIT_vect)
 					break;
 				
 				case RPM_FRONT_LEFT:
-					//rpm_fl = (ReceiveData[i+1] + (ReceiveData[i+2] << 8));
-					rpm_fl++;
+					rpm_fl = (ReceiveData[i+1] + (ReceiveData[i+2] << 8));
+					//rpm_fl++;
 					i+=2;
 					break;
 				
 				case RPM_FRONT_RIGHT:
-					//rpm_fr = (ReceiveData[i+1] + (ReceiveData[i+2] << 8));
-					rpm_fr++;
+					rpm_fr = (ReceiveData[i+1] + (ReceiveData[i+2] << 8));
+					//rpm_fr++;
 					i+=2;
 					break;
 				
 				case RPM_BACK_LEFT:
-					rpm_bl++;
+					rpm_bl = (ReceiveData[i+1] + (ReceiveData[i+2] << 8));
+					//rpm_bl++;
 					i+=2;
 					break;
 				
 				case RPM_BACK_RIGHT:
-					rpm_br++;
+					rpm_br = (ReceiveData[i+1] + (ReceiveData[i+2] << 8));
+					//rpm_br++;
 					i+=2;
 					break;
 				

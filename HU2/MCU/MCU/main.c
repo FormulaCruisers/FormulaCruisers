@@ -253,8 +253,8 @@ ISR(TIMER0_COMP_vect)
 			}
 			else if(predistimer == PREDISCHARGE_TIMER - 1900)
 			{
-				data_send8(CAN_REQUEST_DATA, FLOW_LEFT, NODEID3);
-				data_send8(CAN_REQUEST_DATA, FLOW_RIGHT, NODEID4);
+				data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){FLOW_LEFT, TEMP_LEFT}, NODEID3);
+				data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){FLOW_RIGHT, TEMP_RIGHT}, NODEID4);
 			}
 			else if(predistimer == PREDISCHARGE_TIMER - 2000)
 			{
@@ -275,8 +275,8 @@ ISR(TIMER0_COMP_vect)
 		case SCREEN_DRIVING:
 			if(ttt == 1)
 			{
-				data_send8(CAN_REQUEST_DATA, FLOW_LEFT, NODEID3);
-				data_send8(CAN_REQUEST_DATA, FLOW_RIGHT, NODEID4);
+				data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){FLOW_LEFT, TEMP_LEFT}, NODEID3);
+				data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){FLOW_RIGHT, TEMP_RIGHT}, NODEID4);
 			}
 			if(ttt == 3)
 			{
@@ -288,16 +288,6 @@ ISR(TIMER0_COMP_vect)
 			
 			if(_errorcode == ERROR_NONE)
 			{
-				/*
-				//Alternate sending data to the drivers; If sending both at the same time, neither work.
-				//This *does* mean that one of the drivers will be delayed by 1000/500 = 2ms which could theoretically be a problem.
-				if(ttt_drive == 0)
-					data_send16(MC_SET_TORQUE, -gas1eng, MCDR); //Right driver should get a negative value to drive forward
-				else if(ttt_drive == 1)
-					data_send16(MC_SET_TORQUE, gas1eng, MCDL);
-				
-				ttt_drive = 1 - ttt_drive;*/
-				
 				data_send_motor_d(MC_SET_TORQUE, -gas1eng, ENGINE_MAX, MCDR); //Right driver should get a negative value to drive forward
 				_delay_us(2);	//Experimental: 2 µs delay between drivers instead of using timer
 				data_send_motor_d(MC_SET_TORQUE, gas1eng, ENGINE_MAX, MCDL);
@@ -380,10 +370,10 @@ int main()
 	change_screen(SCREEN_WELCOME);
 	
 	//Initialize timer0
-	TCCR0A |= (1 << CS02);	//Prescaler
-	TCNT0 = 0;							//Set initial counter value
+	TCCR0A |= (1 << CS02);					//Prescaler
+	TCNT0 = 0;								//Set initial counter value
 	OCR0A = _TM0;
-	TIMSK0 |= (1 << OCIE0A);					//Overflow Interrupt Enable
+	TIMSK0 |= (1 << OCIE0A);				//Overflow Interrupt Enable
 	
 	//Initialize timer2
 	ASSR  = (1<< AS2);						//Enable asynchronous mode
