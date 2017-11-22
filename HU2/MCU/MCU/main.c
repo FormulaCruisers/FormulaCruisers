@@ -179,7 +179,7 @@ ISR(TIMER0_COMP_vect)
 			else if(btn1 == 1 || btn1 == 0xFF) test_sensor = ((test_sensor - 0x01) & 0x0F) + (test_sensor & 0xF0);
 			
 			//Skip 4-7 and 12-15 because those are never used
-			if((test_sensor & 0x04) > 0) test_sensor ^= 0x04;
+			if((test_sensor & 0x04) > 0) test_sensor ^= 0b00001100;
 			
 			//Return button
 			if(btngreen == 1) change_screen(SCREEN_WELCOME);
