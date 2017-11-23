@@ -83,7 +83,6 @@ ISR(CANIT_vect)
 		}
 		else
 		{
-			test_value = ((uint32_t)length << 24) + ((uint32_t)ReceiveData[3] << 16) + ((uint32_t)ReceiveData[4] << 8) + (ReceiveData[5]);
 			uint8_t i = 0;
 			while(i < length)
 			{
@@ -151,7 +150,19 @@ ISR(CANIT_vect)
 						break;
 				
 					case FLOW_RIGHT:
-						flowleft = (ReceiveData[i+1] + (ReceiveData[i+2] << 8));
+						test_value = ((uint32_t)length << 24) + ((uint32_t)ReceiveData[3] << 16) + ((uint32_t)ReceiveData[4] << 8) + (ReceiveData[5]);
+						flowright = (ReceiveData[i+1] + (ReceiveData[i+2] << 8));
+						i+=3;
+						break;
+						
+					case TEMP_LEFT:
+						templeft = (ReceiveData[i+1] + (ReceiveData[i+2] << 8));
+						i+=3;
+						break;
+					
+					case TEMP_RIGHT:
+						test_value = ((uint32_t)length << 24) + ((uint32_t)ReceiveData[3] << 16) + ((uint32_t)ReceiveData[4] << 8) + (ReceiveData[5]);
+						tempright = (ReceiveData[i+1] + (ReceiveData[i+2] << 8));
 						i+=3;
 						break;
 				

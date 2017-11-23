@@ -10,7 +10,7 @@ void wait_for_rx();
 
 extern volatile double gas1eng;
 extern volatile uint16_t gas1, gas2, brake, gas1perc, gas2perc, brakeperc;
-extern volatile uint16_t rpm_fl, rpm_fr, rpm_br, rpm_bl, flowleft, flowright;
+extern volatile uint16_t rpm_fl, rpm_fr, rpm_br, rpm_bl, flowleft, flowright, templeft, tempright;
 extern volatile uint8_t shutdownon, ams_shutdown, imd_shutdown;
 extern volatile uint32_t engine_max_perc;
 extern volatile int16_t steerpos;

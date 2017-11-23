@@ -4,7 +4,7 @@
 
 #define F_CPU 16000000UL	// Define processor clock speed for compiler
 
-#define SOFTWARE_VERSION			"Software: V2.073    "  //Version should be 2.xxx where xxx is amount of commits(do "git rev-list HEAD --count" to check)
+#define SOFTWARE_VERSION			"Software: V2.076    "  //Version should be 2.xxx where xxx is amount of commits(do "git rev-list HEAD --count" to check)
 
 #define RTDS						PC7 //Loud ready beep
 #define RTDS_TIME					2000 //2 seconds
@@ -66,11 +66,11 @@
 #define BRAKE						0x2B //ADC2
 
 /*************** Node 3 ***************/
-#define FLOW_LEFT					0x30 //PPS0
+#define FLOW_LEFT					0x32 //PPS2
 #define TEMP_LEFT					0x39 //ADC1
 
 /*************** Node 4 ***************/
-#define FLOW_RIGHT					0x40 //PPS0
+#define FLOW_RIGHT					0x42 //PPS2
 #define TEMP_RIGHT					0x49 //ADC1
 
 /*************** ECU 2  ***************/

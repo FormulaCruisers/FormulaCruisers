@@ -36,6 +36,8 @@ volatile int16_t steerpos = 0;
 
 volatile uint16_t flowleft = 0;
 volatile uint16_t flowright = 0;
+volatile uint16_t templeft = 0;
+volatile uint16_t tempright = 0;
 
 uint16_t readybeep = 0;
 
@@ -104,10 +106,12 @@ ISR(TIMER0_COMP_vect)
 			case 0:
 				data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){RPM_FRONT_RIGHT, RPM_FRONT_LEFT}, NODEID1, 2);
 				data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){BRAKE}, NODEID2, 1);
+				data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){FLOW_LEFT, TEMP_LEFT}, NODEID3, 2);
 				break;
 			case 1:
 				data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){STEERING_POS}, NODEID1, 1);
 				data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){GAS_1, GAS_2}, NODEID2, 2);
+				data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){TEMP_RIGHT, FLOW_RIGHT}, NODEID4, 2);
 				break;
 		}
 	}
@@ -116,10 +120,10 @@ ISR(TIMER0_COMP_vect)
 	{
 		//Reset literally everything possible
 		if(errortimer < 0xFF) errortimer++;
-		if(errortimer == 1) data_send_ecu_a(6, (uint8_t[]){	RUN_ENABLE, _LOW,
+		if(errortimer == 1) data_send_ecu_a(3, (uint8_t[]){	RUN_ENABLE, _LOW,
 															MAIN_RELAIS, _LOW,
-															PREDISCHARGE, _LOW,
-															MOTOR_CONTROLLER, _LOW,
+															PREDISCHARGE, _LOW});
+		if(errortimer == 2) data_send_ecu_a(3, (uint8_t[]){	MOTOR_CONTROLLER, _LOW,
 															PUMP_ENABLE,   _LOW,
 															BRAKELIGHT, _LOW});
 		
@@ -167,8 +171,14 @@ ISR(TIMER0_COMP_vect)
 				if(_errorcode == ERROR_NONE) change_screen(SCREEN_SAVING);
 			}
 			
+			if(btngreen == 1)
+			{
+				data_send_ecu(BRAKELIGHT, _HIGH);
+			}
+			
 			if(btn1 && btn2)
 			{
+				data_send_ecu(PUMP_ENABLE, _HIGH);
 				change_screen(SCREEN_TEST);
 			}
 			break;
@@ -181,7 +191,11 @@ ISR(TIMER0_COMP_vect)
 			else if(btn1 == 1 || btn1 == 0xFF) test_sensor = ((test_sensor - 0x01) & 0x0F) + (test_sensor & 0xF0);
 			
 			//Skip 4-7 and 12-15 because those are never used
-			if((test_sensor & 0x04) > 0) test_sensor ^= 0b00001100;
+			if((test_sensor & 0x04) > 0)
+			{
+				if(test_sensor & 0x01)	test_sensor ^= 0b00000100;
+				else					test_sensor ^= 0b00001100;
+			}
 			
 			//Return button
 			if(btngreen == 1) change_screen(SCREEN_WELCOME);
