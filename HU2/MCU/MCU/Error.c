@@ -34,6 +34,7 @@ char* get_error(enum _error e)
 		case ERROR_SD_NOTREADY:		return "SD not ready";
 		case ERROR_SD_READ:			return "SD Read error";
 		case ERROR_SD_WRITE:		return "SD Write error";
+		case ERROR_SD_SIZE:			return "SD Size error";
 	
 		case ERROR_UNKNOWN:
 		default:			return "Unknown error?!";

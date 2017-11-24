@@ -82,6 +82,10 @@ volatile uint32_t test_value = 0x00000000;
 uint16_t EEMEM ee_boot_count = 1;
 uint16_t boot_count;
 
+//SD card variables
+uint8_t sdbuffer[512] = {0xff};
+uint16_t sd_current_pos = 0;
+
 ISR(TIMER0_COMP_vect)
 {
 	TCNT0 = 0;

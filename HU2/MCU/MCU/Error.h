@@ -32,6 +32,7 @@ enum _error
 	ERROR_SD_NOTREADY,		//When the SD card is not ready
 	ERROR_SD_READ,			//When an SD read error occurs
 	ERROR_SD_WRITE,			//When an SD write error occurs
+	ERROR_SD_SIZE,			//Writing too much data to SD card
 	
 	ERROR_UNKNOWN,			//For unknown errors
 };

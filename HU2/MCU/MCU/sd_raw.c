@@ -1,8 +1,15 @@
 #include "sd_raw.h"
 #include "Error.h"
 #include <string.h>
+#include <avr/eeprom.h>
+#include <stdio.h>
 
 extern volatile enum _error _errorcode;
+extern uint8_t sdbuffer[512];
+extern uint16_t sd_current_pos;
+uint32_t EEMEM ee_sd_start_block = 0;
+uint32_t sd_next_block;
+extern uint16_t boot_count;
 
 /* commands available in SPI mode */
 
@@ -110,10 +117,58 @@ static uint16_t sd_raw_send_command_r2(uint8_t command, uint32_t arg);
  *
  * \returns 0 on failure, 1 on success.
  */
+
+uint8_t sd_flush_buffer(){
+	if(sd_raw_write_block(sd_next_block, sdbuffer, sd_current_pos + 1)){
+		memset(sdbuffer, 0xff, 512);
+		sd_current_pos = 0;
+		sd_next_block++;
+		return 1;
+	}
+	return 0; //Error, _errorcode has already been set by sd_raw_write_block()
+}
+
+uint8_t sd_write(char* buffer, int len){
+	if (len > 512)
+	{
+		_errorcode = ERROR_SD_SIZE;
+		return 0;
+	}
+	if(sd_current_pos + len > 512){
+		if(sd_flush_buffer()){
+			return 0; //_errorcode has already been set by sd_flush_buffer()
+		}
+	}
+	
+	for(int i = 0; i < len; i++){
+		sdbuffer[sd_current_pos] = buffer[i];
+		sd_current_pos++;
+	}
+	return 1;
+}
+
+uint8_t sd_write_nullterminated(char* buffer){ //for zero-terminated strings
+	for(int i = 0; buffer[i] != '\0'; i++){
+		sdbuffer[sd_current_pos] = buffer[i];
+		sd_current_pos++;
+		if(sd_current_pos >= 512){
+			sd_flush_buffer();
+		}
+	}
+	sdbuffer[sd_current_pos] = '\0';
+	sd_current_pos++;
+}
+
 uint8_t sd_raw_init()
 {
-	  /* enable outputs for MOSI, SCK, SS, input for MISO */
+	/* enable outputs for MOSI, SCK, SS, input for MISO */
 	SPI_MasterInit();
+	
+	/* Get the start block from EEPROM*/
+	sd_next_block = eeprom_read_dword(&ee_sd_start_block);
+	char buffer[8];
+	snprintf(buffer, sizeof(buffer), "BOOT%03d", boot_count);
+	sd_write_nullterminated(buffer);
 
 	unselect_card();
 
@@ -195,8 +250,6 @@ void sd_raw_wait_ready(){
 	unselect_card();
 }
 
-
-
 /**
  * \ingroup sd_raw
  * Sends a raw byte to the memory card.
@@ -263,26 +316,23 @@ uint8_t sd_raw_send_command_r1(uint8_t command, uint32_t arg)
 	return response;
 }
 
-
-// void decodeResponse1(char response){
-// Serial.println("----- SD COMMAND Response -----");
-//		if ((response & 0x01) != 0) 
-//		Serial.println("in idle state");
-//		if ((response & 0x02) != 0) 
-//		Serial.println("Erase reset");
-//		if ((response & 0x04) != 0) 
-//		Serial.println("Illegal command");
-//		if ((response & 0x08) != 0) 
-//		Serial.println("CRC error");
-//		if ((response & 0x10) != 0) 
-//		Serial.println("Erase sequence error");
-//		if ((response & 0x20) != 0) 
-//		Serial.println("Address error");
-//		if ((response & 0x40) != 0) 
-//		Serial.println("Parameter Error");  
-//   
-//   
-// }
+/*void decodeResponse1(char response){
+	Serial.println("----- SD COMMAND Response -----");
+	if ((response & 0x01) != 0) 
+	Serial.println("in idle state");
+	if ((response & 0x02) != 0) 
+	Serial.println("Erase reset");
+	if ((response & 0x04) != 0) 
+	Serial.println("Illegal command");
+	if ((response & 0x08) != 0) 
+	Serial.println("CRC error");
+	if ((response & 0x10) != 0) 
+	Serial.println("Erase sequence error");
+	if ((response & 0x20) != 0) 
+	Serial.println("Address error");
+	if ((response & 0x40) != 0) 
+	Serial.println("Parameter Error");  
+} */
 
 /**
  * \ingroup sd_raw
