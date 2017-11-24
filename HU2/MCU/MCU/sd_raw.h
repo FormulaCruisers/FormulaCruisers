@@ -8,7 +8,6 @@
 #define select_card() PORTB &= ~(1 << PB0)
 #define unselect_card() PORTB |= (1 << PB0)
 
-
 /**
  * This struct is used by sd_raw_get_info() to return
  * manufacturing and status information of the card.
@@ -88,7 +87,9 @@ uint8_t sd_raw_write_block(uint32_t block, const uint8_t* buffer,int len);
 void sd_raw_wait_ready();
 
 void SPI_MasterInit(void);
-
-void SPI_MasterTransmit(char data);
+uint8_t sd_flush_buffer();
+uint8_t sd_write(char* buffer, int len);
+uint8_t sd_check_and_flush();
+uint8_t sd_write_nullterminated(char* buffer);
 
 #endif //SD_RAW_H

@@ -5,7 +5,7 @@
 #include <stdio.h>
 
 extern volatile enum _error _errorcode;
-extern uint8_t sdbuffer[512];
+extern uint8_t sdbuffer[BLOCK_SIZE];
 extern uint16_t sd_current_pos;
 uint32_t EEMEM ee_sd_start_block = 0;
 uint32_t sd_next_block;
@@ -120,7 +120,7 @@ static uint16_t sd_raw_send_command_r2(uint8_t command, uint32_t arg);
 
 uint8_t sd_flush_buffer(){
 	if(sd_raw_write_block(sd_next_block, sdbuffer, sd_current_pos + 1)){
-		memset(sdbuffer, 0xff, 512);
+		memset(sdbuffer, 0xff, BLOCK_SIZE);
 		sd_current_pos = 0;
 		sd_next_block++;
 		return 1;
@@ -129,34 +129,23 @@ uint8_t sd_flush_buffer(){
 }
 
 uint8_t sd_write(char* buffer, int len){
-	if (len > 512)
-	{
-		_errorcode = ERROR_SD_SIZE;
-		return 0;
-	}
-	if(sd_current_pos + len > 512){
-		if(sd_flush_buffer()){
-			return 0; //_errorcode has already been set by sd_flush_buffer()
-		}
-	}
-	
 	for(int i = 0; i < len; i++){
+		sd_check_and_flush();
 		sdbuffer[sd_current_pos] = buffer[i];
 		sd_current_pos++;
 	}
 	return 1;
 }
 
-uint8_t sd_write_nullterminated(char* buffer){ //for zero-terminated strings
-	for(int i = 0; buffer[i] != '\0'; i++){
-		sdbuffer[sd_current_pos] = buffer[i];
-		sd_current_pos++;
-		if(sd_current_pos >= 512){
-			sd_flush_buffer();
-		}
+uint8_t sd_check_and_flush(){
+	if(sd_current_pos >= BLOCK_SIZE){
+		return sd_flush_buffer();
 	}
-	sdbuffer[sd_current_pos] = '\0';
-	sd_current_pos++;
+	return 1;
+}
+
+uint8_t sd_write_nullterminated(char* buffer){ //for zero-terminated strings
+	return sd_write(buffer, strlen((buffer) + 1));
 }
 
 uint8_t sd_raw_init()
