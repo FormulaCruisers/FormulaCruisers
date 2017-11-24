@@ -17,7 +17,8 @@ uint8_t TransmitData[64];
 bool predison = false;
 
 //***** Reception ISR **********************************
-ISR(CANIT_vect){  	// use interrupts
+ISR(CANIT_vect)
+{
 	int8_t length;
 	
 	CANPAGE = ( 0 << MOBNB3 ) | ( 0 << MOBNB2 ) | ( 0 << MOBNB1 ) | ( 1 << MOBNB0 ); // select CANMOB 0001 = MOB1
@@ -176,45 +177,40 @@ ISR(CANIT_vect){  	// use interrupts
 
 
 //***** CAN ialization *****************************************************
-void can_init(uint16_t Baud){
-	
-	if(FUNCTION == ECU2ID){
-		
-	}
-	else{
-		DDRD = 0x80;
-		PORTD &= ~(1<<PORTD7); // Enable Can-chip
-		//PORTD |= (1<<PORTD7); // Disable Can-chip
-	}
-	
+void can_init(uint16_t Baud)
+{
 	CANGCON = ( 1 << SWRES );   // Software reset
 	
 	CANTCON = 0x00;       // CAN timing prescaler set to 0;
 	
-	if (Baud == 1000){
+	if (Baud == 1000)
+	{
 		CANBT1 = 0x00;    // Set baud rate to 500kb (assuming 16Mhz IOclk)
 		CANBT2 = 0x0C;    // "
 		CANBT3 = 0x36; 	  // ""
 	}
-	if (Baud == 500){
+	if (Baud == 500)
+	{
 		CANBT1 = 0x02;    // Set baud rate to 500kb (assuming 16Mhz IOclk)
 		CANBT2 = 0x0C;    // "
 		CANBT3 = 0x37; 	  // ""
 	}
-	if (Baud == 250){
+	if (Baud == 250)
+	{
 		CANBT1 = 0x0E;   // Set baud rate to 250kb (assuming 16Mhz IOclk)
 		CANBT2 = 0x04;   // "
 		CANBT3 = 0x13; 	 // ""
 	}
-	if ( Baud == 125){
+	if ( Baud == 125)
+	{
 		CANBT1 = 0x06;  // Set baud rate to 125kb (assuming 16Mhz IOclk)
 		CANBT2 = 0x0C;  // "
 		CANBT3 = 0x37;	// ""
 	}
 	
 
-	for ( int8_t mob=0; mob<14; mob++ ) {
-
+	for ( int8_t mob=0; mob<14; mob++ )
+	{
 		CANPAGE = ( mob << 4 );  // Selects Message Object 0-14
 		CANCDMOB = 0x00;    // Disable mob
 		CANSTMOB = 0x00;    // Clear mob status register;
@@ -227,8 +223,8 @@ void can_init(uint16_t Baud){
 }
 
 //***** CAN Creating RX *****************************************************
-void can_rx(uint16_t NODE_ID){
-	
+void can_rx(uint16_t NODE_ID)
+{	
 	CANPAGE = ( 0 << MOBNB3 ) | ( 0 << MOBNB2 ) | ( 0 << MOBNB1 ) | ( 1 << MOBNB0 ); // select 0001 = CANMOB1
 	
 	CANIDT1 = NODE_ID >> 3; // Receive Address
@@ -243,8 +239,8 @@ void can_rx(uint16_t NODE_ID){
 }
 
 //***** CAN Creating TX *****************************************************
-void can_tx(uint16_t Address, uint8_t DLC) {
-	
+void can_tx(uint16_t Address, uint8_t DLC)
+{
 	CANPAGE = ( 0 << MOBNB3 ) | ( 0 << MOBNB2 ) | ( 0 << MOBNB1 ) | ( 0 << MOBNB0 ); // select 0000 = CANMOB0
 
 	while ( CANEN2 & ( 1 << ENMOB0 ) ); // Wait for MOb 0 to be free
@@ -256,7 +252,8 @@ void can_tx(uint16_t Address, uint8_t DLC) {
 	CANIDT2 = Address << 5;		//
 	CANIDT1 = Address >> 3;		//
 	
-	for ( int8_t i = 0; i < 8; i++ ){
+	for ( int8_t i = 0; i < 8; i++ )
+	{
 		CANMSG = TransmitData[i]; //CAN Data Message Register: setting the data in the message register
 	}
 	
