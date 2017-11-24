@@ -15,7 +15,8 @@ uint16_t PulsePerSec[4] = {0,0,0,0};
 
 
 //***** ADC CODE ***********************************************
-void int_ExternalInterrupt(void){
+void int_ExternalInterrupt(void)
+{
 	PORTD	|= 0b00000100; // Input 2   INT2   PullUp
 	PORTD	|= 0b00001000; // Input 3   INT3   PullUp
 	PORTE	|= 0b00010000; // Input 4   INT4   PullUp
