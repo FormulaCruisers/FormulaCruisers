@@ -75,7 +75,6 @@ ISR(CANIT_vect)
 		
 		if(ui_current_screen == SCREEN_TEST)
 		{
-			//test_value = (ReceiveData[i+1] +  (ReceiveData[i+2] << 8));
 			if(length == 2)			test_value = ((uint32_t)ReceiveData[0] << 8) + (ReceiveData[1]);
 			else if(length == 3)	test_value = ((uint32_t)ReceiveData[0] << 16) + ((uint32_t)ReceiveData[1] << 8) + (ReceiveData[2]);
 			else if(length >= 4)	test_value = ((uint32_t)ReceiveData[0] << 24) + ((uint32_t)ReceiveData[1] << 16) + ((uint32_t)ReceiveData[2] << 8) + (ReceiveData[3]);

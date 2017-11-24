@@ -71,7 +71,6 @@ int16_t stimer = 0;										//Timer for saving the settings individually
 void debounce(uint8_t* btn, uint8_t val);
 
 uint8_t ttt = 0; //Counter to make sure each node only gets one request at a time
-//uint8_t ttt_drive = 0;
 
 bool brakelighton = false;
 
@@ -79,11 +78,15 @@ bool brakelighton = false;
 volatile uint8_t test_sensor = 0x10;
 volatile uint32_t test_value = 0x00000000;
 
+//Boot counter for data logging
+uint16_t EEMEM ee_boot_count = 1;
+uint16_t boot_count;
+
 ISR(TIMER0_COMP_vect)
 {
 	TCNT0 = 0;
 	
-	//if(ui_current_screen != SCREEN_TEST) data_send8(CAN_REQUEST_DATA, SHUTDOWN, ECU2ID);
+	if(ui_current_screen != SCREEN_TEST) data_send8(CAN_REQUEST_DATA, SHUTDOWN, ECU2ID);
 	
 	debounce(&btnblue, PIND & (1<<BUTTONBLUE));
 	debounce(&btngreen, PIND & (1<<BUTTONGREEN));
@@ -414,6 +417,9 @@ int main()
 	if(vsettings[1] > 100) vsettings[1] = 100;
 	if(vsettings[2] > 100) vsettings[2] = 100;
 	if(vsettings[3] > 100) vsettings[3] = 100;
+	
+	boot_count = eeprom_read_word(&ee_boot_count);
+	eeprom_write_word(&ee_boot_count, boot_count+1);
 	
 	lcd_init(LCD_DISP_ON);
 	change_screen(SCREEN_WELCOME);

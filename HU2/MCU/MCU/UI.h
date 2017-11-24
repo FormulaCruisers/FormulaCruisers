@@ -26,6 +26,7 @@ extern volatile uint16_t gas1perc, gas2perc, brakeperc, predistimer, flowleft, f
 extern volatile uint8_t shutdownon, ams_shutdown, imd_shutdown;
 extern volatile uint8_t selsetting, ischanging, vsettings[SETTINGS_COUNT];
 extern volatile int16_t steerpos;
+extern uint16_t boot_count;
 
 extern volatile uint8_t test_sensor;
 extern volatile uint32_t test_value;
