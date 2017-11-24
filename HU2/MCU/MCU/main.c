@@ -86,8 +86,6 @@ ISR(TIMER0_COMP_vect)
 {
 	TCNT0 = 0;
 	
-	if(ui_current_screen != SCREEN_TEST) data_send8(CAN_REQUEST_DATA, SHUTDOWN, ECU2ID);
-	
 	debounce(&btnblue, PIND & (1<<BUTTONBLUE));
 	debounce(&btngreen, PIND & (1<<BUTTONGREEN));
 	debounce(&btn1, PIND & (1<<BUTTON1)); //The button that is above the green button (i.e. left)
@@ -132,6 +130,11 @@ ISR(TIMER0_COMP_vect)
 		
 		//Change into error screen
 		change_screen(SCREEN_ERROR);
+	}
+	else
+	{
+		//Request data from the ECU, but only if it doesn't have to reset literally everything possible
+		if(ui_current_screen != SCREEN_TEST) data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){RPM_BACK_LEFT, RPM_BACK_RIGHT, SHUTDOWN}, ECU2ID, 3);
 	}
 	
 	switch(ui_current_screen)
@@ -268,6 +271,9 @@ ISR(TIMER0_COMP_vect)
 		
 		//The screen that appears after closing the welcome screen
 		case SCREEN_START:
+			//e_checksensors();
+			//e_checkranges();
+			//e_checkdiscrepancy();
 			if(btn1 && btn2)
 			{
 				ischanging = 0;
@@ -276,9 +282,6 @@ ISR(TIMER0_COMP_vect)
 			}
 			if(btnblue == 1)
 			{
-				e_checksensors();
-				e_checkranges();
-			
 				if(_errorcode == ERROR_NONE)
 				{
 					predistimer = PREDISCHARGE_TIMER;
@@ -335,7 +338,7 @@ ISR(TIMER0_COMP_vect)
 				//e_checkflow();
 				e_checksensors();
 				e_checkranges();
-				e_checkdiscrepancy();	
+				e_checkdiscrepancy();
 			}
 			
 			if(_errorcode == ERROR_NONE)

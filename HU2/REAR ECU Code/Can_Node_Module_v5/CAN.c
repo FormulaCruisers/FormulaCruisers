@@ -48,124 +48,119 @@ ISR(CANIT_vect){  	// use interrupts
 		uint8_t j = 0;
 		if (ReceiveData[0] == 0x3D)
 		{ //if first data received is 3D = General data request
-			if (ReceiveData[1] == RPM_LINKS_ACHTER)
+			for(uint8_t i = 1; i < length; i++)
 			{
-				TransmitData[j++] = ReceiveData[1];
-				TransmitData[j++] = (PulsePerSec[_LEFT] >> 8);
-				TransmitData[j++] = PulsePerSec[_LEFT];
-			}
-			if (ReceiveData[1] == RPM_RECHTS_ACHTER)
-			{
-				TransmitData[j++] = ReceiveData[1];
-				TransmitData[j++] = (PulsePerSec[_RIGHT] >> 8);
-				TransmitData[j++] = PulsePerSec[_RIGHT];
-			}
-			if (ReceiveData[1] == DRAAIRICHTING_LINKS_ACHTER)
-			{
-				TransmitData[j++] = ReceiveData[1];
-				TransmitData[j++] = Direction[_LEFT];
-			}
-			if (ReceiveData[1] == DRAAIRICHTING_RECHTS_ACHTER)
-			{
-				TransmitData[j++] = ReceiveData[1];
-				TransmitData[j++] = Direction[_RIGHT];
-			}
-			if (ReceiveData[1] == SHUTDOWN)
-			{
-				DDRD &= ~(1<<PD7);
-				if((PIND & (1 << PD7)))
+				if (ReceiveData[i] == RPM_LINKS_ACHTER)
 				{
-					TransmitData[j++] = ReceiveData[1];
-					TransmitData[j++] = 0xFF;
+					TransmitData[j++] = ReceiveData[i];
+					TransmitData[j++] = (PulsePerSec[_LEFT] >> 8);
+					TransmitData[j++] = PulsePerSec[_LEFT];
 				}
-				else
+				if (ReceiveData[i] == RPM_RECHTS_ACHTER)
 				{
-					TransmitData[j++] = ReceiveData[1];
-					TransmitData[j++] = 0x00;
+					TransmitData[j++] = ReceiveData[i];
+					TransmitData[j++] = (PulsePerSec[_RIGHT] >> 8);
+					TransmitData[j++] = PulsePerSec[_RIGHT];
+				}
+				if (ReceiveData[i] == SHUTDOWN)
+				{
+					DDRD &= ~(1<<PD7);
+					if((PIND & (1 << PD7)))
+					{
+						TransmitData[j++] = ReceiveData[i];
+						TransmitData[j++] = 0xFF;
+					}
+					else
+					{
+						TransmitData[j++] = ReceiveData[i];
+						TransmitData[j++] = 0x00;
+					}
 				}
 			}
 		}
-		
-		for(uint8_t i = 0; i < length; i++)
+		else
 		{
-			if (ReceiveData[i] == RUN_ENABLE)
+			for(uint8_t i = 0; i < length; i++)
 			{
-				DDRC	|= (1 << PC0);
-				if(ReceiveData[i+1])
+				if (ReceiveData[i] == RUN_ENABLE)
 				{
-					PORTC	|= (1 << PC0);
+					DDRC	|= (1 << PC0);
+					if(ReceiveData[i+1])
+					{
+						PORTC	|= (1 << PC0);
+					}
+					else
+					{
+						PORTC	&= ~(1 << PC0);
+					}
+					TransmitData[j++] = RUN_ENABLE;
 				}
-				else
+				if (ReceiveData[i] == MOTOR_CONTROLLER)
 				{
-					PORTC	&= ~(1 << PC0);
+					DDRC	|= (1 << PC1);
+					if(ReceiveData[i+1])
+					{
+						PORTC	|= (1 << PC1);
+					}
+					else
+					{
+						PORTC	&= ~(1 << PC1);
+					}
+					TransmitData[j++] = MOTOR_CONTROLLER;
 				}
-				TransmitData[j++] = RUN_ENABLE;
-			}
-			if (ReceiveData[i] == MOTOR_CONTROLLER)
-			{
-				DDRC	|= (1 << PC1);
-				if(ReceiveData[i+1])
+				if (ReceiveData[i] == BRAKELIGHT)
 				{
-					PORTC	|= (1 << PC1);
+					DDRC	|= (1 << PC4);
+					if(ReceiveData[i+1])
+					{
+						PORTC	|= (1 << PC4);
+					}
+					else
+					{
+						PORTC	&= ~(1 << PC4);
+					}
+					TransmitData[j++] = BRAKELIGHT;
 				}
-				else
+				if (ReceiveData[i] == PRE_DISCHARGE)
 				{
-					PORTC	&= ~(1 << PC1);
-				}
-				TransmitData[j++] = MOTOR_CONTROLLER;
-			}
-			if (ReceiveData[i] == BRAKELIGHT)
-			{
-				DDRC	|= (1 << PC4);
-				if(ReceiveData[i+1])
-				{
-					PORTC	|= (1 << PC4);
-				}
-				else
-				{
-					PORTC	&= ~(1 << PC4);
-				}
-				TransmitData[j++] = BRAKELIGHT;
-			}
-			if (ReceiveData[i] == PRE_DISCHARGE)
-			{
-				DDRC |= (1 << PC3);
+					DDRC |= (1 << PC3);
 				
-				if(ReceiveData[i+1])
+					if(ReceiveData[i+1])
+					{
+						predison = true;
+						PORTC	|= (1 << PC3);
+					}
+					else
+					{
+						predison = false;
+						PORTC	&= ~(1 << PC3);
+					}
+					TransmitData[j++] = PRE_DISCHARGE;
+				}
+				if (ReceiveData[i] == MAINRELAIS)
 				{
-					predison = true;
-					PORTC	|= (1 << PC3);
+					DDRC	|= (1 << PC2);
+					if(ReceiveData[i+1] && predison)
+					{
+						PORTC	|= (1 << PC2);
+					}
+					else
+					{
+						PORTC	&= ~(1 << PC2);
+					}
+					TransmitData[j++] = MAINRELAIS;
 				}
-				else
+				if (ReceiveData[i] == PUMP)
 				{
-					predison = false;
-					PORTC	&= ~(1 << PC3);
+					DDRC	|= (1 << PC5);
+					if(ReceiveData[i+1]){
+						PORTC	|= (1 << PC5);
+					}
+					else{
+						PORTC	&= ~(1 << PC5);
+					}
+					TransmitData[j++] = PUMP;
 				}
-				TransmitData[j++] = PRE_DISCHARGE;
-			}
-			if (ReceiveData[i] == MAINRELAIS)
-			{
-				DDRC	|= (1 << PC2);
-				if(ReceiveData[i+1] && predison)
-				{
-					PORTC	|= (1 << PC2);
-				}
-				else
-				{
-					PORTC	&= ~(1 << PC2);
-				}
-				TransmitData[j++] = MAINRELAIS;
-			}
-			if (ReceiveData[i] == PUMP)
-			{
-				DDRC	|= (1 << PC5);
-				if(ReceiveData[i+1]){
-					PORTC	|= (1 << PC5);
-				}
-				else{
-					PORTC	&= ~(1 << PC5);
-				}
-				TransmitData[j++] = PUMP;
 			}
 		}
 		can_tx(MASTERID, j); //Transmit data depending on the number of message received

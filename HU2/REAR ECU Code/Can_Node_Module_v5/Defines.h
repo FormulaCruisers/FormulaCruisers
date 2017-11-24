@@ -14,30 +14,10 @@
 
 #define PREDISCHARGE_TIMER			10000 //10 seconds
 
-/*************** Node 1 ***************/
-#define STUURPOSITIE				0x11
-#define RPM_VOOR_LINKS				0x12
-#define RPM_VOOR_RECHTS				0x13
-
-/*************** Node 2 ***************/
-#define GAS_1						0x21
-#define GAS_2						0x22
-#define REM							0x23
-
-/*************** Node 3 ***************/
-#define FLOW_RICHTING_LINKS			0x31
-#define TEMP_LINKS					0x32
-
-/*************** Node 4 ***************/
-#define FLOW_RICHTING_RECHTS		0x41
-#define TEMP_RECHTS					0x42
-
 /*************** EcU 2 ***************/
 // Data request
 #define RPM_LINKS_ACHTER			0x51
 #define RPM_RECHTS_ACHTER			0x52
-#define DRAAIRICHTING_LINKS_ACHTER	0x53
-#define DRAAIRICHTING_RECHTS_ACHTER 0x54
 #define SHUTDOWN					0x61
 
 // Commando's

@@ -4,7 +4,7 @@
 
 #define F_CPU 16000000UL	// Define processor clock speed for compiler
 
-#define SOFTWARE_VERSION			"Software: V2.076    "  //Version should be 2.xxx where xxx is amount of commits(do "git rev-list HEAD --count" to check)
+#define SOFTWARE_VERSION			"Software: V2.078c   "  //Version should be 2.xxx where xxx is amount of commits(do "git rev-list HEAD --count" to check)
 
 #define RTDS						PC7 //Loud ready beep
 #define RTDS_TIME					2000 //2 seconds
@@ -36,12 +36,12 @@
 #define BL_SWITCHOFF				10
 
 //Pedal min and max values(with some slack)
-#define GAS1MAX						0x343
-#define GAS1MIN						0x302
-#define GAS2MAX						0x209
-#define GAS2MIN						0x252
-#define BRAKEMAX					0x100
-#define BRAKEMIN					0x050  //Value yet unknown because of stupidity
+#define GAS1MAX						0x339
+#define GAS1MIN						0x301
+#define GAS2MAX						0x238
+#define GAS2MIN						0x1F1
+#define BRAKEMAX					0x030
+#define BRAKEMIN					0x014
 #define RANGESLACK					20
 
 #define PUMP_TEMP_MAX				100
@@ -77,8 +77,6 @@
 // Data request
 #define RPM_BACK_LEFT				0x51
 #define RPM_BACK_RIGHT				0x52
-#define WHEELDIR_BACK_LEFT			0x53
-#define WHEELDIR_BACK_RIGHT			0x54
 #define SHUTDOWN					0x61
 
 // Commands

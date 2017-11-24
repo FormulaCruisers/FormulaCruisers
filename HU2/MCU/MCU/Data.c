@@ -145,12 +145,15 @@ ISR(CANIT_vect)
 				
 					case FLOW_LEFT:
 						flowleft = (ReceiveData[i+1] + (ReceiveData[i+2] << 8));
+						if(flowleft == 0xFFFF)	flowleft = 0;
+						else					flowleft = (uint16_t)(250000.d / (double)flowleft);
 						i+=3;
 						break;
 				
 					case FLOW_RIGHT:
-						test_value = ((uint32_t)length << 24) + ((uint32_t)ReceiveData[3] << 16) + ((uint32_t)ReceiveData[4] << 8) + (ReceiveData[5]);
 						flowright = (ReceiveData[i+1] + (ReceiveData[i+2] << 8));
+						if(flowright == 0xFFFF)	flowright = 0;
+						else					flowright = (uint16_t)(250000.d / (double)flowright);
 						i+=3;
 						break;
 						

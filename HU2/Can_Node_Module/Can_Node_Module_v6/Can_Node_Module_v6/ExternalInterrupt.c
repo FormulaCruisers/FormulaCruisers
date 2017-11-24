@@ -133,72 +133,30 @@ ISR(INT4_vect)
 
 ISR(INT6_vect)
 {
-	if (InterruptPairDirection[0])
-	{
-		InterruptPairTimer[0] = TCNT1L;
-		InterruptPairTimer[0] += (TCNT1H << 8);
+	InterruptPairTimer[0] = TCNT1L;
+	InterruptPairTimer[0] += (TCNT1H << 8);
 		
-		TCNT1H = 0x00;
-		TCNT1L = 0x00;
+	TCNT1H = 0x00;
+	TCNT1L = 0x00;
 		
-		PulsePerSec[0] = InterruptPairTimer[0];
-		Direction[0] = 1;
+	PulsePerSec[0] = InterruptPairTimer[0];
+	Direction[0] = 1;
 		
-		InterruptPairDirection[0] = 0;
-	}
-	else
-	{
-		uint16_t InterruptPairTimerTemp;
-		
-		InterruptPairTimerTemp = TCNT1L;
-		InterruptPairTimerTemp += (TCNT1H << 8);
-		
-		if(InterruptPairTimerTemp < (InterruptPairTimer[0]/2))
-		{
-			InterruptPairDirection[0] = 1;
-			Direction[0] = 0;
-		}
-		else
-		{
-			InterruptPairDirection[0] = 0;
-			Direction[0] = 1;
-		}
-	}
+	InterruptPairDirection[0] = 0;
 }
 
 ISR(INT7_vect)
 {
-	if (InterruptPairDirection[0])
-	{
-		InterruptPairTimer[0] = TCNT1L;
-		InterruptPairTimer[0] += (TCNT1H << 8);
+	InterruptPairTimer[0] = TCNT1L;
+	InterruptPairTimer[0] += (TCNT1H << 8);
 		
-		TCNT1H = 0x00;
-		TCNT1L = 0x00;
+	TCNT1H = 0x00;
+	TCNT1L = 0x00;
 		
-		PulsePerSec[0] = InterruptPairTimer[0];
-		Direction[0] = 0;
+	PulsePerSec[0] = InterruptPairTimer[0];
+	Direction[0] = 0;
 		
-		InterruptPairDirection[0] = 0;
-	}
-	else
-	{
-		uint16_t InterruptPairTimerTemp;
-		
-		InterruptPairTimerTemp = TCNT1L;
-		InterruptPairTimerTemp += (TCNT1H << 8);
-		
-		if(InterruptPairTimerTemp < (InterruptPairTimer[0]/2))
-		{
-			InterruptPairDirection[0] = 1;
-			Direction[0] = 1;
-		}
-		else
-		{
-			InterruptPairDirection[0] = 0;
-			Direction[0] = 0;
-		}
-	}
+	InterruptPairDirection[0] = 0;
 }
 
 
