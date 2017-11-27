@@ -75,12 +75,12 @@ ISR(INT5_vect)
 
 ISR(TIMER3_OVF_vect)
 {
-	PulsePerSec[_LEFT] = 0;
+	PulsePerSec[_LEFT] = -1;
 }
 
 ISR(TIMER1_OVF_vect)
 {
-	PulsePerSec[_RIGHT] = 0;
+	PulsePerSec[_RIGHT] = -1;
 }
 
 #endif

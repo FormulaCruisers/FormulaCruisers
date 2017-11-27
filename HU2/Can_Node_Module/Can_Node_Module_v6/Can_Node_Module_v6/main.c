@@ -14,7 +14,7 @@
 void chip_init (void);
 
 //***** MAIN CODE ***********************************************
-int main( void )
+int main(void)
 {
 	chip_init();			// Chip initialization
 	can_init(BAUD); 		// Can initialization
@@ -24,15 +24,15 @@ int main( void )
 	
 	sei();					// enables interrupts
 	
-		while(1){}
+	while(1){}
 		
 	return(0);
 }
 
 
 //***** chip Initialization **********************************
-void chip_init(void){
-
+void chip_init(void)
+{
 	CLKPR = ( 1 << CLKPCE );  		// Set Clock Prescaler change enable
 	CLKPR = 0x00;				// no prescaler CLK 16Mhz
 }

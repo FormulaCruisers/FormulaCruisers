@@ -15,33 +15,24 @@
 uint8_t R_L = 0, R_H = 0;
 
 //***** ADC CODE ***********************************************
-void int_ADC(void){
-	
-	if(FUNCTION == ECU2ID){
+void int_ADC(void)
+{
+	DDRC	= 0x0F;
+	PORTC	= 0x0F;
 		
-	}
-	else{
-		DDRC	= 0x0F;
-		PORTC	= 0x0F;
+	DDRF	= 0x00;
+	PORTF	= 0x0F;
 		
-		DDRF	= 0x00;
-		PORTF	= 0x0F;
-		
-		ADCSRA = (1<<ADEN) | 7;
-	}
+	ADCSRA = (1<<ADEN) | 7;
 }
 
-void getADC(uint8_t ADC_pin){
-	
+void getADC(uint8_t ADC_pin)
+{
 	ADMUX = (ADC_pin & 0x0f);
 	ADCSRA |= (1<<ADSC) | (1<<ADEN);                 
 	while (ADCSRA & (1<<ADSC));
-	
-	//if(ADCL > 50 || ADCH > 0)
-	//{
-		R_L = ADCL;
-		R_H = ADCH;	
-	//}
+	R_L = ADCL;
+	R_H = ADCH;
 }
 
 #endif
