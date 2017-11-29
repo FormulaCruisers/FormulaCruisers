@@ -138,14 +138,125 @@ enum AMS_EVENT_TYPES
 	ET_Cell_Temp_High_Recovered = 45,
 };
 
+enum AMS_PARAMETER
+{
+	 PM_Num_Overall_Cells = 0x0100,
+	 PM_Capacity = 0x0102, //Coded in 0.1Ah
+	PM_Min_Cell_Volt = 0x0004, //Coded in 0.01V with offset 200(2V)
+	PM_Max_Cell_Volt = 0x0005, //Coded in 0.01V with offset 200(2V)
+	PM_Max_Cell_Module_Volt = 0x0006, //Coded in 1C with offset -100
+	PM_Max_Balance_Current = 0x0007, //Range of 0-255
+	PM_Low_Cell_Volt = 0x0008, //Coded in 0.01V with offset 200(2V)
+	PM_Min_Charge_Temp = 0x0009, //Coded in 1C with offset -100
+	PM_DCDC_Ctrl_Voltage_Active = 0x000A, //Coded in 0.01V with offset 200(2V)
+	PM_Full_Charge_Volt = 0x000B, //Coded in 0.01V with offset 200(2V)
+	PM_Allowed_Disbalance = 0x000C, //Coded in 0.01V
+	PM_Precharge_Voltage = 0x000D, //Coded in 0.01V with offset 200(2V)
+	PM_Early_Balancing_Threshold = 0x000E, //Coded in 0.01V with offset 200(2V)
+	PM_Balancing_Range = 0x000F, //Coded in 0.01V with offset 200(2V)
+	PM_Data_Transmission_Active = 0x0010, //Coded in 0.1s
+	 PM_Data_Transmission_Sleep = 0x0111, //Coded in 0.1s
+	PM_Num_Cell_Strings = 0x0013,
+	PM_Fan_On_Temp = 0x0014, //Coded in 1C with offset -100
+	PM_High_Cell_Module_Temp = 0x0015, //Coded in 1C with offset -100
+	PM_Climate_Control_Normal_Temp = 0x0016, //Coded in 1C with offset -100
+	PM_Climate_Control_Charging_Temp = 0x0017, //Coded in 1C with offset -100
+	 PM_Climate_Control_Min_SOC = 0x0118, //Coded in 0.01%
+	PM_Charge_Restart_Voltage = 0x001A, //Coded in 0.01V with offset 200(2V)
+	PM_SOC_Low_Volt = 0x0022,
+	PM_Cell_Undervolt_Activate_Delay = 0x0025, //Coded in 0.1s
+	PM_Cell_Undervolt_Deactivate_Delay = 0x0026,
+	PM_Cell_Overvolt_Activate_Delay = 0x0027,
+	PM_Cell_Overvolt_Deactivate_Delay = 0x0028,
+	PM_Cell_Module_Overheat_Activation_Delay = 0x0029,
+	PM_Cell_Module_Overheat_Deactivation_Delay = 0x002A,
+	PM_Discharge_Overcurrent_Activation_Delay = 0x002B,
+	PM_Discharge_Overcurrent_Deactivation_Delay = 0x002C,
+	PM_Charge_Overcurrent_Activation_Delay = 0x002D,
+	PM_Charge_Overcurrent_Deactivation_Delay = 0x002E,
+	PM_No_Cell_Comm_Activation_Delay = 0x002F,
+	PM_No_Cell_Comm_Deactivation_Delay = 0x0030,
+	PM_Cell_Undervolt_Deactivate_Threshold = 0x0031,
+	PM_Cell_Overvolt_Deactivate_Threshold = 0x0032,
+	PM_Cell_Module_Overheat_Deactivate_Threshold = 0x0033,
+	PM_Low_Cell_Volt_Activation_Delay = 0x0034,
+	PM_Low_Cell_Volt_Deactivation_Delay = 0x0035,
+	PM_High_Cell_Module_Temp_Activation_Delay = 0x0036,
+	PM_High_Cell_Module_Temp_Deactivation_Delay = 0x0037,
+	PM_High_Discharge_Current_Activation_Delay = 0x0038,
+	PM_High_Discharge_Current_Deactivation_Delay = 0x0039,
+	PM_Low_Cell_Volt_Deactivate_Threshold = 0x003A,
+	PM_High_Cell_Module_Temp_Deactivate = 0x003B,
+	PM_Contactor_Precharge_Duration = 0x003C,
+	PM_Climate_Control_Max_Duration_No_Charge = 0x0048,
+	PM_Insulation_Fault_Activation_Delay = 0x0049,
+	PM_Insulation_Fault_Deactivation_Delay = 0x004A,
+	PM_Cell_Overheat_Activate_Threshold = 0x004B,
+	PM_Cell_Overheat_Deactivate_Threshold = 0x004C,
+	PM_Cell_Overheat_Activation_Delay = 0x004D,
+	PM_Cell_Overheat_Deactivation_Delay = 0x004E,
+	PM_High_Cell_Temp_Activate_Threshold = 0x004F,
+	PM_High_Cell_Temp_Deactivate_Threshold = 0x0050,
+	PM_High_Cell_Temp_Activation_Delay = 0x0051,
+	PM_High_Cell_Temp_Deactivation_Delay = 0x0052,
+	PM_DCDC_Ctrl_Voltage_Passive = 0x0060,
+	PM_No_Current_Sensor_Activation_Delay = 0x0061,
+	PM_No_Current_Sensor_Deactivation_Delay = 0x0062,
+	PM_Cell_Comm_Restore_Duration = 0x0063,
+	PM_Distance_Estimate_Safety_Margin = 0x0400,
+	 PM_Pulses_Per_Distance_Unit = 0x0501,
+	 PM_Distane_Unit_Name = 0x503,
+	PM_Min_SOC_Output = 0x0405,
+	PM_Max_SOC_Output = 0x0406,
+	
+	//...Some pin functions...
+	
+	 PM_CAN_ID_Base = 0x0D00,
+	PM_CAN_Speed = 0x0C02,
+	 PM_Device_CAN_ID_Base = 0x0D03,
+	 
+	//...Lots of CAN Cell stuff that shouldnt be touched...
+	
+	 PM_Current_Sensor_L_Calibration = 0x1100,
+	PM_Current_Sensor_L_Reference = 0x1002,
+	 PM_Current_Sensor_H_Calibration = 0x1103,
+	 PM_Current_Sensor_H_Reference = 0x1105, //Is actually a signed int16?
+	PM_Current_Sensor_Reverse_Dir = 0x1007,
+	PM_Current_Sensor_Deadzone = 0x1008,
+	PM_Current_Sensor_Type = 0x1009, //=0 if Gen 1, =1 if Gen 2
+	  PM_Function_Flags_0 = 0x1600,
+	  PM_Function_Flags_1 = 0x1604,
+	PM_Charger_Type = 0x1800,
+	 PM_Fast_Charging_Current = 0x1901,
+	 PM_Slow_Charging_Current = 0x1903,
+	PM_Precharge_Current = 0x1805,
+	 PM_Charge_Finished_Current = 0x1806, //Odd one out that is 16 bit
+	 PM_Max_Precharge_Duration = 0x1907,
+	 PM_Max_Main_Charge_Duration = 0x1909,
+	 PM_Max_Balancing_Duration = 0x190B,
+	 PM_Charger_Overcurrent_Activate_Threshold = 0x190D,
+	 PM_High_Discharge_Current_Activate_Threshold = 0x190F,
+	 PM_Discharge_Overcurrent_ACtivate_Threshold = 0x1911,
+	PM_Num_Chargers = 0x1815,
+	 PM_Charger_CAN_ID_Base = 0x1916,
+	 PM_Max_PWM_Output = 0x191A,
+	 PM_Min_PWM_Output = 0x191C,
+};
 
+enum AMS_MESSAGES
+{
+	MSG_Overall = 0,
+	MSG_Diagnostic = 7,
+	MSG_Voltage = 1,
+	MSG_Cell_Module_Temp = 2,
+	MSG_Cell_Temp = 8,
+	MSG_Cell_Balancing = 3,
+	MSG_Configuration = 128,
+	MSG_Login = 130,
+};
 
-
-
-
-
-
-
+bool is16bit(AMS_PARAMETER param) { return (param == 0x1806 || ((param & 0x0100) > 0); }//The rule of & 0x0100 for 16 bit is not true for param 0x1806... this one is actually 16 bit but would return as 8.
+bool is32bit(AMS_PARAMETER param) { return (param & 0x0200) > 0; }
 
 
 struct AMS_OVERALL
