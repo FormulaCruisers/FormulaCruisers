@@ -253,6 +253,7 @@ enum AMS_MESSAGES
 	MSG_Cell_Balancing = 3,
 	MSG_Configuration = 128,
 	MSG_Login = 130,
+	//TODO
 };
 
 bool is16bit(AMS_PARAMETER param) { return (param == 0x1806 || ((param & 0x0100) > 0); }//The rule of & 0x0100 for 16 bit is not true for param 0x1806... this one is actually 16 bit but would return as 8.

@@ -158,6 +158,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AMS.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="CAN.c">
       <SubType>compile</SubType>
     </Compile>
