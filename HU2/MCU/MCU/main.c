@@ -86,6 +86,9 @@ uint16_t boot_count;
 uint8_t sdbuffer[512] = {0xff};
 uint16_t sd_current_pos = 0;
 
+//Drive test value
+volatile uint8_t dt_engv = 0;
+
 ISR(TIMER0_COMP_vect)
 {
 	TCNT0 = 0;
@@ -328,7 +331,26 @@ ISR(TIMER0_COMP_vect)
 				data_send_ecu(RUN_ENABLE, _HIGH);
 				change_screen(SCREEN_DRIVING);
 			}
+			if(btn1 && btn2)
+			{
+				data_send_ecu(RUN_ENABLE, _HIGH);
+				change_screen(SCREEN_DRIVETEST);
+			}
 			break;
+			
+		//Drive test screen, used for setting a specific motor value and keeping it there
+		case SCREEN_DRIVETEST:
+			if(_errorcode == ERROR_NONE)
+			{
+				if(btn2 == 1 || btn2 == 0xFF) dt_engv = ((dt_engv == 100) ? 100 : dt_engv + 1);
+				if(btn1 == 1 || btn1 == 0xFF) dt_engv = ((dt_engv == 0) ? 0 : dt_engv - 1);
+				
+				if(btnblue == 1) data_send_motor_d(MC_SET_TORQUE, 0, ENGINE_MAX, MCDR);
+				if(btnblue == 2) data_send_motor_d(MC_SET_TORQUE, 0, ENGINE_MAX, MCDL);
+				
+				if(btngreen == 1) data_send_motor_d(MC_SET_TORQUE, -dt_engv, ENGINE_MAX, MCDR);
+				if(btngreen == 2) data_send_motor_d(MC_SET_TORQUE, -dt_engv, ENGINE_MAX, MCDL);
+			}
 			
 		//The screen that appears when actually driving.
 		case SCREEN_DRIVING:
