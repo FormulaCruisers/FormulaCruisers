@@ -109,7 +109,7 @@ void get_screen(char buffer[4][21], enum uiscreen s)
 			
 		case SCREEN_DRIVETEST:
 			snprintf(buffer[0], sizeof buffer[0], "Engine: %3d%%        ", dt_engv);
-			snprintf(buffer[1], sizeof buffer[1], "                    ");
+			snprintf(buffer[1], sizeof buffer[1], "Temp: L%5u  R%5u", templeft, tempright);
 			snprintf(buffer[2], sizeof buffer[2], "Blue to stop motor  ");
 			snprintf(buffer[3], sizeof buffer[3], "Green to apply      ");
 			break;

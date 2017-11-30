@@ -102,7 +102,7 @@ ISR(TIMER0_COMP_vect)
 	{
 		if(ui_current_screen == SCREEN_PREDISCHARGING || ui_current_screen == SCREEN_DRIVING || ui_current_screen == SCREEN_STATUS)
 		{
-			_errorcode = ERROR_SHUTDOWN;
+			//_errorcode = ERROR_SHUTDOWN;
 		}
 	}
 	
