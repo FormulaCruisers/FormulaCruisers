@@ -1,3 +1,10 @@
+/*
+ * The original file is Copyright (c) 2006-2012 by Roland Riegel <feedback@roland-riegel.de>, distributed under the GNU GPL version 2 or the GNU LGPL version 2.1
+ * Modifications 2017 are by Richard Kokx, Formula Cruisers Team, The Hague University of Applied Sciences
+ * The SPI_MasterInit() function is originally Copyright (c) 2008 Atmel Corporation, and has been copied from the AT90CAN128 datasheet (version 7679H-CAN-08/08)
+ */
+
+
 #include "sd_raw.h"
 #include "Error.h"
 #include <string.h>
