@@ -1,3 +1,8 @@
+/* CAN.C
+Contains the basic CAN functions for receiving and sending data.
+Also contains the interrupt for CAN rx.
+*/
+
 #ifndef _CANc_
 #define _CANc_
 

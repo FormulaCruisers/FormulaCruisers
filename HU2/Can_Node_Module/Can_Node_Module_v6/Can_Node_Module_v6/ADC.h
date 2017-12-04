@@ -1,3 +1,7 @@
+/* ADC.H
+Header file for ADC.c
+*/
+
 #ifndef _ADCh_
 #define _ADCh_
 #include <avr/io.h>

@@ -1,3 +1,7 @@
+/* EXTERNALINTERRUPT.C
+Contains all interrupt based logic
+*/
+
 #ifndef _EXTERNAL_INTERRUPTc_
 #define _EXTERNAL_INTERRUPTc_
 

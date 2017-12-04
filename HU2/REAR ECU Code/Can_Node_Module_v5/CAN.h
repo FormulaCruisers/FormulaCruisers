@@ -1,3 +1,7 @@
+/* CAN.H
+Header file for CAN.c
+*/
+
 #ifndef _CANh_
 #define _CANh_
 #include <avr/io.h>

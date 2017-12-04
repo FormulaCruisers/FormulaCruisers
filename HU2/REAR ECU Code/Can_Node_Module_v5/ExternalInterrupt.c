@@ -1,3 +1,7 @@
+/* EXTERNALINTERRUPT.C
+Contains all interrupt based logic. Used for AMS and IMD shutdown. Also supposedly used for nonexistent rear wheel RPM sensors
+*/
+
 #ifndef _EXTERNAL_INTERRUPTc_
 #define _EXTERNAL_INTERRUPTc_
 
@@ -49,14 +53,14 @@ void int_ExternalInterrupt(void)
 
 ISR(INT2_vect)
 {
-	PulsePerSec[_LEFT] = TCNT1L + (TCNT1H << 8);
+	PulsePerSec[_LEFT] = TCNT1L;
 	TCNT1H = 0x00;
 	TCNT1L = 0x00;
 }
 
 ISR(INT3_vect)
 {
-	PulsePerSec[_RIGHT] = TCNT3L + (TCNT3H << 8);	
+	PulsePerSec[_RIGHT] = TCNT3;
 	TCNT3H = 0x00;
 	TCNT3L = 0x00;
 }

@@ -1,3 +1,7 @@
+/* MAIN.C
+Contains the entry point of the program
+*/
+
 #include "Defines.h"
 #include "CAN.h"
 #include "ExternalInterrupt.h"
@@ -18,7 +22,7 @@ int main(void)
 	chip_init();			// Chip initialization
 	can_init(BAUD); 		// Can initialization
 	can_rx(FUNCTION);
-	//int_ExternalInterrupt();
+	int_ExternalInterrupt();
 	
 	sei();					// enables interrupts
 	return(0);

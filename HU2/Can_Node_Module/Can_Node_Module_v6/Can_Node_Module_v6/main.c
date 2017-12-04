@@ -1,3 +1,6 @@
+/* MAIN.C
+Contains the entry point of the program
+*/
 
 #include "Defines.h"
 #include "CAN.h"
