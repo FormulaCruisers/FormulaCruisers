@@ -1,3 +1,8 @@
+/* UI.H
+Header file for UI.c
+Contains the definitions for all screens(i.e. states)
+*/
+
 #ifndef _UI_H
 #define _UI_H
 

@@ -1,3 +1,7 @@
+/* SD_RAW.H
+Header file for Sd_raw.c
+*/
+
 #ifndef SD_RAW_H
 #define SD_RAW_H
 #include <avr/io.h>

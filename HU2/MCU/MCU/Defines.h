@@ -1,10 +1,14 @@
+/* DEFINES.H
+This is a central header file containing a lot of defined constants that are used in the program.
+*/
+
 #ifndef _Definesh_
 #define _Definesh_
 #include <avr/io.h>
 
 #define F_CPU 16000000UL	// Define processor clock speed for compiler
 
-#define SOFTWARE_VERSION			"Software: V2.086bNS "  //Version should be 2.xxx where xxx is amount of commits(do "git rev-list HEAD --count" to check)
+#define SOFTWARE_VERSION			"Software: V2.087    "  //Version should be 2.xxx where xxx is amount of commits(do "git rev-list HEAD --count" to check)
 
 #define RTDS						PC7 //Loud ready beep
 #define RTDS_TIME					2000 //2 seconds
@@ -22,7 +26,7 @@
 #define _HIGH						0xFF
 #define _LOW						0x00
 
-#define PREDISCHARGE_TIMER			5000 //10 seconds
+#define PREDISCHARGE_TIMER			10000 //10 seconds
 
 #define CANTIMEOUT					100	//100 ms
 #define RX_WAIT_LIMIT				20000 //20000 cycles

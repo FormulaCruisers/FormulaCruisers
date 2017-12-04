@@ -1,3 +1,7 @@
+/* SD_RAW.C
+This file contains the basic functions necessary for sending raw data to the SD card.
+*/
+
 #include "sd_raw.h"
 #include "Error.h"
 #include <string.h>

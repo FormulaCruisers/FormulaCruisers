@@ -1,3 +1,8 @@
+/* ERROR.H
+Header file for Error.c
+Contains the definitions for all possible errors
+*/
+
 #ifndef _ERROR_H
 #define _ERROR_H
 

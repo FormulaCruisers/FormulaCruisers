@@ -1,3 +1,8 @@
+/* CAN.C
+This file contains several basic functions to transmit and receive data via CAN bus.
+The CAN rx interrupt is enabled here, but not handled in this file. (See Data.c)
+*/
+
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include "Defines.h"

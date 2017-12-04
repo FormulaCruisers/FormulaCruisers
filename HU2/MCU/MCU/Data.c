@@ -1,3 +1,7 @@
+/* DATA.C
+This file contains more specific data sending functions, as well as the interrupt for the CAN rx.
+*/
+
 #include <string.h>			//Only for memcpy
 #include <avr/io.h>
 #include <avr/interrupt.h>
@@ -82,6 +86,8 @@ ISR(CANIT_vect)
 		}
 		else
 		{
+			test_value = ((uint32_t)length << 24) + ((uint32_t)ReceiveData[0] << 16) + ((uint32_t)ReceiveData[1] << 8) + (ReceiveData[2]);
+			
 			uint8_t i = 0;
 			while(i < length)
 			{
@@ -163,7 +169,6 @@ ISR(CANIT_vect)
 						break;
 					
 					case TEMP_RIGHT:
-						test_value = ((uint32_t)length << 24) + ((uint32_t)ReceiveData[3] << 16) + ((uint32_t)ReceiveData[4] << 8) + (ReceiveData[5]);
 						tempright = (ReceiveData[i+1] + (ReceiveData[i+2] << 8));
 						i+=3;
 						break;

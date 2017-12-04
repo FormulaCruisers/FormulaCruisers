@@ -1,8 +1,5 @@
-/*
- * AMS.h
- *
- * Created: 2017-11-27 12:00:20
- *  Author: Jeremy
+/* AMS.H
+This file contains several definitions to be used when communicating to the Emus AMS via CAN.
  */ 
 
 

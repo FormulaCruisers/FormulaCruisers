@@ -1,3 +1,8 @@
+/* CAN.H
+Header file for CAN.c
+Contains definitions for CAN messages
+*/
+
 #ifndef _CAN_H
 #define _CAN_H
 

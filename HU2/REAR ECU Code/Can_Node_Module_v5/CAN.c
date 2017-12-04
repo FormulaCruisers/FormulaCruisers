@@ -30,20 +30,8 @@ ISR(CANIT_vect)
 	if(ReceiveAddress == ECU2ID)
 	{
 		length = ( CANCDMOB & 0x0F );	// DLC, number of bytes to be received
-		//for ( int8_t i = 0; i < length; i++ ){
-		//	ReceiveData[i] = CANMSG; // Get data, INDX auto increments CANMSG
-		//}
-		//Loop unrolling
-		ReceiveData[0] = CANMSG;
-		if(length > 1)
-		{
-			ReceiveData[1] = CANMSG;
-			if(length > 2)
-			{
-				//Should only happen in multi-request messages
-				for (uint8_t i = 3; i < length; i++)
-				ReceiveData[i] = CANMSG;
-			}
+		for ( int8_t i = 0; i < length; i++ ){
+			ReceiveData[i] = CANMSG; // Get data, INDX auto increments CANMSG
 		}
 		
 		uint8_t j = 0;
