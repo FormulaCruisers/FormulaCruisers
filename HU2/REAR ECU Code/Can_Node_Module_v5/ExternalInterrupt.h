@@ -8,6 +8,6 @@ Header file for ExternalInterrupt.c
 
 void int_ExternalInterrupt(void);
 
-extern uint16_t pulse_per_sec[4];
+extern uint16_t pulsetime[4];
 
 #endif

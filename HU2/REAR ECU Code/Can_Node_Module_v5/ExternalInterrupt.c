@@ -15,7 +15,7 @@ Contains all interrupt based logic. Used for AMS and IMD shutdown. Also supposed
 #include "CAN.h"
 #include "ExternalInterrupt.h"
 
-uint16_t pulse_per_sec[4] = {0,0,0,0};
+uint16_t pulsetime[4] = {0,0,0,0};
 
 
 //***** ADC CODE ***********************************************
@@ -53,14 +53,14 @@ void int_ExternalInterrupt(void)
 
 ISR(INT2_vect)
 {
-	pulse_per_sec[_LEFT] = TCNT1L;
+	pulsetime[_LEFT] = TCNT1L;
 	TCNT1H = 0x00;
 	TCNT1L = 0x00;
 }
 
 ISR(INT3_vect)
 {
-	pulse_per_sec[_RIGHT] = TCNT3;
+	pulsetime[_RIGHT] = TCNT3;
 	TCNT3H = 0x00;
 	TCNT3L = 0x00;
 }
@@ -79,12 +79,12 @@ ISR(INT5_vect)
 
 ISR(TIMER3_OVF_vect)
 {
-	pulse_per_sec[_LEFT] = -1;
+	pulsetime[_LEFT] = -1;
 }
 
 ISR(TIMER1_OVF_vect)
 {
-	pulse_per_sec[_RIGHT] = -1;
+	pulsetime[_RIGHT] = -1;
 }
 
 #endif

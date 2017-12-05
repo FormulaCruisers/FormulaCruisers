@@ -19,7 +19,7 @@ Contains all interrupt based logic
 uint8_t InterruptPairDirection[2] = {0x00,0x00};
 uint16_t InterruptPairTimer[2] = {0x0000,0x0000};
 
-uint16_t PulsePerSec[4] = {0,0,0,0};
+uint16_t pulsetime[4] = {0,0,0,0};
 uint8_t Direction[2] = {1,1};
 
 
@@ -49,7 +49,7 @@ ISR(INT1_vect)
 	TCNT1H = 0x00;
 	TCNT1L = 0x00;
 	
-	PulsePerSec[3] = InterruptPairTimerTemp;
+	pulsetime[3] = InterruptPairTimerTemp;
 }
 
 ISR(INT2_vect)
@@ -62,7 +62,7 @@ ISR(INT2_vect)
 	TCNT3H = 0x00;
 	TCNT3L = 0x00;
 	
-	PulsePerSec[2] = InterruptPairTimerTemp;
+	pulsetime[2] = InterruptPairTimerTemp;
 }
 
 ISR(INT3_vect)
@@ -75,7 +75,7 @@ ISR(INT3_vect)
 		TCNT3H = 0x00;
 		TCNT3L = 0x00;
 		
-		PulsePerSec[1] = InterruptPairTimer[1];
+		pulsetime[1] = InterruptPairTimer[1];
 		Direction[1] = 1;
 		
 		InterruptPairDirection[1] = 0;
@@ -110,7 +110,7 @@ ISR(INT4_vect)
 		TCNT3H = 0x00;
 		TCNT3L = 0x00;
 		
-		PulsePerSec[1] = InterruptPairTimer[1];
+		pulsetime[1] = InterruptPairTimer[1];
 		Direction[1] = 0;
 		
 		InterruptPairDirection[1] = 0;
@@ -143,7 +143,7 @@ ISR(INT6_vect)
 	TCNT1H = 0x00;
 	TCNT1L = 0x00;
 		
-	PulsePerSec[0] = InterruptPairTimer[0];
+	pulsetime[0] = InterruptPairTimer[0];
 	Direction[0] = 1;
 		
 	InterruptPairDirection[0] = 0;
@@ -157,7 +157,7 @@ ISR(INT7_vect)
 	TCNT1H = 0x00;
 	TCNT1L = 0x00;
 		
-	PulsePerSec[0] = InterruptPairTimer[0];
+	pulsetime[0] = InterruptPairTimer[0];
 	Direction[0] = 0;
 		
 	InterruptPairDirection[0] = 0;
@@ -166,8 +166,8 @@ ISR(INT7_vect)
 
 ISR(TIMER1_OVF_vect)
 {
-	PulsePerSec[0] = -1;
-	PulsePerSec[3] = -1;
+	pulsetime[0] = -1;
+	pulsetime[3] = -1;
 	
 	Direction[0] = 1;
 }
@@ -175,8 +175,8 @@ ISR(TIMER1_OVF_vect)
 
 ISR(TIMER3_OVF_vect)
 {
-	PulsePerSec[2] = -1;
-	PulsePerSec[1] = -1;
+	pulsetime[2] = -1;
+	pulsetime[1] = -1;
 	
 	Direction[1] = 1;
 }

@@ -43,20 +43,20 @@ ISR(CANIT_vect)
 		if (receive_data[0] == CAN_REQUEST_DATA)
 		{ //if first data received is 3D = General data request
 			uint8_t i = 1;
-			for(i < length)
+			while(i < length)
 			{
 				if (receive_data[i] == RPM_LINKS_ACHTER)
 				{
 					transmit_data[j++] = receive_data[i];
-					transmit_data[j++] = (pulse_per_sec[_LEFT] >> 8);
-					transmit_data[j++] = pulse_per_sec[_LEFT];
+					transmit_data[j++] = (pulsetime[_LEFT] >> 8);
+					transmit_data[j++] = pulsetime[_LEFT];
 					i++;
 				}
 				if (receive_data[i] == RPM_RECHTS_ACHTER)
 				{
 					transmit_data[j++] = receive_data[i];
-					transmit_data[j++] = (pulse_per_sec[_RIGHT] >> 8);
-					transmit_data[j++] = pulse_per_sec[_RIGHT];
+					transmit_data[j++] = (pulsetime[_RIGHT] >> 8);
+					transmit_data[j++] = pulsetime[_RIGHT];
 					i++;
 				}
 				if (receive_data[i] == SHUTDOWN)

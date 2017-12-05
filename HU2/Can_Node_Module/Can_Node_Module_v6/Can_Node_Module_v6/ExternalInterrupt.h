@@ -8,7 +8,7 @@ Header file for ExternalInterrupt.c
 
 void int_ExternalInterrupt(void);
 
-extern uint16_t PulsePerSec[4];
+extern uint16_t pulsetime[4];
 extern uint8_t Direction[2];
 
 uint8_t InterruptPairDirection[2];

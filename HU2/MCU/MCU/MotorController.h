@@ -9,8 +9,6 @@
 #ifndef MOTORCONTROLLER_H_
 #define MOTORCONTROLLER_H_
 
-// Turning the wheel
-
 #define MC_F_NOMINAL					0x05
 #define MC_V_NOMINAL					0x06
 #define MC_COS_PHI						0x07
