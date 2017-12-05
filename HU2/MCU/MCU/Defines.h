@@ -8,7 +8,7 @@ This is a central header file containing a lot of defined constants that are use
 
 #define F_CPU 16000000UL	// Define processor clock speed for compiler
 
-#define SOFTWARE_VERSION			"Software: V2.087    "  //Version should be 2.xxx where xxx is amount of commits(do "git rev-list HEAD --count" to check)
+#define SOFTWARE_VERSION			"Software: V2.094    "  //Version should be 2.xxx where xxx is amount of commits(do "git rev-list HEAD --count" to check)
 
 #define RTDS						PC7 //Loud ready beep
 #define RTDS_TIME					2000 //2 seconds
@@ -93,16 +93,6 @@ This is a central header file containing a lot of defined constants that are use
 
 #define IMDSHUTDOWN					0x99
 #define AMSSHUTDOWN					0x98
-
-/*********** Motor controller *********/
-// Turning the wheel
-#define MC_SET_SPEED					0x31		//Value between 0x0000 - 0x7FFF
-#define MC_SET_TORQUE					0x90		//Value between 0x0000 - 0x7FFF
-
-// Settings
-#define MC_N_LIMIT						0x34		//Value between 0x0000 - 0x7FFF
-#define MC_CURRENT_MAXPK				0xC4		//Value between 0x0000 - 0x3FFF
-#define MC_CURRENT_CONEFF				0xC5		//Value between 0x0000 - 0x3FFF
 
 
 // CAN node IDs

@@ -21,6 +21,7 @@ The base state machine(by way of screens) is controlled in this file.
 #include "UI.h"
 #include "Data.h"
 #include "Error.h"
+#include "MotorController.h"
 
 volatile uint16_t gas1 = 0;
 volatile uint16_t gas2 = 0;
@@ -245,10 +246,10 @@ ISR(TIMER0_COMP_vect)
 				engine_max_perc = vsettings[3];
 				if(stimer == 1)      data_send_motor(MC_N_LIMIT, vsettings[0], 0x7FFF, MCDL);
 				else if(stimer == 2) data_send_motor(MC_N_LIMIT, vsettings[0], 0x7FFF, MCDR);
-				else if(stimer == 3) data_send_motor(MC_CURRENT_MAXPK, vsettings[1], 0x3FFF, MCDL);
-				else if(stimer == 4) data_send_motor(MC_CURRENT_MAXPK, vsettings[1], 0x3FFF, MCDR);
-				else if(stimer == 5) data_send_motor(MC_CURRENT_CONEFF, vsettings[2], 0x3FFF, MCDL);
-				else if(stimer == 6) data_send_motor(MC_CURRENT_CONEFF, vsettings[2], 0x3FFF, MCDR);
+				else if(stimer == 3) data_send_motor(MC_I_MAXPK_PERCENT, vsettings[1], 0x3FFF, MCDL);
+				else if(stimer == 4) data_send_motor(MC_I_MAXPK_PERCENT, vsettings[1], 0x3FFF, MCDR);
+				else if(stimer == 5) data_send_motor(MC_I_CONEFF_PERCENT, vsettings[2], 0x3FFF, MCDL);
+				else if(stimer == 6) data_send_motor(MC_I_CONEFF_PERCENT, vsettings[2], 0x3FFF, MCDR);
 				stimer++;
 			}
 			break;

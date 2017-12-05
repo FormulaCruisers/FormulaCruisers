@@ -6,6 +6,8 @@ This file contains several definitions to be used when communicating to the Emus
 #ifndef AMS_H_
 #define AMS_H_
 
+#define AMS_BASE					0x1B5
+
 enum AMS_CHARGING_STAGE
 {
 	CS_Disconnected = 0,
@@ -240,18 +242,15 @@ enum AMS_PARAMETER
 	 PM_Min_PWM_Output = 0x191C,
 };
 
-enum AMS_MESSAGES
-{
-	MSG_Overall = 0,
-	MSG_Diagnostic = 7,
-	MSG_Voltage = 1,
-	MSG_Cell_Module_Temp = 2,
-	MSG_Cell_Temp = 8,
-	MSG_Cell_Balancing = 3,
-	MSG_Configuration = 128,
-	MSG_Login = 130,
-	//TODO
-};
+#define AMS_MSG_OVERALL				AMS_BASE + 0
+#define AMS_MSG_DIAGNOSTIC			AMS_BASE + 7
+#define AMS_MSG_VOLTAGE				AMS_BASE + 1
+#define AMS_MSG_CELL_MODULE_TEMP	AMS_BASE + 2
+#define AMS_MSG_CELL_TEMP			AMS_BASE + 8
+#define AMS_MSG_CELL_BALANCING		AMS_BASE + 3
+#define AMS_MSG_CONFIGURATION		AMS_BASE + 128
+#define AMS_MSG_LOGIN				AMS_BASE + 130
+	//TODO: complete list
 
 bool is16bit(AMS_PARAMETER param) { return (param == 0x1806 || ((param & 0x0100) > 0); }//The rule of & 0x0100 for 16 bit is not true for param 0x1806... this one is actually 16 bit but would return as 8.
 bool is32bit(AMS_PARAMETER param) { return (param & 0x0200) > 0; }
