@@ -402,8 +402,8 @@ uint8_t sd_raw_read_block(uint32_t block, uint8_t* buffer, int len){
 
 uint8_t sd_raw_write_block(uint32_t block, const uint8_t* buffer, int len)
 {  
-  int r;
-  uint16_t i;
+	int r;
+	uint16_t i;
 	/* address card */
 	select_card();
 
