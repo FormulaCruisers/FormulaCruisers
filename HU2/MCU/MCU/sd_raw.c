@@ -159,12 +159,6 @@ uint8_t sd_raw_init()
 {
 	/* enable outputs for MOSI, SCK, SS, input for MISO */
 	SPI_MasterInit();
-	
-	/* Get the start block from EEPROM*/
-	sd_next_block = eeprom_read_dword(&ee_sd_start_block);
-	char buffer[8];
-	snprintf(buffer, sizeof(buffer), "BOOT%03d", boot_count);
-	sd_write_nullterminated(buffer);
 
 	unselect_card();
 
@@ -191,7 +185,7 @@ uint8_t sd_raw_init()
 		if(i == 0x1ff)
 		{
 			unselect_card();
-			_errorcode = ERROR_SD_INIT;
+			_errorcode = ERROR_SD_INIT_RESET;
 			return 0;
 		}
 	}
@@ -206,7 +200,7 @@ uint8_t sd_raw_init()
 		if(i == 0x7fff)
 		{
 			unselect_card();
-			_errorcode = ERROR_SD_INIT;
+			_errorcode = ERROR_SD_INIT_READY;
 			return 0;
 		}
 	}
@@ -218,6 +212,12 @@ uint8_t sd_raw_init()
 		_errorcode = ERROR_SD_BLOCK;
 		return 0;
 	}
+	
+	/* Get the start block from EEPROM*/
+	sd_next_block = eeprom_read_dword(&ee_sd_start_block);
+	char buffer[8];
+	snprintf(buffer, sizeof(buffer), "BOOT%03d", boot_count);
+	sd_write_nullterminated(buffer);
 
 	/* deaddress card */
 	unselect_card();
@@ -400,8 +400,8 @@ uint8_t sd_raw_read_block(uint32_t block, uint8_t* buffer, int len){
 
 uint8_t sd_raw_write_block(uint32_t block, const uint8_t* buffer, int len)
 {  
-  int r;
-  uint16_t i;
+	int r;
+	uint16_t i;
 	/* address card */
 	select_card();
 

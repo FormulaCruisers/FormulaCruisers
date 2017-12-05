@@ -15,6 +15,7 @@
 #include "UI.h"
 #include "Data.h"
 #include "Error.h"
+#include "sd_raw.h"
 
 volatile uint16_t gas1 = 0;
 volatile uint16_t gas2 = 0;
@@ -468,6 +469,7 @@ int main()
 	
 	can_init();
 	can_rx(MASTERID);
+	sd_raw_init();
 	
 	//Set CPU into sleep mode(simultaneously enabling interrupts)
 	set_sleep_mode(SLEEP_MODE_IDLE);

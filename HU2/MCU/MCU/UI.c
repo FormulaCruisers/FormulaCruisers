@@ -5,6 +5,7 @@
 #include "lcd.h"
 #include "UI.h"
 #include "Error.h"
+#include "sd_raw.h"
 
 extern volatile uint8_t anim;	//Actual animation frame number
 extern volatile uint8_t av;		//Normalized animation frame number
@@ -55,6 +56,10 @@ void lcd_quickrefresh()
 	{
 		lcd_gotoxy(0, y);
 		lcd_puts(Linebuffer[y]);
+#ifdef USE_SD_CARD
+		sd_write(Linebuffer[y], 20);
+		sd_write("0", 1);
+#endif //USE_SD_CARD
 	}
 }
 

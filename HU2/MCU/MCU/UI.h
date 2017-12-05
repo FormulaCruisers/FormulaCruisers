@@ -1,6 +1,8 @@
 #ifndef _UI_H
 #define _UI_H
 
+#include "Defines.h"
+
 char Linebuffer[4][21];
 
 enum uiscreen

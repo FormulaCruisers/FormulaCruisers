@@ -8,6 +8,8 @@
 #define SD_RAW_H
 #include <avr/io.h>
 
+#define USE_SD_CARD
+
 //define the block size to read and write
 #define BLOCK_SIZE 512
 

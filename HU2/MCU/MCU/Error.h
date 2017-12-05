@@ -27,7 +27,8 @@ enum _error
 	ERROR_CAN_FORM,
 	ERROR_CAN_ACK,
 
-	ERROR_SD_INIT,			//When the SD card could not be initialized
+	ERROR_SD_INIT_RESET,	//When the SD card could not be reset
+	ERROR_SD_INIT_READY,	//When the SD card is not ready
 	ERROR_SD_BLOCK,			//When a block error occurs
 	ERROR_SD_NOTREADY,		//When the SD card is not ready
 	ERROR_SD_READ,			//When an SD read error occurs
