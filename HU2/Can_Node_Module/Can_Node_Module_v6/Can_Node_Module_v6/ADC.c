@@ -1,3 +1,7 @@
+/* ADC.c
+Contains the basic logic for reading data from analog pins
+*/
+
 #ifndef _ADCc_
 #define _ADCc_
 

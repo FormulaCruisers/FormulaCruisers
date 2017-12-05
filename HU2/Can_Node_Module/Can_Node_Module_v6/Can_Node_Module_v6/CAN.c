@@ -1,3 +1,8 @@
+/* CAN.C
+Contains the basic CAN functions for receiving and sending data.
+Also contains the interrupt for CAN rx.
+*/
+
 #ifndef _CANc_
 #define _CANc_
 
@@ -11,8 +16,8 @@
 #include "ADC.h"
 #include "ExternalInterrupt.h"
 
-uint8_t ReceiveData[8];
-uint8_t TransmitData[8];
+uint8_t receive_data[8];
+uint8_t transmit_data[8];
 
 uint8_t is_enabled[16] = {0};
 
@@ -35,22 +40,22 @@ ISR(CANIT_vect)
 		//	ReceiveData[i] = CANMSG; // Get data, INDX auto increments CANMSG
 		//}
 		//Loop unrolling
-		ReceiveData[0] = CANMSG;
-		ReceiveData[1] = CANMSG; //CAN nodes should *always* receive at least two bytes of data. This assumes that that is indeed the case.
+		receive_data[0] = CANMSG;
+		receive_data[1] = CANMSG; //CAN nodes should *always* receive at least two bytes of data. This assumes that that is indeed the case.
 		if(length > 2)
 		{
 			//Only should happen in multi-request messages
 			for (uint8_t i = 2; i < length; i++)
-			ReceiveData[i] = CANMSG;
+			receive_data[i] = CANMSG;
 		}
 		uint8_t j = 0;
-		if(ReceiveData[0] == 0x3D)
+		if(receive_data[0] == 0x3D)
 		{	
 			//Allow for multiple requests to be sent at once
 			for(uint8_t i = 1; i < length; i++)
 			{
-				uint8_t message = ReceiveData[i];
-				TransmitData[j++] = message;
+				uint8_t message = receive_data[i];
+				transmit_data[j++] = message;
 				
 				//Split the received message
 				uint8_t req = message & 0x07;
@@ -89,13 +94,13 @@ ISR(CANIT_vect)
 				if(is_adc)
 				{
 					getADC(req);
-					TransmitData[j++] = R_L;
-					TransmitData[j++] = R_H;
+					transmit_data[j++] = R_L;
+					transmit_data[j++] = R_H;
 				}
 				else
 				{
-					TransmitData[j++] = PulsePerSec[req];
-					TransmitData[j++] = (PulsePerSec[req] >> 8);
+					transmit_data[j++] = pulsetime[req];
+					transmit_data[j++] = (pulsetime[req] >> 8);
 				}
 			}
 			can_tx(MASTERID, j); //Transmit data depending on the number of message received
@@ -190,7 +195,7 @@ void can_tx(uint16_t Address, uint8_t DLC)
 	
 	for ( int8_t i = 0; i < 8; i++ )
 	{
-		CANMSG = TransmitData[i]; //CAN Data Message Register: setting the data in the message register
+		CANMSG = transmit_data[i]; //CAN Data Message Register: setting the data in the message register
 	}
 	
 	CANCDMOB = (( 1 << CONMOB0 ) | ( 0 << IDE ) | ( DLC << DLC0)); //CAN MOb Control and DLC Register: (1<<CONMOB1) = enable reception. (0<<IDE) = can standard rev 2.0A ( id length = 11 bits), (DLC << DLC0) Set *DLC* Bytes in the data field of the message.

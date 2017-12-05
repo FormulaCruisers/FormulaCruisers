@@ -1,8 +1,12 @@
+/* CAN.H
+Header file for CAN.c
+Contains definitions for CAN messages
+*/
+
 #ifndef _CAN_H
 #define _CAN_H
 
 #define CAN_REQUEST_DATA	0x3D
-#define CAN_SEND_DATA		0x31
 
 #include <avr/io.h>
 
@@ -17,7 +21,7 @@ void can_init();
 void can_rx(uint16_t NODE_ID);
 void can_tx(uint16_t Address, uint8_t DLC);
 
-uint8_t TransmitData[8];
+uint8_t transmit_data[8];
 
 extern volatile uint32_t test_value;
 

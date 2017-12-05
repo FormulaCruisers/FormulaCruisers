@@ -1,3 +1,7 @@
+/* DEFINES.H
+This is a central header file containing a lot of defined constants that are used in the program.
+*/
+
 #ifndef _Definesh_
 #define _Definesh_
 #include <avr/io.h>

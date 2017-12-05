@@ -1,3 +1,7 @@
+/* DATA.H
+Header file for Data.c
+*/
+
 #ifndef _DATA_H
 #define _DATA_H
 #include "UI.h"

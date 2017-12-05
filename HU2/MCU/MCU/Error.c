@@ -1,3 +1,7 @@
+/* ERROR.C
+This file contains basic error handling functions and error checking functions.
+*/
+
 #include "Defines.h"
 #include "Error.h"
 

@@ -1,3 +1,7 @@
+/* EXTERNALINTERRUPT.C
+Contains all interrupt based logic. Used for AMS and IMD shutdown. Also supposedly used for nonexistent rear wheel RPM sensors
+*/
+
 #ifndef _EXTERNAL_INTERRUPTc_
 #define _EXTERNAL_INTERRUPTc_
 
@@ -11,7 +15,7 @@
 #include "CAN.h"
 #include "ExternalInterrupt.h"
 
-uint16_t PulsePerSec[4] = {0,0,0,0};
+uint16_t pulsetime[4] = {0,0,0,0};
 
 
 //***** ADC CODE ***********************************************
@@ -49,38 +53,38 @@ void int_ExternalInterrupt(void)
 
 ISR(INT2_vect)
 {
-	PulsePerSec[_LEFT] = TCNT1L + (TCNT1H << 8);
+	pulsetime[_LEFT] = TCNT1L;
 	TCNT1H = 0x00;
 	TCNT1L = 0x00;
 }
 
 ISR(INT3_vect)
 {
-	PulsePerSec[_RIGHT] = TCNT3L + (TCNT3H << 8);	
+	pulsetime[_RIGHT] = TCNT3;
 	TCNT3H = 0x00;
 	TCNT3L = 0x00;
 }
 
 ISR(INT4_vect)
 {
-	TransmitData[0] = AMSSHUTDOWN;			// AMS Shutdown
+	transmit_data[0] = AMSSHUTDOWN;			// AMS Shutdown
 	can_tx(MASTERID, 1);
 }
 
 ISR(INT5_vect)
 {
-	TransmitData[0] = IMDSHUTDOWN;			// IMDSHUTDOWN
+	transmit_data[0] = IMDSHUTDOWN;			// IMDSHUTDOWN
 	can_tx(MASTERID, 1);
 }
 
 ISR(TIMER3_OVF_vect)
 {
-	PulsePerSec[_LEFT] = -1;
+	pulsetime[_LEFT] = -1;
 }
 
 ISR(TIMER1_OVF_vect)
 {
-	PulsePerSec[_RIGHT] = -1;
+	pulsetime[_RIGHT] = -1;
 }
 
 #endif

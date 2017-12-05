@@ -191,6 +191,9 @@
     <Compile Include="main.c">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="MotorController.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="sd_raw.c">
       <SubType>compile</SubType>
     </Compile>

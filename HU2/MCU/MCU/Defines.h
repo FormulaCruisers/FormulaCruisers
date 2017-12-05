@@ -1,10 +1,14 @@
+/* DEFINES.H
+This is a central header file containing a lot of defined constants that are used in the program.
+*/
+
 #ifndef _Definesh_
 #define _Definesh_
 #include <avr/io.h>
 
 #define F_CPU 16000000UL	// Define processor clock speed for compiler
 
-#define SOFTWARE_VERSION			"Software: V2.085    "  //Version should be 2.xxx where xxx is amount of commits(do "git rev-list HEAD --count" to check)
+#define SOFTWARE_VERSION			"Software: V2.097    "  //Version should be 2.xxx where xxx is amount of commits(do "git rev-list HEAD --count" to check)
 
 #define RTDS						PC7 //Loud ready beep
 #define RTDS_TIME					2000 //2 seconds
@@ -22,7 +26,7 @@
 #define _HIGH						0xFF
 #define _LOW						0x00
 
-#define PREDISCHARGE_TIMER			5000 //10 seconds
+#define PREDISCHARGE_TIMER			10000 //10 seconds
 
 #define CANTIMEOUT					100	//100 ms
 #define RX_WAIT_LIMIT				20000 //20000 cycles
@@ -67,11 +71,11 @@
 
 /*************** Node 3 ***************/
 #define FLOW_LEFT					0x32 //PPS2
-#define TEMP_LEFT					0x39 //ADC1
+#define TEMP_LEFT					0x39 //ADC1		//00a3 = 17 c
 
 /*************** Node 4 ***************/
 #define FLOW_RIGHT					0x42 //PPS2
-#define TEMP_RIGHT					0x49 //ADC1
+#define TEMP_RIGHT					0x49 //ADC1		//0393 = 17 c
 
 /*************** ECU 2  ***************/
 // Data request
@@ -89,16 +93,6 @@
 
 #define IMDSHUTDOWN					0x99
 #define AMSSHUTDOWN					0x98
-
-/*********** Motor controller *********/
-// Turning the wheel
-#define MC_SET_SPEED					0x31		//Value between 0x0000 - 0x7FFF
-#define MC_SET_TORQUE					0x90		//Value between 0x0000 - 0x7FFF
-
-// Settings
-#define MC_N_LIMIT						0x34		//Value between 0x0000 - 0x7FFF
-#define MC_CURRENT_MAXPK				0xC4		//Value between 0x0000 - 0x3FFF
-#define MC_CURRENT_CONEFF				0xC5		//Value between 0x0000 - 0x3FFF
 
 
 // CAN node IDs

@@ -1,3 +1,8 @@
+/* UI.C
+This file contains all of the code to do with displaying text on the LCD, using lcd.h
+This includes all of the screen states.
+*/
+
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <stdio.h>
@@ -97,12 +102,8 @@ void get_screen(char buffer[4][21], enum uiscreen s)
 		case SCREEN_START:
 			snprintf(buffer[0], sizeof buffer[0], "Gas1:%3d%% Gas2:%3d%% ", gas1perc, gas2perc);
 			snprintf(buffer[1], sizeof buffer[1], "Brake:%3d%%          ", brakeperc);
-//			snprintf(buffer[2], sizeof buffer[2], "Rpm: FL%5u FR%5u", rpm_fl, rpm_fr);
-			snprintf(buffer[3], sizeof buffer[3], "Rpm: BL%5u BR%5u", rpm_bl, rpm_br);
-//			snprintf(buffer[2], sizeof buffer[2], "LT:%5u   F:%5u  ", templeft, flowleft);
-//			snprintf(buffer[3], sizeof buffer[3], "RT:%5u   F:%5u  ", tempright, flowright);
 			snprintf(buffer[2], sizeof buffer[2], "Steerpos:%5d      ", steerpos);
-//			snprintf(buffer[3], sizeof buffer[3], "Press blue to begin ");
+			snprintf(buffer[3], sizeof buffer[3], "Press blue to begin ");
 			break;
 
 		case SCREEN_DRIVING:
@@ -114,7 +115,7 @@ void get_screen(char buffer[4][21], enum uiscreen s)
 			
 		case SCREEN_DRIVETEST:
 			snprintf(buffer[0], sizeof buffer[0], "Engine: %3d%%        ", dt_engv);
-			snprintf(buffer[1], sizeof buffer[1], "                    ");
+			snprintf(buffer[1], sizeof buffer[1], "Temp: L%5u  R%5u", templeft, tempright);
 			snprintf(buffer[2], sizeof buffer[2], "Blue to stop motor  ");
 			snprintf(buffer[3], sizeof buffer[3], "Green to apply      ");
 			break;

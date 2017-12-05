@@ -1,3 +1,9 @@
+/* MAIN.C
+This file contains the entry point of the program and the main loop.
+The base state machine(by way of screens) is controlled in this file.
+ */
+
+
 #include "Defines.h"
 
 #include <avr/io.h>
@@ -16,6 +22,7 @@
 #include "Data.h"
 #include "Error.h"
 #include "sd_raw.h"
+#include "MotorController.h"
 
 volatile uint16_t gas1 = 0;
 volatile uint16_t gas2 = 0;
@@ -94,6 +101,8 @@ ISR(TIMER0_COMP_vect)
 {
 	TCNT0 = 0;
 	
+	data_send8(CAN_REQUEST_DATA, SHUTDOWN, ECU2ID);
+	
 	debounce(&btnblue, PIND & (1<<BUTTONBLUE));
 	debounce(&btngreen, PIND & (1<<BUTTONGREEN));
 	debounce(&btn1, PIND & (1<<BUTTON1)); //The button that is above the green button (i.e. left)
@@ -101,7 +110,7 @@ ISR(TIMER0_COMP_vect)
 	
 	if(!shutdownon || ams_shutdown || imd_shutdown)
 	{
-		if(ui_current_screen == SCREEN_PREDISCHARGING || ui_current_screen == SCREEN_DRIVING || ui_current_screen == SCREEN_STATUS)
+		if(ui_current_screen == SCREEN_PREDISCHARGING || ui_current_screen == SCREEN_DRIVING || ui_current_screen == SCREEN_STATUS || ui_current_screen == SCREEN_DRIVETEST)
 		{
 			_errorcode = ERROR_SHUTDOWN;
 		}
@@ -129,20 +138,21 @@ ISR(TIMER0_COMP_vect)
 	{
 		//Reset literally everything possible
 		if(errortimer < 0xFF) errortimer++;
-		if(errortimer == 1) data_send_ecu_a(3, (uint8_t[]){	RUN_ENABLE, _LOW,
-															MAIN_RELAIS, _LOW,
-															PREDISCHARGE, _LOW});
-		if(errortimer == 2) data_send_ecu_a(3, (uint8_t[]){	MOTOR_CONTROLLER, _LOW,
-															PUMP_ENABLE,   _LOW,
-															BRAKELIGHT, _LOW});
+		//if(errortimer == 1) data_send_ecu_a(3, (uint8_t[]){	RUN_ENABLE, _LOW,
+		//													MAIN_RELAIS, _LOW,
+		//													PREDISCHARGE, _LOW});
+		//if(errortimer == 2) data_send_ecu_a(3, (uint8_t[]){	MOTOR_CONTROLLER, _LOW,
+		//													PUMP_ENABLE,   _LOW,
+		//													BRAKELIGHT, _LOW});
+		if(errortimer == 1) data_send_ecu(RUN_ENABLE, _LOW);
+		if(errortimer == 2) data_send_ecu(MAIN_RELAIS, _LOW);
+		if(errortimer == 3) data_send_ecu(PREDISCHARGE, _LOW);
+		if(errortimer == 4) data_send_ecu(MOTOR_CONTROLLER, _LOW);
+		if(errortimer == 5) data_send_ecu(PUMP_ENABLE, _LOW);
+		if(errortimer == 6) data_send_ecu(BRAKELIGHT, _LOW);
 		
 		//Change into error screen
 		change_screen(SCREEN_ERROR);
-	}
-	else
-	{
-		//Request data from the ECU, but only if it doesn't have to reset literally everything possible
-		if(ui_current_screen != SCREEN_TEST) data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){RPM_BACK_LEFT, RPM_BACK_RIGHT, SHUTDOWN}, ECU2ID, 3);
 	}
 	
 	switch(ui_current_screen)
@@ -237,10 +247,10 @@ ISR(TIMER0_COMP_vect)
 				engine_max_perc = vsettings[3];
 				if(stimer == 1)      data_send_motor(MC_N_LIMIT, vsettings[0], 0x7FFF, MCDL);
 				else if(stimer == 2) data_send_motor(MC_N_LIMIT, vsettings[0], 0x7FFF, MCDR);
-				else if(stimer == 3) data_send_motor(MC_CURRENT_MAXPK, vsettings[1], 0x3FFF, MCDL);
-				else if(stimer == 4) data_send_motor(MC_CURRENT_MAXPK, vsettings[1], 0x3FFF, MCDR);
-				else if(stimer == 5) data_send_motor(MC_CURRENT_CONEFF, vsettings[2], 0x3FFF, MCDL);
-				else if(stimer == 6) data_send_motor(MC_CURRENT_CONEFF, vsettings[2], 0x3FFF, MCDR);
+				else if(stimer == 3) data_send_motor(MC_I_MAXPK_PERCENT, vsettings[1], 0x3FFF, MCDL);
+				else if(stimer == 4) data_send_motor(MC_I_MAXPK_PERCENT, vsettings[1], 0x3FFF, MCDR);
+				else if(stimer == 5) data_send_motor(MC_I_CONEFF_PERCENT, vsettings[2], 0x3FFF, MCDL);
+				else if(stimer == 6) data_send_motor(MC_I_CONEFF_PERCENT, vsettings[2], 0x3FFF, MCDR);
 				stimer++;
 			}
 			break;
@@ -352,6 +362,7 @@ ISR(TIMER0_COMP_vect)
 				if(btngreen == 1) data_send_motor_d(MC_SET_TORQUE, -dt_engv, ENGINE_MAX, MCDR);
 				if(btngreen == 2) data_send_motor_d(MC_SET_TORQUE, -dt_engv, ENGINE_MAX, MCDL);
 			}
+			break;
 			
 		//The screen that appears when actually driving.
 		case SCREEN_DRIVING:
