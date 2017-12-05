@@ -10,8 +10,8 @@ The CAN rx interrupt is enabled here, but not handled in this file. (See Data.c)
 
 void data_send_arr(uint8_t header, uint8_t buffer[], uint16_t node, uint8_t bufferlen)
 {
-	TransmitData[0] = header;
-	for(uint8_t i = 0; i < bufferlen; i++) TransmitData[i+1] = buffer[i];
+	transmit_data[0] = header;
+	for(uint8_t i = 0; i < bufferlen; i++) transmit_data[i+1] = buffer[i];
 	can_tx(node, bufferlen + 1);
 }
 void data_send8(uint8_t header, uint8_t data, uint16_t node)
@@ -27,7 +27,7 @@ void data_send16(uint8_t header, uint16_t data, uint16_t node)
 
 void data_send_arr_nh(uint8_t buffer[], uint16_t node, uint8_t bufferlen)
 {
-	for(uint8_t i = 0; i < bufferlen; i++) TransmitData[i] = buffer[i];
+	for(uint8_t i = 0; i < bufferlen; i++) transmit_data[i] = buffer[i];
 	can_tx(node, bufferlen);
 }
 void data_send8_nh(uint8_t data, uint16_t node)
@@ -94,7 +94,7 @@ void can_tx(uint16_t Address, uint8_t DLC)
 	CANIDT2 = Address << 5;		//
 	CANIDT1 = Address >> 3;		//
 	
-	for ( int8_t i = 0; i < 8; i++ ) CANMSG = TransmitData[i]; //CAN Data Message Register: setting the data in the message register
+	for ( int8_t i = 0; i < 8; i++ ) CANMSG = transmit_data[i]; //CAN Data Message Register: setting the data in the message register
 	
 	CANCDMOB = (( 1 << CONMOB0 ) | ( 0 << IDE ) | ( DLC << DLC0)); //CAN MOb Control and DLC Register: (1<<CONMOB1) = enable reception. (0<<IDE) = can standard rev 2.0A ( id length = 11 bits), (DLC << DLC0) Set *DLC* Bytes in the data field of the message.
 
@@ -106,5 +106,5 @@ void can_tx(uint16_t Address, uint8_t DLC)
 	
 	CANPAGE = ( 0 << MOBNB3 ) | ( 0 << MOBNB2 ) | ( 0 << MOBNB1 ) | ( 1 << MOBNB0 ); // select 0001 = MOB1
 	
-	for (int8_t i = 0; i < 8; i++) TransmitData[i] = 0; //Resetting Transmit Data
+	for (int8_t i = 0; i < 8; i++) transmit_data[i] = 0; //Resetting Transmit Data
 }

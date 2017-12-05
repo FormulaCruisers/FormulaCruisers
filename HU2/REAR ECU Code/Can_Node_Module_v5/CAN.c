@@ -16,8 +16,8 @@ Also contains the interrupt for CAN rx.
 #include "CAN.h"
 #include "ExternalInterrupt.h"
 
-uint8_t ReceiveData[64];
-uint8_t TransmitData[64];
+uint8_t receive_data[64];
+uint8_t transmit_data[64];
 
 bool predison = false;
 
@@ -28,58 +28,64 @@ ISR(CANIT_vect)
 	
 	CANPAGE = ( 0 << MOBNB3 ) | ( 0 << MOBNB2 ) | ( 0 << MOBNB1 ) | ( 1 << MOBNB0 ); // select CANMOB 0001 = MOB1
 	
-	uint16_t ReceiveAddress = (CANIDT1 << 3) | ((CANIDT2 & 0b11100000) >> 5);
+	uint16_t rx_addr = (CANIDT1 << 3) | ((CANIDT2 & 0b11100000) >> 5);
 	
 	cantimer = 0;
 	
-	if(ReceiveAddress == ECU2ID)
+	if(rx_addr == ECU2ID)
 	{
 		length = ( CANCDMOB & 0x0F );	// DLC, number of bytes to be received
 		for ( int8_t i = 0; i < length; i++ ){
-			ReceiveData[i] = CANMSG; // Get data, INDX auto increments CANMSG
+			receive_data[i] = CANMSG; // Get data, INDX auto increments CANMSG
 		}
 		
 		uint8_t j = 0;
-		if (ReceiveData[0] == 0x3D)
+		if (receive_data[0] == CAN_REQUEST_DATA)
 		{ //if first data received is 3D = General data request
-			for(uint8_t i = 1; i < length; i++)
+			uint8_t i = 1;
+			for(i < length)
 			{
-				if (ReceiveData[i] == RPM_LINKS_ACHTER)
+				if (receive_data[i] == RPM_LINKS_ACHTER)
 				{
-					TransmitData[j++] = ReceiveData[i];
-					TransmitData[j++] = (PulsePerSec[_LEFT] >> 8);
-					TransmitData[j++] = PulsePerSec[_LEFT];
+					transmit_data[j++] = receive_data[i];
+					transmit_data[j++] = (pulse_per_sec[_LEFT] >> 8);
+					transmit_data[j++] = pulse_per_sec[_LEFT];
+					i++;
 				}
-				if (ReceiveData[i] == RPM_RECHTS_ACHTER)
+				if (receive_data[i] == RPM_RECHTS_ACHTER)
 				{
-					TransmitData[j++] = ReceiveData[i];
-					TransmitData[j++] = (PulsePerSec[_RIGHT] >> 8);
-					TransmitData[j++] = PulsePerSec[_RIGHT];
+					transmit_data[j++] = receive_data[i];
+					transmit_data[j++] = (pulse_per_sec[_RIGHT] >> 8);
+					transmit_data[j++] = pulse_per_sec[_RIGHT];
+					i++;
 				}
-				if (ReceiveData[i] == SHUTDOWN)
+				if (receive_data[i] == SHUTDOWN)
 				{
 					DDRD &= ~(1<<PD7);
 					if((PIND & (1 << PD7)))
 					{
-						TransmitData[j++] = ReceiveData[i];
-						TransmitData[j++] = 0xFF;
+						transmit_data[j++] = receive_data[i];
+						transmit_data[j++] = 0xFF;
 					}
 					else
 					{
-						TransmitData[j++] = ReceiveData[i];
-						TransmitData[j++] = 0x00;
+						transmit_data[j++] = receive_data[i];
+						transmit_data[j++] = 0x00;
 					}
+					i++;
 				}
 			}
 		}
 		else
 		{
-			for(uint8_t i = 0; i < length; i++)
+			uint8_t i = 0;
+			while(i < length)
 			{
-				if (ReceiveData[i] == RUN_ENABLE)
+				//Run enable
+				if (receive_data[i] == RUN_ENABLE)
 				{
 					DDRC	|= (1 << PC0);
-					if(ReceiveData[i+1])
+					if(receive_data[i+1])
 					{
 						PORTC	|= (1 << PC0);
 					}
@@ -87,12 +93,15 @@ ISR(CANIT_vect)
 					{
 						PORTC	&= ~(1 << PC0);
 					}
-					TransmitData[j++] = RUN_ENABLE;
+					transmit_data[j++] = RUN_ENABLE;
+					i++;
 				}
-				if (ReceiveData[i] == MOTOR_CONTROLLER)
+				
+				//Motor controller
+				if (receive_data[i] == MOTOR_CONTROLLER)
 				{
 					DDRC	|= (1 << PC1);
-					if(ReceiveData[i+1])
+					if(receive_data[i+1])
 					{
 						PORTC	|= (1 << PC1);
 					}
@@ -100,12 +109,15 @@ ISR(CANIT_vect)
 					{
 						PORTC	&= ~(1 << PC1);
 					}
-					TransmitData[j++] = MOTOR_CONTROLLER;
+					transmit_data[j++] = MOTOR_CONTROLLER;
+					i++;
 				}
-				if (ReceiveData[i] == BRAKELIGHT)
+				
+				//Brakelight
+				if (receive_data[i] == BRAKELIGHT)
 				{
 					DDRC	|= (1 << PC4);
-					if(ReceiveData[i+1])
+					if(receive_data[i+1])
 					{
 						PORTC	|= (1 << PC4);
 					}
@@ -113,13 +125,16 @@ ISR(CANIT_vect)
 					{
 						PORTC	&= ~(1 << PC4);
 					}
-					TransmitData[j++] = BRAKELIGHT;
+					transmit_data[j++] = BRAKELIGHT;
+					i++;
 				}
-				if (ReceiveData[i] == PRE_DISCHARGE)
+				
+				//Predischarge
+				if (receive_data[i] == PRE_DISCHARGE)
 				{
 					DDRC |= (1 << PC3);
 				
-					if(ReceiveData[i+1])
+					if(receive_data[i+1])
 					{
 						predison = true;
 						PORTC	|= (1 << PC3);
@@ -129,12 +144,15 @@ ISR(CANIT_vect)
 						predison = false;
 						PORTC	&= ~(1 << PC3);
 					}
-					TransmitData[j++] = PRE_DISCHARGE;
+					transmit_data[j++] = PRE_DISCHARGE;
+					i++;
 				}
-				if (ReceiveData[i] == MAINRELAIS)
+				
+				//Main relais(which will not turn on if the predischarge is not on)
+				if (receive_data[i] == MAINRELAIS)
 				{
 					DDRC	|= (1 << PC2);
-					if(ReceiveData[i+1] && predison)
+					if(receive_data[i+1] && predison)
 					{
 						PORTC	|= (1 << PC2);
 					}
@@ -142,19 +160,24 @@ ISR(CANIT_vect)
 					{
 						PORTC	&= ~(1 << PC2);
 					}
-					TransmitData[j++] = MAINRELAIS;
+					transmit_data[j++] = MAINRELAIS;
+					i++;
 				}
-				if (ReceiveData[i] == PUMP)
+				
+				//Pump
+				if (receive_data[i] == PUMP)
 				{
 					DDRC	|= (1 << PC5);
-					if(ReceiveData[i+1]){
+					if(receive_data[i+1]){
 						PORTC	|= (1 << PC5);
 					}
 					else{
 						PORTC	&= ~(1 << PC5);
 					}
-					TransmitData[j++] = PUMP;
+					transmit_data[j++] = PUMP;
+					i++;
 				}
+				i++;
 			}
 		}
 		can_tx(MASTERID, j); //Transmit data depending on the number of message received
@@ -247,7 +270,7 @@ void can_tx(uint16_t Address, uint8_t DLC)
 	
 	for ( int8_t i = 0; i < 8; i++ )
 	{
-		CANMSG = TransmitData[i]; //CAN Data Message Register: setting the data in the message register
+		CANMSG = transmit_data[i]; //CAN Data Message Register: setting the data in the message register
 	}
 	
 	CANCDMOB = (( 1 << CONMOB0 ) | ( 0 << IDE ) | ( DLC << DLC0)); //CAN MOb Control and DLC Register: (1<<CONMOB1) = enable reception. (0<<IDE) = can standard rev 2.0A ( id length = 11 bits), (DLC << DLC0) Set *DLC* Bytes in the data field of the message.
