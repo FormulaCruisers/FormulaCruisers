@@ -480,7 +480,9 @@ int main()
 	
 	can_init();
 	can_rx(MASTERID);
+#ifdef USE_SD_CARD
 	sd_raw_init();
+#endif
 	
 	//Set CPU into sleep mode(simultaneously enabling interrupts)
 	set_sleep_mode(SLEEP_MODE_IDLE);
