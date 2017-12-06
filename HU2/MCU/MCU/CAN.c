@@ -9,6 +9,9 @@ The CAN rx interrupt is enabled here, but not handled in this file. (See Data.c)
 #include "Defines.h"
 #include "CAN.h"
 
+volatile uint32_t tx_count = 0;
+volatile uint32_t rx_count = 0;
+
 void data_send_arr(uint8_t header, uint8_t buffer[], uint16_t node, uint8_t bufferlen)
 {
 	transmit_data[0] = header;
@@ -83,10 +86,12 @@ void can_rx(uint16_t NODE_ID)
 
 //***** CAN Creating TX *****************************************************
 void can_tx(uint16_t Address, uint8_t DLC)
-{		
-	CANPAGE = ( 0 << MOBNB3 ) | ( 0 << MOBNB2 ) | ( 0 << MOBNB1 ) | ( 0 << MOBNB0 ); // select 0000 = CANMOB0
-
+{
+	tx_count++;
+	
 	while ( CANEN2 & ( 1 << ENMOB0 ) ); // Wait for MOb 0 to be free
+	
+	CANPAGE = ( 0 << MOBNB3 ) | ( 0 << MOBNB2 ) | ( 0 << MOBNB1 ) | ( 0 << MOBNB0 ); // select 0000 = CANMOB0
 	
 	CANSTMOB = 0x00;   // Clear mob status register
 	

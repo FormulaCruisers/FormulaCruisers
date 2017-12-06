@@ -26,6 +26,8 @@ char* fsettings[SETTINGS_COUNT] = {	"Speed limit %      ",
 									"Max engine *1k(0-?)" };
 char settingcursor[2] = "> ";	//Cursor for settings screen
 
+extern volatile uint32_t rx_count, tx_count;
+
 ISR(TIMER2_OVF_vect) //8 Hz
 {
 	//Full refresh LCD
@@ -50,6 +52,11 @@ void lcd_refresh()
 	{
 		Linebuffer[2][2] = 'I';
 	}//*/
+	
+	//snprintf(Linebuffer[3], sizeof Linebuffer[3], "%8lu %8lu ", rx_count, tx_count);
+	
+	rx_count = 0;
+	tx_count = 0;
 	
 	lcd_quickrefresh();
 }

@@ -10,6 +10,8 @@ This file contains more specific data sending functions, as well as the interrup
 #include "CAN.h"
 #include "Error.h"
 
+extern volatile uint32_t rx_count;
+
 void data_send_ecu(uint8_t node, uint8_t data)
 {
 	transmit_data[0] = node;
@@ -36,12 +38,16 @@ void data_send_motor_d(uint8_t header, double data, int32_t mul, uint16_t node)
 
 ISR(CANIT_vect)
 {	
+	//rx_count = TCNT0;
+	
 	CANPAGE = ( 0 << MOBNB3 ) | ( 0 << MOBNB2 ) | ( 0 << MOBNB1 ) | ( 1 << MOBNB0 ); // select CANMOB 0001 = MOB1
 
 	uint16_t rx_addr = (CANIDT1 << 3) | ((CANIDT2 & 0b11100000) >> 5);
 
+	rx_count++;
+
 	if(rx_addr == MASTERID)
-	{	
+	{
 		uint8_t length = ( CANCDMOB & 0x0F );
 		
 		//for ( int8_t i = 0; i < length; i++ ) ReceiveData[i] = CANMSG;
@@ -65,7 +71,7 @@ ISR(CANIT_vect)
 		
 		if(ui_current_screen == SCREEN_TEST)
 		{
-			if(receive_data[0] != 0x61)
+			if(receive_data[0] != SHUTDOWN) //Ignore shutdown message
 			{
 				if(length == 2)			test_value = ((uint32_t)receive_data[0] << 8) + (receive_data[1]);
 				else if(length == 3)	test_value = ((uint32_t)receive_data[0] << 16) + ((uint32_t)receive_data[1] << 8) + (receive_data[2]);
@@ -107,6 +113,7 @@ ISR(CANIT_vect)
 						break;
 			
 					case SHUTDOWN:
+						//rx_count = TCNT0;
 						shutdownon = receive_data[i+1] ? 1 : 0;
 						i+=2;
 						break;

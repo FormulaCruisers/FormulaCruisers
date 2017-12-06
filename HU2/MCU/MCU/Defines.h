@@ -57,7 +57,7 @@ This is a central header file containing a lot of defined constants that are use
 
 //Counter values
 #define _TM0						100 //500 Hz
-#define _TM2						192 //8 Hz
+#define _TM2						192 //13.5 Hz?
 
 /*************** Node 1 ***************/
 #define STEERING_POS				0x18 //ADC3
