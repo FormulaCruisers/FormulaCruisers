@@ -5,6 +5,7 @@ The CAN rx interrupt is enabled here, but not handled in this file. (See Data.c)
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
+#include <util/delay.h>
 #include "Defines.h"
 #include "CAN.h"
 
@@ -67,7 +68,7 @@ void can_init()
 //***** CAN Creating RX *****************************************************
 void can_rx(uint16_t NODE_ID)
 {
-	CANPAGE = ( 1 << MOBNB0 ); // Select message object 0
+	CANPAGE = ( 1 << MOBNB0 ); // Select message object 1
 	
 	CANIDT1 = NODE_ID >> 3; // Receive Address
 	CANIDT2 = NODE_ID << 5; //
@@ -82,7 +83,7 @@ void can_rx(uint16_t NODE_ID)
 
 //***** CAN Creating TX *****************************************************
 void can_tx(uint16_t Address, uint8_t DLC)
-{	
+{		
 	CANPAGE = ( 0 << MOBNB3 ) | ( 0 << MOBNB2 ) | ( 0 << MOBNB1 ) | ( 0 << MOBNB0 ); // select 0000 = CANMOB0
 
 	while ( CANEN2 & ( 1 << ENMOB0 ) ); // Wait for MOb 0 to be free
@@ -105,6 +106,4 @@ void can_tx(uint16_t Address, uint8_t DLC)
 	CANSTMOB = 0x00; // Clear TXOK flag
 	
 	CANPAGE = ( 0 << MOBNB3 ) | ( 0 << MOBNB2 ) | ( 0 << MOBNB1 ) | ( 1 << MOBNB0 ); // select 0001 = MOB1
-	
-	for (int8_t i = 0; i < 8; i++) transmit_data[i] = 0; //Resetting Transmit Data
 }
