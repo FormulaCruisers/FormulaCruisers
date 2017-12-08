@@ -348,7 +348,7 @@ ISR(TIMER0_COMP_vect)
 				if(btnblue == 2) data_send_motor_d(MC_SET_TORQUE, 0, ENGINE_MAX, MCDL);
 				
 				if(btngreen == 1) data_send_motor_d(MC_SET_TORQUE, -dt_engv, ENGINE_MAX, MCDR);
-				if(btngreen == 2) data_send_motor_d(MC_SET_TORQUE, -dt_engv, ENGINE_MAX, MCDL);
+				if(btngreen == 2) data_send_motor_d(MC_SET_TORQUE, dt_engv, ENGINE_MAX, MCDL);
 			}
 			break;
 			
