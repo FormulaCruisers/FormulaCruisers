@@ -132,6 +132,7 @@ uint8_t sd_flush_buffer(){
 		memset(sdbuffer, 0xff, BLOCK_SIZE);
 		sd_current_pos = 0;
 		sd_next_block++;
+		eeprom_write_dword(&ee_sd_start_block, sd_next_block);
 		return 1;
 	}
 	return 0; //Error, _errorcode has already been set by sd_raw_write_block()
@@ -218,7 +219,7 @@ uint8_t sd_raw_init()
 	/* Get the start block from EEPROM*/
 	sd_next_block = eeprom_read_dword(&ee_sd_start_block);
 	char buffer[8];
-	snprintf(buffer, sizeof(buffer), "BOOT%03d", boot_count);
+	snprintf(buffer, sizeof(buffer), "BOOT%03d", boot_count % 1000);
 	sd_write_nullterminated(buffer);
 
 	/* deaddress card */
@@ -411,7 +412,33 @@ uint8_t sd_raw_write_block(uint32_t block, const uint8_t* buffer, int len)
 	if((r = sd_raw_send_command_r1(CMD_WRITE_SINGLE_BLOCK, BLOCK_SIZE * block)))
 	{
 		unselect_card();
-		_errorcode = ERROR_SD_WRITE;
+		switch(r){
+		case 0x01:
+			_errorcode = ERROR_SD_WRITE_IDLE;
+			break;
+		case 0x02:
+			_errorcode = ERROR_SD_WRITE_ERASE_RST;
+			break;
+		case 0x04:
+			_errorcode = ERROR_SD_WRITE_ILLEGAL;
+			break;
+		case 0x08:
+			_errorcode = ERROR_SD_WRITE_CRC;
+			break;
+		case 0x10:
+			_errorcode = ERROR_SD_WRITE_ERASE_SEQ;
+			break;
+		case 0x20:
+			_errorcode = ERROR_SD_WRITE_ADDRESS;
+			break;
+		case 0x40:
+			_errorcode = ERROR_SD_WRITE_PARAMETER;
+			break;
+		default:
+			_errorcode = ERROR_SD_WRITE;
+			break;
+		}
+		
 		return 0;
 	}
 

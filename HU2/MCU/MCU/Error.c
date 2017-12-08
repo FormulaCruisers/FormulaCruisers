@@ -40,6 +40,14 @@ char* get_error(enum _error e)
 		case ERROR_SD_READ:			return "SD Read error";
 		case ERROR_SD_WRITE:		return "SD Write error";
 		case ERROR_SD_SIZE:			return "SD Size error";
+		
+		case ERROR_SD_WRITE_IDLE:		return "SD Write Idle";
+		case ERROR_SD_WRITE_ERASE_RST:	return "SD Write Erase Reset";
+		case ERROR_SD_WRITE_ILLEGAL:	return "SD Write Illegal Cmd";
+		case ERROR_SD_WRITE_CRC:		return "SD Write Command CRC";
+		case ERROR_SD_WRITE_ERASE_SEQ:	return "SD Write Erase Sequence";
+		case ERROR_SD_WRITE_ADDRESS:	return "SD Write Address";
+		case ERROR_SD_WRITE_PARAMETER:	return "SD Write Parameter";
 	
 		case ERROR_UNKNOWN:
 		default:			return "Unknown error?!";

@@ -40,6 +40,14 @@ enum _error
 	ERROR_SD_WRITE,			//When an SD write error occurs
 	ERROR_SD_SIZE,			//Writing too much data to SD card
 	
+	ERROR_SD_WRITE_IDLE,
+	ERROR_SD_WRITE_ERASE_RST,
+	ERROR_SD_WRITE_ILLEGAL,
+	ERROR_SD_WRITE_CRC,
+	ERROR_SD_WRITE_ERASE_SEQ,
+	ERROR_SD_WRITE_ADDRESS,
+	ERROR_SD_WRITE_PARAMETER,
+	
 	ERROR_UNKNOWN,			//For unknown errors
 };
 
