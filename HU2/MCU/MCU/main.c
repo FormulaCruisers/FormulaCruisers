@@ -97,12 +97,16 @@ uint16_t sd_current_pos = 0;
 //Drive test value
 volatile uint8_t dt_engv = 0;
 
+extern volatile uint32_t tx_count;
+
 ISR(TIMER0_COMP_vect)
 {
+	//tx_count = TCNT0;
 	TCNT0 = 0;
 	
 	data_send8(CAN_REQUEST_DATA, SHUTDOWN, ECU2ID);
 	
+	//*
 	debounce(&btnblue, PIND & (1<<BUTTONBLUE));
 	debounce(&btngreen, PIND & (1<<BUTTONGREEN));
 	debounce(&btn1, PIND & (1<<BUTTON1)); //The button that is above the green button (i.e. left)
@@ -122,14 +126,12 @@ ISR(TIMER0_COMP_vect)
 		switch(ttt)
 		{
 			case 0:
-				data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){RPM_FRONT_RIGHT, RPM_FRONT_LEFT}, NODEID1, 2);
 				data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){BRAKE}, NODEID2, 1);
-				data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){FLOW_LEFT, TEMP_LEFT}, NODEID3, 2);
+				data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){RPM_FRONT_RIGHT, RPM_FRONT_LEFT}, NODEID1, 2);
 				break;
 			case 1:
 				data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){STEERING_POS}, NODEID1, 1);
 				data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){GAS_1, GAS_2}, NODEID2, 2);
-				data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){TEMP_RIGHT, FLOW_RIGHT}, NODEID4, 2);
 				break;
 		}
 	}
@@ -138,18 +140,18 @@ ISR(TIMER0_COMP_vect)
 	{
 		//Reset literally everything possible
 		if(errortimer < 0xFF) errortimer++;
-		//if(errortimer == 1) data_send_ecu_a(3, (uint8_t[]){	RUN_ENABLE, _LOW,
-		//													MAIN_RELAIS, _LOW,
-		//													PREDISCHARGE, _LOW});
-		//if(errortimer == 2) data_send_ecu_a(3, (uint8_t[]){	MOTOR_CONTROLLER, _LOW,
-		//													PUMP_ENABLE,   _LOW,
-		//													BRAKELIGHT, _LOW});
-		if(errortimer == 1) data_send_ecu(RUN_ENABLE, _LOW);
-		if(errortimer == 2) data_send_ecu(MAIN_RELAIS, _LOW);
-		if(errortimer == 3) data_send_ecu(PREDISCHARGE, _LOW);
-		if(errortimer == 4) data_send_ecu(MOTOR_CONTROLLER, _LOW);
-		if(errortimer == 5) data_send_ecu(PUMP_ENABLE, _LOW);
-		if(errortimer == 6) data_send_ecu(BRAKELIGHT, _LOW);
+		if(errortimer == 1) data_send_ecu_a(3, (uint8_t[]){	RUN_ENABLE, _LOW,
+															MAIN_RELAIS, _LOW,
+															PREDISCHARGE, _LOW});
+		if(errortimer == 2) data_send_ecu_a(3, (uint8_t[]){	MOTOR_CONTROLLER, _LOW,
+															PUMP_ENABLE,   _LOW,
+															BRAKELIGHT, _LOW});
+		//if(errortimer == 1) data_send_ecu(RUN_ENABLE, _LOW);
+		//if(errortimer == 2) data_send_ecu(MAIN_RELAIS, _LOW);
+		//if(errortimer == 3) data_send_ecu(PREDISCHARGE, _LOW);
+		//if(errortimer == 4) data_send_ecu(MOTOR_CONTROLLER, _LOW);
+		//if(errortimer == 5) data_send_ecu(PUMP_ENABLE, _LOW);
+		//if(errortimer == 6) data_send_ecu(BRAKELIGHT, _LOW);
 		
 		//Change into error screen
 		change_screen(SCREEN_ERROR);
@@ -194,15 +196,10 @@ ISR(TIMER0_COMP_vect)
 				stimer = -200;
 				if(_errorcode == ERROR_NONE) change_screen(SCREEN_SAVING);
 			}
-			
-			if(btngreen == 1)
-			{
-				data_send_ecu(BRAKELIGHT, _HIGH);
-			}
-			
+						
 			if(btn1 && btn2)
 			{
-				data_send_ecu(PUMP_ENABLE, _HIGH);
+				//data_send_ecu(PUMP_ENABLE, _HIGH);
 				change_screen(SCREEN_TEST);
 			}
 			break;
@@ -324,15 +321,6 @@ ISR(TIMER0_COMP_vect)
 				data_send_ecu(MAIN_RELAIS, _HIGH);
 				change_screen(SCREEN_STATUS);
 			}
-			else if(predistimer == PREDISCHARGE_TIMER - 1900)
-			{
-				data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){FLOW_LEFT, TEMP_LEFT}, NODEID3, 2);
-				data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){FLOW_RIGHT, TEMP_RIGHT}, NODEID4, 2);
-			}
-			else if(predistimer == PREDISCHARGE_TIMER - 2000)
-			{
-				//e_checkflow();
-			}
 			break;
 		
 		//The screen that appears after predischarging; Only one press of the green LAUNCH button to start driving. (run_enable)
@@ -366,11 +354,6 @@ ISR(TIMER0_COMP_vect)
 			
 		//The screen that appears when actually driving.
 		case SCREEN_DRIVING:
-			if(ttt == 1)
-			{
-				data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){FLOW_LEFT, TEMP_LEFT}, NODEID3, 2);
-				data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){FLOW_RIGHT, TEMP_RIGHT}, NODEID4, 2);
-			}
 			if(ttt == 3)
 			{
 				//e_checkflow();
@@ -414,7 +397,7 @@ ISR(TIMER0_COMP_vect)
 	}
 
 	//mod-2 timer increase
-	ttt = 1-ttt;
+	ttt = 1 - ttt;
 	
 	if(readybeep > 1) readybeep--;
 	else if(readybeep == 1)
@@ -426,6 +409,7 @@ ISR(TIMER0_COMP_vect)
 	
 	//Check for any CAN errors at the end of the loop
 	e_checkCAN();
+	//*/
 }
 
 void debounce(uint8_t* btn, uint8_t val)

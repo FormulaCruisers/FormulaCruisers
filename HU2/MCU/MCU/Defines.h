@@ -8,7 +8,7 @@ This is a central header file containing a lot of defined constants that are use
 
 #define F_CPU 16000000UL	// Define processor clock speed for compiler
 
-#define SOFTWARE_VERSION			"Software: V2.097    "  //Version should be 2.xxx where xxx is amount of commits(do "git rev-list HEAD --count" to check)
+#define SOFTWARE_VERSION			"Software: V2.101    "  //Version should be 2.xxx where xxx is amount of commits(do "git rev-list HEAD --count" to check)
 
 #define RTDS						PC7 //Loud ready beep
 #define RTDS_TIME					2000 //2 seconds
@@ -29,7 +29,7 @@ This is a central header file containing a lot of defined constants that are use
 #define PREDISCHARGE_TIMER			10000 //10 seconds
 
 #define CANTIMEOUT					100	//100 ms
-#define RX_WAIT_LIMIT				20000 //20000 cycles
+#define RX_WAIT_LIMIT				200 //200 cycles
 
 #define SETTINGS_COUNT				4
 
@@ -51,13 +51,13 @@ This is a central header file containing a lot of defined constants that are use
 #define PUMP_TEMP_MAX				100
 #define FLOWMIN						10
 
-#define STEER_MAX					220
-#define STEER_MIN					320
+#define STEER_MAX					0x0DC
+#define STEER_MIN					0x144
 #define STEER_MIDDLE				(STEER_MAX+STEER_MIN)/2
 
 //Counter values
 #define _TM0						100 //500 Hz
-#define _TM2						192 //8 Hz
+#define _TM2						192 //13.5 Hz?
 
 /*************** Node 1 ***************/
 #define STEERING_POS				0x18 //ADC3

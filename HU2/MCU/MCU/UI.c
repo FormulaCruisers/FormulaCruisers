@@ -26,6 +26,8 @@ char* fsettings[SETTINGS_COUNT] = {	"Speed limit %      ",
 									"Max engine *1k(0-?)" };
 char settingcursor[2] = "> ";	//Cursor for settings screen
 
+extern volatile uint32_t rx_count, tx_count;
+
 ISR(TIMER2_OVF_vect) //8 Hz
 {
 	//Full refresh LCD
@@ -50,6 +52,11 @@ void lcd_refresh()
 	{
 		Linebuffer[2][2] = 'I';
 	}//*/
+	
+	//snprintf(Linebuffer[3], sizeof Linebuffer[3], "%8lu %8lu ", rx_count, tx_count);
+	
+	rx_count = 0;
+	tx_count = 0;
 	
 	lcd_quickrefresh();
 }
@@ -103,7 +110,8 @@ void get_screen(char buffer[4][21], enum uiscreen s)
 			snprintf(buffer[0], sizeof buffer[0], "Gas1:%3d%% Gas2:%3d%% ", gas1perc, gas2perc);
 			snprintf(buffer[1], sizeof buffer[1], "Brake:%3d%%          ", brakeperc);
 			snprintf(buffer[2], sizeof buffer[2], "Steerpos:%5d      ", steerpos);
-			snprintf(buffer[3], sizeof buffer[3], "Press blue to begin ");
+			snprintf(buffer[3], sizeof buffer[3], "Rpm: FL%5u FR%5u", rpm_fl, rpm_fr);
+			//snprintf(buffer[3], sizeof buffer[3], "Press blue to begin ");
 			break;
 
 		case SCREEN_DRIVING:

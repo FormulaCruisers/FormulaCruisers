@@ -10,29 +10,19 @@ This file contains more specific data sending functions, as well as the interrup
 #include "CAN.h"
 #include "Error.h"
 
-volatile uint16_t waiting = 1;
-
-void wait_for_rx()
-{
-	waiting = 1;
-	while(waiting > 1 && waiting < RX_WAIT_LIMIT) waiting++;
-}
+extern volatile uint32_t rx_count;
 
 void data_send_ecu(uint8_t node, uint8_t data)
 {
 	transmit_data[0] = node;
 	transmit_data[1] = data;
 	can_tx(ECU2ID, 2);
-	
-	wait_for_rx();
 }
 
 void data_send_ecu_a(uint8_t count, uint8_t ndarr[])
 {
 	memcpy(transmit_data, ndarr, count * 2);
 	can_tx(ECU2ID, count * 2);
-	
-	wait_for_rx();
 }
 
 void data_send_motor(uint8_t header, uint8_t data, int32_t mul, uint16_t node)
@@ -48,14 +38,16 @@ void data_send_motor_d(uint8_t header, double data, int32_t mul, uint16_t node)
 
 ISR(CANIT_vect)
 {	
+	//rx_count = TCNT0;
+	
 	CANPAGE = ( 0 << MOBNB3 ) | ( 0 << MOBNB2 ) | ( 0 << MOBNB1 ) | ( 1 << MOBNB0 ); // select CANMOB 0001 = MOB1
 
 	uint16_t rx_addr = (CANIDT1 << 3) | ((CANIDT2 & 0b11100000) >> 5);
 
+	rx_count++;
+
 	if(rx_addr == MASTERID)
 	{
-		waiting = 0;
-		
 		uint8_t length = ( CANCDMOB & 0x0F );
 		
 		//for ( int8_t i = 0; i < length; i++ ) ReceiveData[i] = CANMSG;
@@ -79,10 +71,13 @@ ISR(CANIT_vect)
 		
 		if(ui_current_screen == SCREEN_TEST)
 		{
-			if(length == 2)			test_value = ((uint32_t)receive_data[0] << 8) + (receive_data[1]);
-			else if(length == 3)	test_value = ((uint32_t)receive_data[0] << 16) + ((uint32_t)receive_data[1] << 8) + (receive_data[2]);
-			else if(length >= 4)	test_value = ((uint32_t)receive_data[0] << 24) + ((uint32_t)receive_data[1] << 16) + ((uint32_t)receive_data[2] << 8) + (receive_data[3]);
-			else					test_value = (receive_data[0]);
+			if(receive_data[0] != SHUTDOWN) //Ignore shutdown message
+			{
+				if(length == 2)			test_value = ((uint32_t)receive_data[0] << 8) + (receive_data[1]);
+				else if(length == 3)	test_value = ((uint32_t)receive_data[0] << 16) + ((uint32_t)receive_data[1] << 8) + (receive_data[2]);
+				else if(length >= 4)	test_value = ((uint32_t)receive_data[0] << 24) + ((uint32_t)receive_data[1] << 16) + ((uint32_t)receive_data[2] << 8) + (receive_data[3]);
+				else					test_value = (receive_data[0]);
+			}
 		}
 		else
 		{
@@ -118,18 +113,19 @@ ISR(CANIT_vect)
 						break;
 			
 					case SHUTDOWN:
+						//rx_count = TCNT0;
 						shutdownon = receive_data[i+1] ? 1 : 0;
 						i+=2;
 						break;
 				
 					case RPM_FRONT_LEFT:
-						rpm_fl = (uint16_t)(250000.d / (double)(receive_data[i+1] + (receive_data[i+2] << 8)));
+						rpm_fl = (uint16_t)(500000.d / (double)(receive_data[i+1] + (receive_data[i+2] << 8)));
 						if(rpm_fl > 10000) rpm_fl = 0;
 						i+=3;
 						break;
 				
 					case RPM_FRONT_RIGHT:
-						rpm_fr = (uint16_t)(250000.d / (double)(receive_data[i+1] + (receive_data[i+2] << 8)));
+						rpm_fr = (uint16_t)(500000.d / (double)(receive_data[i+1] + (receive_data[i+2] << 8)));
 						if(rpm_fr > 10000) rpm_fr = 0;
 						i+=3;
 						break;
@@ -152,14 +148,14 @@ ISR(CANIT_vect)
 					case FLOW_LEFT:
 						flowleft = (receive_data[i+1] + (receive_data[i+2] << 8));
 						if(flowleft == 0xFFFF)	flowleft = 0;
-						else					flowleft = (uint16_t)(250000.d / (double)flowleft);
+						else					flowleft = (uint16_t)(500000.d / (double)flowleft);
 						i+=3;
 						break;
 				
 					case FLOW_RIGHT:
 						flowright = (receive_data[i+1] + (receive_data[i+2] << 8));
 						if(flowright == 0xFFFF)	flowright = 0;
-						else					flowright = (uint16_t)(250000.d / (double)flowright);
+						else					flowright = (uint16_t)(500000.d / (double)flowright);
 						i+=3;
 						break;
 						
