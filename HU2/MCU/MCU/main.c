@@ -23,6 +23,7 @@ The base state machine(by way of screens) is controlled in this file.
 #include "Error.h"
 #include "sd_raw.h"
 #include "MotorController.h"
+#include "AMS.h"
 
 volatile uint16_t gas1 = 0;
 volatile uint16_t gas2 = 0;

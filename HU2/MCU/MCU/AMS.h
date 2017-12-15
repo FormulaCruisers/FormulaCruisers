@@ -2,11 +2,25 @@
 This file contains several definitions to be used when communicating to the Emus AMS via CAN.
  */ 
 
-
 #ifndef AMS_H_
 #define AMS_H_
 
 #define AMS_BASE					0x1B5
+
+#define AMS_MSG_OVERALL				AMS_BASE + 0
+#define AMS_MSG_DIAGNOSTIC			AMS_BASE + 7
+#define AMS_MSG_VOLTAGE				AMS_BASE + 1
+#define AMS_MSG_CELL_MODULE_TEMP	AMS_BASE + 2
+#define AMS_MSG_CELL_TEMP			AMS_BASE + 8
+#define AMS_MSG_CELL_BALANCING		AMS_BASE + 3
+#define AMS_MSG_CONFIGURATION		AMS_BASE + 128
+#define AMS_MSG_LOGIN				AMS_BASE + 130
+//TODO: complete list
+	
+void to_struct(void* structure, uint8_t data[8])
+{
+	memcpy(structure, data, 8);
+}
 
 enum AMS_CHARGING_STAGE
 {
@@ -242,18 +256,8 @@ enum AMS_PARAMETER
 	 PM_Min_PWM_Output = 0x191C,
 };
 
-#define AMS_MSG_OVERALL				AMS_BASE + 0
-#define AMS_MSG_DIAGNOSTIC			AMS_BASE + 7
-#define AMS_MSG_VOLTAGE				AMS_BASE + 1
-#define AMS_MSG_CELL_MODULE_TEMP	AMS_BASE + 2
-#define AMS_MSG_CELL_TEMP			AMS_BASE + 8
-#define AMS_MSG_CELL_BALANCING		AMS_BASE + 3
-#define AMS_MSG_CONFIGURATION		AMS_BASE + 128
-#define AMS_MSG_LOGIN				AMS_BASE + 130
-	//TODO: complete list
-
-bool is16bit(AMS_PARAMETER param) { return (param == 0x1806 || ((param & 0x0100) > 0); }//The rule of & 0x0100 for 16 bit is not true for param 0x1806... this one is actually 16 bit but would return as 8.
-bool is32bit(AMS_PARAMETER param) { return (param & 0x0200) > 0; }
+bool is16bit(enum AMS_PARAMETER param) { return (param == 0x1806 || (param & 0x0100) > 0); }//The rule of & 0x0100 for 16 bit is not true for param 0x1806... this one is actually 16 bit but would return as 8.
+bool is32bit(enum AMS_PARAMETER param) { return (param & 0x0200) > 0; }
 
 
 struct AMS_OVERALL
@@ -277,9 +281,9 @@ struct AMS_OVERALL
 	
 	//The rest
 	uint8_t N_Livecells_MSB;
-	AMS_CHARGING_STAGE Charging_Stage : 8;
+	enum AMS_CHARGING_STAGE Charging_Stage : 8;
 	uint16_t N_Chargingduration;				//In minutes
-	AMS_CHARGING_ERROR Last_Charging_Error : 8;
+	enum AMS_CHARGING_ERROR Last_Charging_Error : 8;
 	uint8_t N_Livecells_LSB;
 };
 
@@ -380,7 +384,7 @@ struct AMS_ENERGY
 struct AMS_STATISTIC
 {
 	uint8_t ID;
-	AMS_STATISTIC_DATATYPE Datatype : 8;
+	enum AMS_STATISTIC_DATATYPE Datatype : 8;
 	uint32_t Data;
 	
 	uint8_t RESERVED[2];
@@ -389,7 +393,7 @@ struct AMS_STATISTIC
 struct AMS_EVENT
 {
 	uint8_t ID;
-	AMS_EVENT_DATATYPE Datatype : 8;
+	enum AMS_EVENT_DATATYPE Datatype : 8;
 	uint32_t data;
 	
 	uint8_t RESERVED[2];
