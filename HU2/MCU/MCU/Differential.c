@@ -5,10 +5,10 @@ Some basic functions for calculating the electronic differential
 #include <math.h>
 #include "Differential.h"
 
-const double l2_over_w = 3;
+const double l2_over_w = (2 * 150) / 130;
 
-//Steerangle should be positive when steering right, negative when steering left. It should also be in radians.
-struct torques getDifferential(double Tmid, double steerangle)
+//Steerangle should be positive when steering right, negative when steering left.
+struct torques getDifferential(double Tmid, double steerpos)
 {
 	struct torques ret;
 	
@@ -19,6 +19,8 @@ struct torques getDifferential(double Tmid, double steerangle)
 		ret.right_perc = 0;
 		return ret;
 	}
+	
+	double steerangle = steerpos / 130; //TODO: Calibrate this to get an accurate calculation
 	
 	//To not get stupid values
 	if(steerangle < 0.01 && steerangle > -0.01)
@@ -57,6 +59,17 @@ struct torques getDifferential(double Tmid, double steerangle)
 		ret.right_perc = 0;
 		ret.left_perc = 0;
 	}
+	
+	return ret;
+}
+
+struct torques solveSlip(bool left, bool right, struct torques input)
+{
+	if(!left && !right) return input;
+	
+	struct torques ret = input;
+	if(left) ret.left_perc = 0;
+	if(right) ret.right_perc = 0;
 	
 	return ret;
 }

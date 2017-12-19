@@ -340,11 +340,13 @@ ISR(TIMER0_COMP_vect)
 				if(btn2 == 1 || btn2 == 0xFF) dt_engv = ((dt_engv == 100) ? 100 : dt_engv + 1);
 				if(btn1 == 1 || btn1 == 0xFF) dt_engv = ((dt_engv == 0) ? 0 : dt_engv - 1);
 				
+				struct torques tq = getDifferential(dt_engv, steerpos);
+				
 				if(btnblue == 1) data_send_motor_d(MC_SET_TORQUE, 0, ENGINE_MAX, MCDR);
 				if(btnblue == 2) data_send_motor_d(MC_SET_TORQUE, 0, ENGINE_MAX, MCDL);
 				
-				if(btngreen == 1) data_send_motor_d(MC_SET_TORQUE, -dt_engv, ENGINE_MAX, MCDR);
-				if(btngreen == 2) data_send_motor_d(MC_SET_TORQUE, dt_engv, ENGINE_MAX, MCDL);
+				if(btngreen == 1) data_send_motor_d(MC_SET_TORQUE, -tq.right_perc, ENGINE_MAX, MCDR);
+				if(btngreen == 2) data_send_motor_d(MC_SET_TORQUE, tq.left_perc, ENGINE_MAX, MCDL);
 			}
 			break;
 			
@@ -360,7 +362,7 @@ ISR(TIMER0_COMP_vect)
 			
 			if(_errorcode == ERROR_NONE)
 			{
-				struct torques tq = getDifferential(gas1eng, steerpos / 130); //TODO: Measure what the max angle is to get a more accurate calculation
+				struct torques tq = getDifferential(gas1eng, steerpos);
 				
 				data_send_motor_d(MC_SET_TORQUE, -tq.right_perc, ENGINE_MAX, MCDR); //Right driver should get a negative value to drive forward
 				_delay_us(2);	//Experimental: 2 µs delay between drivers instead of using timer
