@@ -42,23 +42,20 @@ struct torques getDifferential(double Tmid, double steerangle)
 	//Boundary fixing
 	if(ret.left_perc > 100)
 	{
-		ret.right_perc -= ret.left_perc - 100;
+		ret.right_perc *= (100 / ret.left_perc);
 		ret.left_perc = 100;
 	}
 	if(ret.right_perc > 100)
 	{
-		ret.left_perc -= ret.right_perc - 100;
+		ret.left_perc *= (100 / ret.right_perc);
 		ret.right_perc = 100;
 	}
-	if(ret.left_perc < 0)
+	
+	//If one of them hits zero or lower, stop.
+	if(ret.left_perc <= 0 || ret.right_perc <= 0)
 	{
-		ret.right_perc -= ret.left_perc;
-		ret.left_perc = 0;
-	}
-	if(ret.right_perc < 0)
-	{
-		ret.left_perc -= ret.right_perc;
 		ret.right_perc = 0;
+		ret.left_perc = 0;
 	}
 	
 	return ret;
