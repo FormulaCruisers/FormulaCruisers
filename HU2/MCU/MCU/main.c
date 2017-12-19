@@ -142,18 +142,12 @@ ISR(TIMER0_COMP_vect)
 	{
 		//Reset literally everything possible
 		if(errortimer < 0xFF) errortimer++;
-		if(errortimer == 1) data_send_ecu_a(3, (uint8_t[]){	RUN_ENABLE, _LOW,
-															MAIN_RELAIS, _LOW,
-															PREDISCHARGE, _LOW});
-		if(errortimer == 2) data_send_ecu_a(3, (uint8_t[]){	MOTOR_CONTROLLER, _LOW,
-															PUMP_ENABLE,   _LOW,
-															BRAKELIGHT, _LOW});
-		//if(errortimer == 1) data_send_ecu(RUN_ENABLE, _LOW);
-		//if(errortimer == 2) data_send_ecu(MAIN_RELAIS, _LOW);
-		//if(errortimer == 3) data_send_ecu(PREDISCHARGE, _LOW);
-		//if(errortimer == 4) data_send_ecu(MOTOR_CONTROLLER, _LOW);
-		//if(errortimer == 5) data_send_ecu(PUMP_ENABLE, _LOW);
-		//if(errortimer == 6) data_send_ecu(BRAKELIGHT, _LOW);
+		if(errortimer == 1) data_send_ecu(RUN_ENABLE, _LOW);
+		if(errortimer == 2) data_send_ecu(MAIN_RELAIS, _LOW);
+		if(errortimer == 3) data_send_ecu(PREDISCHARGE, _LOW);
+		if(errortimer == 4) data_send_ecu(MOTOR_CONTROLLER, _LOW);
+		if(errortimer == 5) data_send_ecu(PUMP_ENABLE, _LOW);
+		if(errortimer == 6) data_send_ecu(BRAKELIGHT, _LOW);
 		
 		//Change into error screen
 		change_screen(SCREEN_ERROR);

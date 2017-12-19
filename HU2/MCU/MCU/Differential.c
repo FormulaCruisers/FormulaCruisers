@@ -30,7 +30,7 @@ struct torques getTorques(double Tmid, double steerangle)
 	
 	double c = tan(steerangle);
 	
-	//Boundary fixing for c. Dont want to get weird negative values. (though these should never happen anyway)
+	//Boundary fixing for c. Don't want to get weird negative values. (though these should never happen anyway)
 	if(c > l2_over_w - 0.1) c = l2_over_w - 0.1;
 	if(c < -l2_over_w + 0.1) c = -l2_over_w + 0.1;
 	
