@@ -176,6 +176,12 @@
     <Compile Include="Defines.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="Differential.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Differential.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="Error.c">
       <SubType>compile</SubType>
     </Compile>

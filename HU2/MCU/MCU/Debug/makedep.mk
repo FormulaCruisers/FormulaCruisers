@@ -6,6 +6,8 @@ CAN.c
 
 Data.c
 
+Differential.c
+
 Error.c
 
 lcd.c

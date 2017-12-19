@@ -24,6 +24,7 @@ The base state machine(by way of screens) is controlled in this file.
 #include "sd_raw.h"
 #include "MotorController.h"
 #include "AMS.h"
+#include "Differential.h"
 
 volatile uint16_t gas1 = 0;
 volatile uint16_t gas2 = 0;
@@ -365,9 +366,11 @@ ISR(TIMER0_COMP_vect)
 			
 			if(_errorcode == ERROR_NONE)
 			{
-				data_send_motor_d(MC_SET_TORQUE, -gas1eng, ENGINE_MAX, MCDR); //Right driver should get a negative value to drive forward
+				struct torques tq = getTorques(gas1eng, steerpos / 130); //TODO: Measure what the max angle is to get a more accurate calculation
+				
+				data_send_motor_d(MC_SET_TORQUE, -tq.right_perc, ENGINE_MAX, MCDR); //Right driver should get a negative value to drive forward
 				_delay_us(2);	//Experimental: 2 µs delay between drivers instead of using timer
-				data_send_motor_d(MC_SET_TORQUE, gas1eng, ENGINE_MAX, MCDL);
+				data_send_motor_d(MC_SET_TORQUE, tq.left_perc, ENGINE_MAX, MCDL);
 			}
 			break;
 			

@@ -17,10 +17,10 @@ This file contains several definitions to be used when communicating to the Emus
 #define AMS_MSG_LOGIN				AMS_BASE + 130
 //TODO: complete list
 	
-void to_struct(void* structure, uint8_t data[8])
-{
-	memcpy(structure, data, 8);
-}
+//void to_struct(void* structure, uint8_t data[8])
+//{
+//	memcpy(structure, data, 8);
+//}
 
 enum AMS_CHARGING_STAGE
 {

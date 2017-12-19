@@ -39,6 +39,7 @@ SUBDIRS :=
 C_SRCS +=  \
 ../CAN.c \
 ../Data.c \
+../Differential.c \
 ../Error.c \
 ../lcd.c \
 ../main.c \
@@ -55,6 +56,7 @@ ASM_SRCS +=
 OBJS +=  \
 CAN.o \
 Data.o \
+Differential.o \
 Error.o \
 lcd.o \
 main.o \
@@ -64,6 +66,7 @@ UI.o
 OBJS_AS_ARGS +=  \
 CAN.o \
 Data.o \
+Differential.o \
 Error.o \
 lcd.o \
 main.o \
@@ -73,6 +76,7 @@ UI.o
 C_DEPS +=  \
 CAN.d \
 Data.d \
+Differential.d \
 Error.d \
 lcd.d \
 main.d \
@@ -82,6 +86,7 @@ UI.d
 C_DEPS_AS_ARGS +=  \
 CAN.d \
 Data.d \
+Differential.d \
 Error.d \
 lcd.d \
 main.d \
@@ -102,6 +107,8 @@ LINKER_SCRIPT_DEP+=
 
 
 # AVR32/GNU C Compiler
+
+
 
 
 
