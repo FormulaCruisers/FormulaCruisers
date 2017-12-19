@@ -8,7 +8,7 @@ Some basic functions for calculating the electronic differential
 const double l2_over_w = 3;
 
 //Steerangle should be positive when steering right, negative when steering left. It should also be in radians.
-struct torques getTorques(double Tmid, double steerangle)
+struct torques getDifferential(double Tmid, double steerangle)
 {
 	struct torques ret;
 	

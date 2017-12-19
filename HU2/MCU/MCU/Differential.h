@@ -11,6 +11,6 @@ struct torques
 	double right_perc;
 };
 
-struct torques getTorques(double Tmid, double steerangle);
+struct torques getDifferential(double Tmid, double steerangle);
 
 #endif /* DIFFERENTIAL_H_ */

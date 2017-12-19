@@ -360,7 +360,7 @@ ISR(TIMER0_COMP_vect)
 			
 			if(_errorcode == ERROR_NONE)
 			{
-				struct torques tq = getTorques(gas1eng, steerpos / 130); //TODO: Measure what the max angle is to get a more accurate calculation
+				struct torques tq = getDifferential(gas1eng, steerpos / 130); //TODO: Measure what the max angle is to get a more accurate calculation
 				
 				data_send_motor_d(MC_SET_TORQUE, -tq.right_perc, ENGINE_MAX, MCDR); //Right driver should get a negative value to drive forward
 				_delay_us(2);	//Experimental: 2 µs delay between drivers instead of using timer
