@@ -70,11 +70,13 @@ struct slips detectSlip(double rpmleft, double rpmright, struct torques input)
 	struct slips ret;
 	if(rpmleft > 100 || rpmright > 100)
 	{
+		//Only check for slippage if the rear wheels are spinning at all
 		ret.right = (rpmleft * slack < rpmright * input.factor * input.factor);
 		ret.left = (rpmleft > rpmright * input.factor * input.factor * slack);
 	}
 	else
 	{
+		//If the rear wheels are not spinning, don't detect slip by default
 		ret.right = 0;
 		ret.left = 0;
 	}
@@ -84,8 +86,10 @@ struct slips detectSlip(double rpmleft, double rpmright, struct torques input)
 
 struct torques solveSlip(struct slips slip, struct torques input)
 {
+	//If neither are slipping, immediately return
 	if(!slip.left && !slip.right) return input;
 	
+	//Set output torque to 0 if a wheel is slipping
 	struct torques ret = input;
 	if(slip.left) ret.left_perc = 0;
 	if(slip.right) ret.right_perc = 0;

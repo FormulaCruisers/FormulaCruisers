@@ -109,9 +109,8 @@ void get_screen(char buffer[4][21], enum uiscreen s)
 		case SCREEN_START:
 			snprintf(buffer[0], sizeof buffer[0], "Gas1:%3d%% Gas2:%3d%% ", gas1perc, gas2perc);
 			snprintf(buffer[1], sizeof buffer[1], "Brake:%3d%%          ", brakeperc);
-			snprintf(buffer[2], sizeof buffer[2], "Steerpos:%5d      ", steerpos);
-			snprintf(buffer[3], sizeof buffer[3], "Rpm: FL%5u FR%5u", rpm_fl, rpm_fr);
-			//snprintf(buffer[3], sizeof buffer[3], "Press blue to begin ");
+			snprintf(buffer[2], sizeof buffer[2], "Green = calibrate   ");
+			snprintf(buffer[3], sizeof buffer[3], "Press blue to begin ");
 			break;
 
 		case SCREEN_DRIVING:
@@ -140,6 +139,13 @@ void get_screen(char buffer[4][21], enum uiscreen s)
 			snprintf(buffer[1], sizeof buffer[1], "                    ");
 			snprintf(buffer[2], sizeof buffer[2], "                    ");
 			snprintf(buffer[3], sizeof buffer[3], "%5d               ", boot_count);
+			break;
+		
+		case SCREEN_CALIBRATE:
+			snprintf(buffer[0], sizeof buffer[0], "Press both pedals to");
+			snprintf(buffer[1], sizeof buffer[1], "their maximum       ");
+			snprintf(buffer[2], sizeof buffer[2], "                    ");
+			snprintf(buffer[3], sizeof buffer[3], "Then, press green   ");
 			break;
 			
 		case SCREEN_ANIMATION:

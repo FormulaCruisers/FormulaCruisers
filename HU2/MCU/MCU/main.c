@@ -99,6 +99,23 @@ uint16_t sd_current_pos = 0;
 //Drive test value
 volatile uint8_t dt_engv = 0;
 
+//Calibration values
+uint16_t EEMEM ee_Gas1_min = 0x301;
+uint16_t EEMEM ee_Gas1_max = 0x339;
+uint16_t EEMEM ee_Gas2_min = 0x1F1;
+uint16_t EEMEM ee_Gas2_max = 0x238;
+uint16_t EEMEM ee_Brake_min = 0x014;
+uint16_t EEMEM ee_Brake_max = 0x030;
+
+uint16_t GAS1MIN = 0x301;
+uint16_t GAS1MAX = 0x339;
+uint16_t GAS2MIN = 0x1F1;
+uint16_t GAS2MAX = 0x238;
+uint16_t BRAKEMIN = 0x014;
+uint16_t BRAKEMAX = 0x030;
+
+
+//Debug value
 extern volatile uint32_t tx_count;
 
 ISR(TIMER0_COMP_vect)
@@ -306,6 +323,29 @@ ISR(TIMER0_COMP_vect)
 					data_send_ecu(PUMP_ENABLE, _HIGH);
 				}
 			}
+			if(btngreen == 1)
+			{
+				GAS1MIN = gas1 + CALIB_SLACK;
+				GAS2MIN = gas2 + CALIB_SLACK;
+				BRAKEMIN = brake + CALIB_SLACK;
+			}
+			break;
+			
+		case SCREEN_CALIBRATE:
+			if(btngreen == 1)
+			{
+				GAS1MAX = gas1 - CALIB_SLACK;
+				GAS2MAX = gas2 - CALIB_SLACK;
+				BRAKEMAX = brake;
+				
+				//Write to EEPROM
+				eeprom_write_word(&ee_Gas1_min, GAS1MIN);
+				eeprom_write_word(&ee_Gas1_max, GAS1MAX);
+				eeprom_write_word(&ee_Gas2_min, GAS2MIN);
+				eeprom_write_word(&ee_Gas2_max, GAS2MAX);
+				eeprom_write_word(&ee_Brake_min, BRAKEMIN);
+				eeprom_write_word(&ee_Brake_max, BRAKEMAX);
+			}
 			break;
 		
 		//5 seconds of this screen while predischarging.
@@ -448,6 +488,15 @@ int main()
 	
 	boot_count = eeprom_read_word(&ee_boot_count);
 	eeprom_write_word(&ee_boot_count, boot_count+1);
+	
+	GAS1MIN = eeprom_read_word(&ee_Gas1_min);
+	GAS1MAX = eeprom_read_word(&ee_Gas1_max);
+	GAS2MIN = eeprom_read_word(&ee_Gas2_min);
+	GAS2MAX = eeprom_read_word(&ee_Gas2_max);
+	BRAKEMIN = eeprom_read_word(&ee_Brake_min);
+	BRAKEMAX = eeprom_read_word(&ee_Brake_max);
+	
+	
 	
 	lcd_init(LCD_DISP_ON);
 	change_screen(SCREEN_WELCOME);

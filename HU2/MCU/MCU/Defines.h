@@ -8,7 +8,7 @@ This is a central header file containing a lot of defined constants that are use
 
 #define F_CPU 16000000UL	// Define processor clock speed for compiler
 
-#define SOFTWARE_VERSION			"Software: V2.115    "  //Version should be 2.xxx where xxx is amount of commits(do "git rev-list HEAD --count" to check)
+#define SOFTWARE_VERSION			"Software: V2.116    "  //Version should be 2.xxx where xxx is amount of commits(do "git rev-list HEAD --count" to check)
 
 #define RTDS						PC7 //Loud ready beep
 #define RTDS_TIME					1000 //1000 / 500 = 2 seconds    //Has to be between 1 and 3 seconds!
@@ -39,13 +39,7 @@ This is a central header file containing a lot of defined constants that are use
 #define BL_SWITCHON					15
 #define BL_SWITCHOFF				10
 
-//Pedal min and max values(with some slack)
-#define GAS1MAX						0x339
-#define GAS1MIN						0x301
-#define GAS2MAX						0x238
-#define GAS2MIN						0x1F1
-#define BRAKEMAX					0x030
-#define BRAKEMIN					0x014
+#define CALIB_SLACK					6
 #define RANGESLACK					20
 
 #define PUMP_TEMP_MAX				100

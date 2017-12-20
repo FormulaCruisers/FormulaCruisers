@@ -21,6 +21,8 @@ extern volatile int16_t steerpos;
 extern volatile uint8_t test_sensor;
 extern volatile uint32_t test_value;
 
+extern uint16_t GAS1MIN, GAS1MAX, GAS2MIN, GAS2MAX, BRAKEMIN, BRAKEMAX;
+
 extern volatile enum _error _errorcode;
 extern volatile enum uiscreen ui_current_screen;
 
