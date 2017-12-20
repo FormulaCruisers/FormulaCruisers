@@ -222,12 +222,16 @@ ISR(TIMER0_COMP_vect)
 			//e_checksensors();
 			//e_checkranges();
 			//e_checkdiscrepancy();
+			
+			//Settings
 			if(btn1 && btn2)
 			{
 				ischanging = 0;
 				stimer = 0;
 				change_screen(SCREEN_SETTINGS);
 			}
+			
+			//Start predischarging
 			if(btnblue == 1)
 			{
 				if(_errorcode == ERROR_NONE)
@@ -243,6 +247,8 @@ ISR(TIMER0_COMP_vect)
 					data_send_ecu(PUMP_ENABLE, _HIGH);
 				}
 			}
+			
+			//Calibration
 			if(btngreen == 1)
 			{
 				GAS1MIN = gas1 + CALIB_SLACK;
