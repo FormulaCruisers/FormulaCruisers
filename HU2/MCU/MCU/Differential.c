@@ -1,5 +1,5 @@
 /* DIFFERENTIAL.C
-Some basic functions for calculating the electronic differential
+Some basic functions for calculating the electronic (torque vectoring)
  */ 
 
 #include <math.h>
@@ -20,7 +20,7 @@ struct torques getDifferential(double Tmid, double steerpos)
 		return ret;
 	}
 	
-	double steerangle = steerpos / 130; //TODO: Calibrate this to get an accurate calculation
+	double steerangle = steerpos * 0.008; //TODO: Calibrate this to get an accurate calculation
 	
 	//To not get stupid values
 	if(steerangle < 0.01 && steerangle > -0.01)
@@ -38,6 +38,7 @@ struct torques getDifferential(double Tmid, double steerpos)
 	
 	//This is where the magic happens
 	double mul_l = (l2_over_w + c) / (l2_over_w - c);
+	ret.factor = mul_l;
 	ret.left_perc = Tmid * mul_l;
 	ret.right_perc = Tmid / mul_l;
 	
@@ -63,13 +64,31 @@ struct torques getDifferential(double Tmid, double steerpos)
 	return ret;
 }
 
-struct torques solveSlip(bool left, bool right, struct torques input)
+const double slack = 1.1;
+struct slips detectSlip(double rpmleft, double rpmright, struct torques input)
 {
-	if(!left && !right) return input;
+	struct slips ret;
+	if(rpmleft > 100 || rpmright > 100)
+	{
+		ret.right = (rpmleft * slack < rpmright * input.factor * input.factor);
+		ret.left = (rpmleft > rpmright * input.factor * input.factor * slack);
+	}
+	else
+	{
+		ret.right = 0;
+		ret.left = 0;
+	}
+	return ret;
+}
+
+
+struct torques solveSlip(struct slips slip, struct torques input)
+{
+	if(!slip.left && !slip.right) return input;
 	
 	struct torques ret = input;
-	if(left) ret.left_perc = 0;
-	if(right) ret.right_perc = 0;
+	if(slip.left) ret.left_perc = 0;
+	if(slip.right) ret.right_perc = 0;
 	
 	return ret;
 }

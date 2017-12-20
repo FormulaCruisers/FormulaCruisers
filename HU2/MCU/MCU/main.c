@@ -364,6 +364,9 @@ ISR(TIMER0_COMP_vect)
 			{
 				struct torques tq = getDifferential(gas1eng, steerpos);
 				
+				struct slips sp = detectSlip(rpm_bl, rpm_br, tq);
+				tq = solveSlip(sp, tq);
+				
 				data_send_motor_d(MC_SET_TORQUE, -tq.right_perc, ENGINE_MAX, MCDR); //Right driver should get a negative value to drive forward
 				_delay_us(2);	//Experimental: 2 µs delay between drivers instead of using timer
 				data_send_motor_d(MC_SET_TORQUE, tq.left_perc, ENGINE_MAX, MCDL);
