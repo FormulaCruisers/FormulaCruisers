@@ -85,18 +85,24 @@ void get_screen(char buffer[4][21], enum uiscreen s)
 {
 	switch(s)
 	{
+		case SCREEN_ANIMATION:
+			snprintf(buffer[0], sizeof buffer[0], "%s", &anim1[av]);
+			snprintf(buffer[1], sizeof buffer[1], "%s", &anim2[av]);
+			snprintf(buffer[2], sizeof buffer[2], "%s", (anim % 2 == 0) ? &anim3[av] : &anim4[av]);
+			break;
+		
 		case SCREEN_WELCOME:
 			snprintf(buffer[0], sizeof buffer[0], "        HU-2        ");
 			snprintf(buffer[1], sizeof buffer[1], SOFTWARE_VERSION);
 			snprintf(buffer[2], sizeof buffer[2], "                    ");
 			snprintf(buffer[3], sizeof buffer[3], " Press blue button  ");
 			break;
-
-		case SCREEN_ERROR:
-			snprintf(buffer[0], sizeof buffer[0], "     !!!ERROR!!!    ");
-			snprintf(buffer[1], sizeof buffer[1], "%20s", get_error(_errorcode));
-			snprintf(buffer[2], sizeof buffer[2], "                    ");
-			snprintf(buffer[3], sizeof buffer[3], "                    ");
+			
+		case SCREEN_START:
+			snprintf(buffer[0], sizeof buffer[0], "Gas1:%3d%% Gas2:%3d%% ", gas1perc, gas2perc);
+			snprintf(buffer[1], sizeof buffer[1], "Brake:%3d%%          ", brakeperc);
+			snprintf(buffer[2], sizeof buffer[2], "Green = calibrate   ");
+			snprintf(buffer[3], sizeof buffer[3], "Press blue to begin ");
 			break;
 
 		case SCREEN_PREDISCHARGING:
@@ -106,11 +112,11 @@ void get_screen(char buffer[4][21], enum uiscreen s)
 			snprintf(buffer[3], sizeof buffer[3], "Flow: L%5d  R%5d", flowleft, flowright);
 			break;
 
-		case SCREEN_START:
-			snprintf(buffer[0], sizeof buffer[0], "Gas1:%3d%% Gas2:%3d%% ", gas1perc, gas2perc);
-			snprintf(buffer[1], sizeof buffer[1], "Brake:%3d%%          ", brakeperc);
-			snprintf(buffer[2], sizeof buffer[2], "Green = calibrate   ");
-			snprintf(buffer[3], sizeof buffer[3], "Press blue to begin ");
+		case SCREEN_STATUS:
+			snprintf(buffer[0], sizeof buffer[0], "Temp: L%5u  R%5u", templeft, tempright);
+			snprintf(buffer[1], sizeof buffer[1], "Rpm: FL%5u FR%5u", rpm_fl, rpm_fr);
+			snprintf(buffer[2], sizeof buffer[2], "Gas1:%3u%% Gas2:%3u%% ", gas1perc, gas2perc);
+			snprintf(buffer[3], sizeof buffer[3], "Steerpos: %5d     ", steerpos);
 			break;
 
 		case SCREEN_DRIVING:
@@ -120,18 +126,17 @@ void get_screen(char buffer[4][21], enum uiscreen s)
 			snprintf(buffer[3], sizeof buffer[3], "Battery: NAN%%       ");
 			break;
 			
-		case SCREEN_DRIVETEST:
-			snprintf(buffer[0], sizeof buffer[0], "Engine: %3d%%        ", dt_engv);
-			snprintf(buffer[1], sizeof buffer[1], "Temp: L%5u  R%5u", templeft, tempright);
-			snprintf(buffer[2], sizeof buffer[2], "Blue to stop motor  ");
-			snprintf(buffer[3], sizeof buffer[3], "Green to apply      ");
-			break;
+		
+		
+		
+		
+		
 
-		case SCREEN_STATUS:
-			snprintf(buffer[0], sizeof buffer[0], "Temp: L%5u  R%5u", templeft, tempright);
-			snprintf(buffer[1], sizeof buffer[1], "Rpm: FL%5u FR%5u", rpm_fl, rpm_fr);
-			snprintf(buffer[2], sizeof buffer[2], "Gas1:%3u%% Gas2:%3u%% ", gas1perc, gas2perc);
-			snprintf(buffer[3], sizeof buffer[3], "Steerpos: %5d     ", steerpos);
+		case SCREEN_SETTINGS:
+			snprintf(buffer[0], sizeof buffer[0], "%c%s", settingcursor[ischanging], fsettings[selsetting]);
+			snprintf(buffer[1], sizeof buffer[1], "%c%5d             ", settingcursor[1-ischanging], vsettings[selsetting]);
+			snprintf(buffer[2], sizeof buffer[2], "Blue = edit setting ");
+			snprintf(buffer[3], sizeof buffer[3], "Green= save and exit");
 			break;
 			
 		case SCREEN_SAVING:
@@ -147,25 +152,43 @@ void get_screen(char buffer[4][21], enum uiscreen s)
 			snprintf(buffer[2], sizeof buffer[2], "                    ");
 			snprintf(buffer[3], sizeof buffer[3], "Then, press green   ");
 			break;
-			
-		case SCREEN_ANIMATION:
-			snprintf(buffer[0], sizeof buffer[0], "%s", &anim1[av]);
-			snprintf(buffer[1], sizeof buffer[1], "%s", &anim2[av]);
-			snprintf(buffer[2], sizeof buffer[2], "%s", (anim % 2 == 0) ? &anim3[av] : &anim4[av]);
-			break;
-
-		case SCREEN_SETTINGS:
-			snprintf(buffer[0], sizeof buffer[0], "%c%s", settingcursor[ischanging], fsettings[selsetting]);
-			snprintf(buffer[1], sizeof buffer[1], "%c%5d             ", settingcursor[1-ischanging], vsettings[selsetting]);
-			snprintf(buffer[2], sizeof buffer[2], "Blue = edit setting ");
-			snprintf(buffer[3], sizeof buffer[3], "Green= save and exit");
-			break;
+		
+		
+		
+		
+		
+		
+		
 			
 		case SCREEN_TEST:
 			snprintf(buffer[0], sizeof buffer[0], "Read from:0x%02x      ", test_sensor);
 			snprintf(buffer[1], sizeof buffer[1], "Raw value:0x%08lx", test_value);
 			snprintf(buffer[2], sizeof buffer[2], "Blue cycles nodes   ");
 			snprintf(buffer[3], sizeof buffer[3], "Green closes menu   ");
+			break;
+			
+		case SCREEN_DRIVETEST:
+			snprintf(buffer[0], sizeof buffer[0], "Engine: %3d%%        ", dt_engv);
+			snprintf(buffer[1], sizeof buffer[1], "Temp: L%5u  R%5u", templeft, tempright);
+			snprintf(buffer[2], sizeof buffer[2], "Blue to stop motor  ");
+			snprintf(buffer[3], sizeof buffer[3], "Green to apply      ");
+			break;
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+		case SCREEN_ERROR:
+			snprintf(buffer[0], sizeof buffer[0], "     !!!ERROR!!!    ");
+			snprintf(buffer[1], sizeof buffer[1], "%20s", get_error(_errorcode));
+			snprintf(buffer[2], sizeof buffer[2], "                    ");
+			snprintf(buffer[3], sizeof buffer[3], "                    ");
 			break;
 
 		default:

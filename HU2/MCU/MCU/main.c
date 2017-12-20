@@ -216,86 +216,6 @@ ISR(TIMER0_COMP_vect)
 				change_screen(SCREEN_TEST);
 			}
 			break;
-			
-			
-		//sensor testing screen
-		case SCREEN_TEST:
-			if(btnblue == 1 || btnblue == 0xFF) test_sensor += 0x10;
-			else if(btn2 == 1 || btn2 == 0xFF) test_sensor = ((test_sensor + 0x01) & 0x0F) + (test_sensor & 0xF0);
-			else if(btn1 == 1 || btn1 == 0xFF) test_sensor = ((test_sensor - 0x01) & 0x0F) + (test_sensor & 0xF0);
-			
-			//Skip 4-7 and 12-15 because those are never used
-			if((test_sensor & 0x04) > 0)
-			{
-				if(test_sensor & 0x01)	test_sensor ^= 0b00000100;
-				else					test_sensor ^= 0b00001100;
-			}
-			
-			//Return button
-			if(btngreen == 1) change_screen(SCREEN_WELCOME);
-			
-			//Figure out which node to send it to
-			uint8_t tnode = (test_sensor & 0xF0);
-			uint16_t actualnode;
-			if(tnode == 0x10) actualnode = NODEID1;
-			else if(tnode == 0x20) actualnode = NODEID2;
-			else if(tnode == 0x30) actualnode = NODEID3;
-			else if(tnode == 0x40) actualnode = NODEID4;
-			else break;
-			data_send8(CAN_REQUEST_DATA, test_sensor, actualnode);
-			break;
-		
-		//Saving for the settings of the motor controller
-		case SCREEN_SAVING:
-			if (stimer == 10)
-			{
-				change_screen(SCREEN_START);
-				stimer = 0;
-			}
-			else
-			{
-				engine_max_perc = vsettings[3];
-				if(stimer == 1)      data_send_motor(MC_N_LIMIT, vsettings[0], 0x7FFF, MCDL);
-				else if(stimer == 2) data_send_motor(MC_N_LIMIT, vsettings[0], 0x7FFF, MCDR);
-				else if(stimer == 3) data_send_motor(MC_I_MAXPK_PERCENT, vsettings[1], 0x3FFF, MCDL);
-				else if(stimer == 4) data_send_motor(MC_I_MAXPK_PERCENT, vsettings[1], 0x3FFF, MCDR);
-				else if(stimer == 5) data_send_motor(MC_I_CONEFF_PERCENT, vsettings[2], 0x3FFF, MCDL);
-				else if(stimer == 6) data_send_motor(MC_I_CONEFF_PERCENT, vsettings[2], 0x3FFF, MCDR);
-				stimer++;
-			}
-			break;
-		
-		//settings screen
-		case SCREEN_SETTINGS:
-			if(ischanging == 0)
-			{
-				//Cursor on top; Changing the selected variable
-				if(btnblue == 1) ischanging++;
-				else if(btn2 == 1) selsetting = (selsetting == SETTINGS_COUNT-1) ? 0 : selsetting + 1;
-				else if(btn1 == 1) selsetting = (selsetting == 0) ? SETTINGS_COUNT-1 : selsetting - 1;	
-			}
-			else if(ischanging == 1)
-			{
-				//Cursor on the bottom; Changing the value of the selected variable
-				if(btnblue == 1) ischanging--;
-				else if(btn2 == 1 || btn2 == 0xFF) vsettings[selsetting] = (vsettings[selsetting] == 100) ? 100 : vsettings[selsetting] + 1;
-				else if(btn1 == 1 || btn1 == 0xFF) vsettings[selsetting] = (vsettings[selsetting] == 0) ? 0 : vsettings[selsetting] - 1;
-			}
-			
-			if(btngreen == 1)
-			{
-				//Write values back to EEPROM
-				eeprom_write_word(&ee_MC_N_LIMIT, vsettings[0]);
-				eeprom_write_word(&ee_MC_CURRENT_MAXPK, vsettings[1]);
-				eeprom_write_word(&ee_MC_CURRENT_CONEFF, vsettings[2]);
-				eeprom_write_word(&ee_MC_MAX_VAL, vsettings[3]);
-				
-				//Send values to the motor controller
-				stimer = 0;
-				change_screen(SCREEN_SAVING);
-			}
-			
-			break;
 		
 		//The screen that appears after closing the welcome screen
 		case SCREEN_START:
@@ -330,23 +250,6 @@ ISR(TIMER0_COMP_vect)
 				BRAKEMIN = brake + CALIB_SLACK;
 			}
 			break;
-			
-		case SCREEN_CALIBRATE:
-			if(btngreen == 1)
-			{
-				GAS1MAX = gas1 - CALIB_SLACK;
-				GAS2MAX = gas2 - CALIB_SLACK;
-				BRAKEMAX = brake;
-				
-				//Write to EEPROM
-				eeprom_write_word(&ee_Gas1_min, GAS1MIN);
-				eeprom_write_word(&ee_Gas1_max, GAS1MAX);
-				eeprom_write_word(&ee_Gas2_min, GAS2MIN);
-				eeprom_write_word(&ee_Gas2_max, GAS2MAX);
-				eeprom_write_word(&ee_Brake_min, BRAKEMIN);
-				eeprom_write_word(&ee_Brake_max, BRAKEMAX);
-			}
-			break;
 		
 		//5 seconds of this screen while predischarging.
 		//Also checks the pumps to see if they have any flow, otherwise turn off!
@@ -372,7 +275,145 @@ ISR(TIMER0_COMP_vect)
 				change_screen(SCREEN_DRIVETEST);
 			}
 			break;
-			
+		
+		//The screen that appears when actually driving.
+		case SCREEN_DRIVING:
+			if(ttt == 3)
+			{
+				//e_checkflow();
+				e_checksensors();
+				e_checkranges();
+				e_checkdiscrepancy();
+			}
+				
+			if(_errorcode == ERROR_NONE)
+			{
+				struct torques tq = getDifferential(gas1eng, steerpos);
+					
+				struct slips sp = detectSlip(rpm_bl, rpm_br, tq);
+				tq = solveSlip(sp, tq);
+					
+				data_send_motor_d(MC_SET_TORQUE, -tq.right_perc, ENGINE_MAX, MCDR); //Right driver should get a negative value to drive forward
+				_delay_us(2);	//Experimental: 2 µs delay between drivers instead of using timer
+				data_send_motor_d(MC_SET_TORQUE, tq.left_perc, ENGINE_MAX, MCDL);
+			}
+			break;
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		//settings screen
+		case SCREEN_SETTINGS:
+			if(ischanging == 0)
+			{
+				//Cursor on top; Changing the selected variable
+				if(btnblue == 1) ischanging++;
+				else if(btn2 == 1) selsetting = (selsetting == SETTINGS_COUNT-1) ? 0 : selsetting + 1;
+				else if(btn1 == 1) selsetting = (selsetting == 0) ? SETTINGS_COUNT-1 : selsetting - 1;
+			}
+			else if(ischanging == 1)
+			{
+				//Cursor on the bottom; Changing the value of the selected variable
+				if(btnblue == 1) ischanging--;
+				else if(btn2 == 1 || btn2 == 0xFF) vsettings[selsetting] = (vsettings[selsetting] == 100) ? 100 : vsettings[selsetting] + 1;
+				else if(btn1 == 1 || btn1 == 0xFF) vsettings[selsetting] = (vsettings[selsetting] == 0) ? 0 : vsettings[selsetting] - 1;
+			}
+				
+			if(btngreen == 1)
+			{
+				//Write values back to EEPROM
+				eeprom_write_word(&ee_MC_N_LIMIT, vsettings[0]);
+				eeprom_write_word(&ee_MC_CURRENT_MAXPK, vsettings[1]);
+				eeprom_write_word(&ee_MC_CURRENT_CONEFF, vsettings[2]);
+				eeprom_write_word(&ee_MC_MAX_VAL, vsettings[3]);
+					
+				//Send values to the motor controller
+				stimer = 0;
+				change_screen(SCREEN_SAVING);
+			}
+			break;
+				
+		//Saving for the settings of the motor controller
+		case SCREEN_SAVING:
+			if (stimer == 10)
+			{
+				change_screen(SCREEN_START);
+				stimer = 0;
+			}
+			else
+			{
+				engine_max_perc = vsettings[3];
+				if(stimer == 1)      data_send_motor(MC_N_LIMIT, vsettings[0], 0x7FFF, MCDL);
+				else if(stimer == 2) data_send_motor(MC_N_LIMIT, vsettings[0], 0x7FFF, MCDR);
+				else if(stimer == 3) data_send_motor(MC_I_MAXPK_PERCENT, vsettings[1], 0x3FFF, MCDL);
+				else if(stimer == 4) data_send_motor(MC_I_MAXPK_PERCENT, vsettings[1], 0x3FFF, MCDR);
+				else if(stimer == 5) data_send_motor(MC_I_CONEFF_PERCENT, vsettings[2], 0x3FFF, MCDL);
+				else if(stimer == 6) data_send_motor(MC_I_CONEFF_PERCENT, vsettings[2], 0x3FFF, MCDR);
+				stimer++;
+			}
+			break;
+				
+		//Calibration screen
+		case SCREEN_CALIBRATE:
+			if(btngreen == 1)
+			{
+				GAS1MAX = gas1 - CALIB_SLACK;
+				GAS2MAX = gas2 - CALIB_SLACK;
+				BRAKEMAX = brake;
+					
+				//Write to EEPROM
+				eeprom_write_word(&ee_Gas1_min, GAS1MIN);
+				eeprom_write_word(&ee_Gas1_max, GAS1MAX);
+				eeprom_write_word(&ee_Gas2_min, GAS2MIN);
+				eeprom_write_word(&ee_Gas2_max, GAS2MAX);
+				eeprom_write_word(&ee_Brake_min, BRAKEMIN);
+				eeprom_write_word(&ee_Brake_max, BRAKEMAX);
+			}
+			break;
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		//sensor testing screen
+		case SCREEN_TEST:
+			if(btnblue == 1 || btnblue == 0xFF) test_sensor += 0x10;
+			else if(btn2 == 1 || btn2 == 0xFF) test_sensor = ((test_sensor + 0x01) & 0x0F) + (test_sensor & 0xF0);
+			else if(btn1 == 1 || btn1 == 0xFF) test_sensor = ((test_sensor - 0x01) & 0x0F) + (test_sensor & 0xF0);
+		
+			//Skip 4-7 and 12-15 because those are never used
+			if((test_sensor & 0x04) > 0)
+			{
+				if(test_sensor & 0x01)	test_sensor ^= 0b00000100;
+				else					test_sensor ^= 0b00001100;
+			}
+		
+			//Return button
+			if(btngreen == 1) change_screen(SCREEN_WELCOME);
+		
+			//Figure out which node to send it to
+			uint8_t tnode = (test_sensor & 0xF0);
+			uint16_t actualnode;
+			if(tnode == 0x10) actualnode = NODEID1;
+			else if(tnode == 0x20) actualnode = NODEID2;
+			else if(tnode == 0x30) actualnode = NODEID3;
+			else if(tnode == 0x40) actualnode = NODEID4;
+			else break;
+			data_send8(CAN_REQUEST_DATA, test_sensor, actualnode);
+			break;
+		
 		//Drive test screen, used for setting a specific motor value and keeping it there
 		case SCREEN_DRIVETEST:
 			if(_errorcode == ERROR_NONE)
@@ -390,29 +431,16 @@ ISR(TIMER0_COMP_vect)
 			}
 			break;
 			
-		//The screen that appears when actually driving.
-		case SCREEN_DRIVING:
-			if(ttt == 3)
-			{
-				//e_checkflow();
-				e_checksensors();
-				e_checkranges();
-				e_checkdiscrepancy();
-			}
 			
-			if(_errorcode == ERROR_NONE)
-			{
-				struct torques tq = getDifferential(gas1eng, steerpos);
-				
-				struct slips sp = detectSlip(rpm_bl, rpm_br, tq);
-				tq = solveSlip(sp, tq);
-				
-				data_send_motor_d(MC_SET_TORQUE, -tq.right_perc, ENGINE_MAX, MCDR); //Right driver should get a negative value to drive forward
-				_delay_us(2);	//Experimental: 2 µs delay between drivers instead of using timer
-				data_send_motor_d(MC_SET_TORQUE, tq.left_perc, ENGINE_MAX, MCDL);
-			}
-			break;
 			
+			
+			
+			
+		
+		
+		
+		
+		//Error screen	
 		case SCREEN_ERROR:
 			if(btngreen == 1 && errortimer == 0xFF)
 			{
@@ -426,6 +454,10 @@ ISR(TIMER0_COMP_vect)
 		default:
 			break;
 	}
+	
+	
+	
+	
 	
 	//Brakelight logic
 	if(brakeperc >= BL_SWITCHON && !brakelighton)

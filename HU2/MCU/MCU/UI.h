@@ -12,20 +12,25 @@ char Linebuffer[4][21];
 
 enum uiscreen
 {
-	SCREEN_WELCOME,
-	SCREEN_ERROR,
-	SCREEN_PREDISCHARGING,
-	SCREEN_START,
-	SCREEN_DRIVING,
-	SCREEN_STATUS,
+	//Normal screens
 	SCREEN_ANIMATION,
+	SCREEN_WELCOME,
+	SCREEN_START,
+	SCREEN_PREDISCHARGING,
+	SCREEN_STATUS,
+	SCREEN_DRIVING,
 	
+	//Setup screens
 	SCREEN_SETTINGS,
 	SCREEN_SAVING,
 	SCREEN_CALIBRATE,
 	
+	//Testing screens
 	SCREEN_TEST,
 	SCREEN_DRIVETEST,
+	
+	//Error screens
+	SCREEN_ERROR,
 };
 
 volatile enum uiscreen ui_current_screen;
