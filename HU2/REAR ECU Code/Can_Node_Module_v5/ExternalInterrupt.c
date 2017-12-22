@@ -26,10 +26,6 @@ void int_ExternalInterrupt(void)
 	PORTE	|= 0b00010000; // Input 4   INT4   PullUp
 	PORTE	|= 0b00100000; // Input 5   INT5   PullUp
 	
-	TCCR1B |= ( 1 << CS11 ) | (1 << CS10); // 16000000 / 64 = 250000 counts/second
-	TCCR3B |= ( 1 << CS31 ) | (1 << CS30); // 16000000 / 64 = 250000 counts/second
-	TIMSK1 |= ( 1 << TOIE1);
-	TIMSK3 |= ( 1 << TOIE3);
 	EIMSK=(0<<INT7)|(0<<INT6)|(1<<INT5)|(1<<INT4)|(1<<INT3)|(1<<INT2)|(0<<INT1)|(0 << INT0);
 	
 	EICRA =	  (1 << ISC31)
@@ -51,20 +47,6 @@ void int_ExternalInterrupt(void)
 			| (0 << ISC40);
 }
 
-ISR(INT2_vect)
-{
-	pulsetime[_LEFT] = TCNT1L;
-	TCNT1H = 0x00;
-	TCNT1L = 0x00;
-}
-
-ISR(INT3_vect)
-{
-	pulsetime[_RIGHT] = TCNT3;
-	TCNT3H = 0x00;
-	TCNT3L = 0x00;
-}
-
 ISR(INT4_vect)
 {
 	transmit_data[0] = AMSSHUTDOWN;			// AMS Shutdown
@@ -75,16 +57,6 @@ ISR(INT5_vect)
 {
 	transmit_data[0] = IMDSHUTDOWN;			// IMDSHUTDOWN
 	can_tx(MASTERID, 1);
-}
-
-ISR(TIMER3_OVF_vect)
-{
-	pulsetime[_LEFT] = -1;
-}
-
-ISR(TIMER1_OVF_vect)
-{
-	pulsetime[_RIGHT] = -1;
 }
 
 #endif

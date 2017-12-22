@@ -20,8 +20,6 @@ This is a central header file containing a lot of defined constants that are use
 
 /*************** EcU 2 ***************/
 // Data request
-#define RPM_LINKS_ACHTER			0x51
-#define RPM_RECHTS_ACHTER			0x52
 #define SHUTDOWN					0x61
 
 // Commando's

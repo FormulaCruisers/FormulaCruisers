@@ -45,20 +45,6 @@ ISR(CANIT_vect)
 			uint8_t i = 1;
 			while(i < length)
 			{
-				if (receive_data[i] == RPM_LINKS_ACHTER)
-				{
-					transmit_data[j++] = receive_data[i];
-					transmit_data[j++] = (pulsetime[_LEFT] >> 8);
-					transmit_data[j++] = pulsetime[_LEFT];
-					i++;
-				}
-				if (receive_data[i] == RPM_RECHTS_ACHTER)
-				{
-					transmit_data[j++] = receive_data[i];
-					transmit_data[j++] = (pulsetime[_RIGHT] >> 8);
-					transmit_data[j++] = pulsetime[_RIGHT];
-					i++;
-				}
 				if (receive_data[i] == SHUTDOWN)
 				{
 					DDRD &= ~(1<<PD7);
