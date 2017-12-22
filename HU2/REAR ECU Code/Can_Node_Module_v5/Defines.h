@@ -16,8 +16,6 @@ This is a central header file containing a lot of defined constants that are use
 #define _LEFT				2
 #define PD_SHUTDOWN			PD7
 
-#define PREDISCHARGE_TIMER			10000 //10 seconds
-
 /*************** EcU 2 ***************/
 // Data request
 #define SHUTDOWN					0x61

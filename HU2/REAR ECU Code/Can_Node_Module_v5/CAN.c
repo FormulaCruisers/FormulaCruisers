@@ -16,8 +16,8 @@ Also contains the interrupt for CAN rx.
 #include "CAN.h"
 #include "ExternalInterrupt.h"
 
-uint8_t receive_data[64];
-uint8_t transmit_data[64];
+uint8_t receive_data[8];
+uint8_t transmit_data[8];
 
 bool predison = false;
 
@@ -154,11 +154,18 @@ ISR(CANIT_vect)
 				if (receive_data[i] == PUMP)
 				{
 					DDRC	|= (1 << PC5);
-					if(receive_data[i+1]){
-						PORTC	|= (1 << PC5);
+					pump_pwm = receive_data[i+i];
+					if(pump_pwm > 0)
+					{
+						//If PWM should happen, turn on the interrupt
+						OCR0A = pump_pwm;
+						TIMSK0 = (1<<OCIE0A) | (1<<TOIE0);
 					}
-					else{
-						PORTC	&= ~(1 << PC5);
+					else
+					{
+						//Else, turn off interrupt and turn off pumps
+						TIMSK0 = 0;
+						PORTC &= ~(1<<PC5);
 					}
 					transmit_data[j++] = PUMP;
 					i++;

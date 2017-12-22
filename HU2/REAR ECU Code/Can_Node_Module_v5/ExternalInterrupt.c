@@ -15,7 +15,7 @@ Contains all interrupt based logic. Used for AMS and IMD shutdown. Also supposed
 #include "CAN.h"
 #include "ExternalInterrupt.h"
 
-uint16_t pulsetime[4] = {0,0,0,0};
+uint8_t pump_pwm = 0x01;
 
 
 //***** ADC CODE ***********************************************
@@ -26,7 +26,11 @@ void int_ExternalInterrupt(void)
 	PORTE	|= 0b00010000; // Input 4   INT4   PullUp
 	PORTE	|= 0b00100000; // Input 5   INT5   PullUp
 	
-	EIMSK=(0<<INT7)|(0<<INT6)|(1<<INT5)|(1<<INT4)|(1<<INT3)|(1<<INT2)|(0<<INT1)|(0 << INT0);
+	TCCR0A = (1 << CS01);
+	OCR0A = pump_pwm;
+	TIMSK0 = 0;
+	
+	EIMSK=(0<<INT7)|(0<<INT6)|(1<<INT5)|(1<<INT4)|(0<<INT3)|(0<<INT2)|(0<<INT1)|(0 << INT0);
 	
 	EICRA =	  (1 << ISC31)
 			| (0 << ISC30)
@@ -45,6 +49,18 @@ void int_ExternalInterrupt(void)
 			| (0 << ISC50)
 			| (1 << ISC41)
 			| (0 << ISC40);
+}
+
+ISR(TIMER0_COMP_vect)
+{
+	//On compare match, turn off pumps
+	PORTC &= ~(1<<PC5);
+}
+
+ISR(TIMER0_OVF_vect)
+{
+	//On overflow, turn on pumps
+	PORTC |= 1<<PC5;
 }
 
 ISR(INT4_vect)
