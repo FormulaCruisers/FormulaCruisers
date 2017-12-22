@@ -1,5 +1,5 @@
 /* EXTERNALINTERRUPT.C
-Contains all interrupt based logic. Used for AMS and IMD shutdown. Also supposedly used for nonexistent rear wheel RPM sensors
+Contains all interrupt based logic. Used for AMS and IMD shutdown. Also contains pseudo-PWM for pumps
 */
 
 #ifndef _EXTERNAL_INTERRUPTc_

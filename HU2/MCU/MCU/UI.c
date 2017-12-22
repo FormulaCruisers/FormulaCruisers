@@ -174,6 +174,13 @@ void get_screen(char buffer[4][21], enum uiscreen s)
 			snprintf(buffer[3], sizeof buffer[3], "Green to apply      ");
 			break;
 			
+		case SCREEN_PUMPTEST:
+			snprintf(buffer[0], sizeof buffer[0], "Pump: %3d           ", pump_pwm);
+			snprintf(buffer[1], sizeof buffer[1], "                    ");
+			snprintf(buffer[2], sizeof buffer[2], "Blue to set to 0    ");
+			snprintf(buffer[3], sizeof buffer[3], "Green to close      ");
+			break;
+			
 			
 			
 			

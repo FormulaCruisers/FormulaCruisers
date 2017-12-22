@@ -84,10 +84,6 @@ uint8_t ttt = 0; //Counter to make sure each node only gets one request at a tim
 
 bool brakelighton = false;
 
-//Sensor test screen variables
-volatile uint8_t test_sensor = 0x10;
-volatile uint32_t test_value = 0x00000000;
-
 //Boot counter for data logging
 uint16_t EEMEM ee_boot_count = 1;
 uint16_t boot_count;
@@ -96,8 +92,11 @@ uint16_t boot_count;
 uint8_t sdbuffer[512] = {0xff};
 uint16_t sd_current_pos = 0;
 
-//Drive test value
+//test screen variables
 volatile uint8_t dt_engv = 0;
+volatile uint8_t pump_pwm = 0;
+volatile uint8_t test_sensor = 0x10;
+volatile uint32_t test_value = 0x00000000;
 
 //Calibration values
 uint16_t EEMEM ee_Gas1_min = 0x301;
@@ -114,12 +113,11 @@ uint16_t GAS2MAX = 0x238;
 uint16_t BRAKEMIN = 0x014;
 uint16_t BRAKEMAX = 0x030;
 
-
 //Debug value
 extern volatile uint32_t tx_count;
 
 ISR(TIMER0_COMP_vect)
-{
+{	
 	//tx_count = TCNT0;
 	TCNT0 = 0;
 	
@@ -398,6 +396,8 @@ ISR(TIMER0_COMP_vect)
 			if(btnblue == 1 || btnblue == 0xFF) test_sensor += 0x10;
 			else if(btn2 == 1 || btn2 == 0xFF) test_sensor = ((test_sensor + 0x01) & 0x0F) + (test_sensor & 0xF0);
 			else if(btn1 == 1 || btn1 == 0xFF) test_sensor = ((test_sensor - 0x01) & 0x0F) + (test_sensor & 0xF0);
+			
+			if((btn1 == 1 && btn2 > 0) || (btn1 > 0 && btn2 == 1)) change_screen(SCREEN_PUMPTEST);
 		
 			//Skip 4-7 and 12-15 because those are never used
 			if((test_sensor & 0x04) > 0)
@@ -437,7 +437,14 @@ ISR(TIMER0_COMP_vect)
 			}
 			break;
 			
+		//Pump test screen
+		case SCREEN_PUMPTEST:
+			if(btn2 == 1 || btn2 == 0xFF) pump_pwm = ((pump_pwm == 0xFF) ? 0xFF : pump_pwm + 1);
+			if(btn1 == 1 || btn1 == 0xFF) pump_pwm = ((pump_pwm == 0) ? 0 : pump_pwm - 1);
+			if(btnblue == 1 || btngreen == 1) pump_pwm = 0;
+			data_send_ecu(PUMP_ENABLE, pump_pwm);
 			
+			if(btngreen == 1) change_screen(SCREEN_WELCOME);
 			
 			
 			
