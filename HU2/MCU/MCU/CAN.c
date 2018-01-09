@@ -81,7 +81,7 @@ void can_rx(uint16_t NODE_ID)
 	CANIDM1 = 0b11111111;   // Receive Address
 	CANIDM2 = 0b11100000;	//
 
-	CANCDMOB = (( 1 << CONMOB1 ) | ( 0 << IDE ) | ( 3 << DLC0));  // Enable Reception | 11 bit | IDE DLC8
+	CANCDMOB = (( 1 << CONMOB1 ) | ( 0 << IDE ) | ( 8 << DLC0));  // Enable Reception | 11 bit | IDE DLC8
 }
 
 //***** CAN Creating TX *****************************************************
@@ -102,7 +102,7 @@ void can_tx(uint16_t Address, uint8_t DLC)
 	
 	for ( int8_t i = 0; i < 8; i++ ) CANMSG = transmit_data[i]; //CAN Data Message Register: setting the data in the message register
 	
-	CANCDMOB = (( 1 << CONMOB0 ) | ( 0 << IDE ) | ( DLC << DLC0)); //CAN MOb Control and DLC Register: (1<<CONMOB1) = enable reception. (0<<IDE) = can standard rev 2.0A ( id length = 11 bits), (DLC << DLC0) Set *DLC* Bytes in the data field of the message.
+	CANCDMOB = (( 1 << CONMOB0 ) | ( 0 << IDE ) | ( DLC << DLC0)); //CAN MOb Control and DLC Register: (1<<CONMOB0) = enable transmission. (0<<IDE) = can standard rev 2.0A ( id length = 11 bits), (DLC << DLC0) Set *DLC* Bytes in the data field of the message.
 
 	while ( ! ( CANSTMOB & ( 1 << TXOK ) ) );	// wait for TXOK flag set	// JEROEN PAS NOU OP JONGE
 	
