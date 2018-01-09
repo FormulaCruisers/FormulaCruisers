@@ -45,7 +45,19 @@ ISR(CANIT_vect)
 		//Should only go here if AMS has sent a message
 		uint16_t rx_addr = (CANIDT1 << 3) | ((CANIDT2 & 0b11100000) >> 5);
 		
-		uint8_t receive_data[8];
+		uint8_t* receive_data;
+		
+		if(rx_addr == AMS_MSG_OVERALL)					receive_data = (uint8_t*)&amsd_overall;
+		else if(rx_addr == AMS_MSG_DIAGNOSTIC)			receive_data = (uint8_t*)&amsd_diagnostic;
+		else if(rx_addr == AMS_MSG_VOLTAGE)				receive_data = (uint8_t*)&amsd_voltage;
+		else if(rx_addr == AMS_MSG_CELL_MODULE_TEMP)	receive_data = (uint8_t*)&amsd_cell_module_temp;
+		else if(rx_addr == AMS_MSG_CELL_TEMP)			receive_data = (uint8_t*)&amsd_cell_temp;
+		else if(rx_addr == AMS_MSG_CELL_BALANCING)		receive_data = (uint8_t*)&amsd_cell_balancing;
+		else
+		{
+			//I know using goto is evil but it's not that bad here
+			goto skip;
+		}
 		
 		//AMS always sends 8 bytes
 		receive_data[0] = CANMSG;
@@ -56,13 +68,9 @@ ISR(CANIT_vect)
 		receive_data[5] = CANMSG;
 		receive_data[6] = CANMSG;
 		receive_data[7] = CANMSG;
-		
-		if(rx_addr == AMS_MSG_OVERALL)			memcpy((void*)&amsd_overall, receive_data, 8);
-		if(rx_addr == AMS_MSG_DIAGNOSTIC)		memcpy((void*)&amsd_diagnostic, receive_data, 8);
-		if(rx_addr == AMS_MSG_VOLTAGE)			memcpy((void*)&amsd_voltage, receive_data, 8);
-		if(rx_addr == AMS_MSG_CELL_MODULE_TEMP)	memcpy((void*)&amsd_cell_module_temp, receive_data, 8);
-		if(rx_addr == AMS_MSG_CELL_TEMP)		memcpy((void*)&amsd_cell_temp, receive_data, 8);
-		if(rx_addr == AMS_MSG_CELL_BALANCING)	memcpy((void*)&amsd_cell_balancing, receive_data, 8);
+skip:
+		CANSTMOB = 0x00; // Clear RXOK flag
+		CANCDMOB = (( 1 << CONMOB1 ) | ( 0 << IDE ) | ( 8 << DLC0)); //CAN MOb Control and DLC Register: (1<<CONMOB1) = enable reception. (0<<IDE) = can standard rev 2.0A ( id length = 11 bits), (3 << DLC0) 3 Bytes in the data field of the message.
 	}
 	
 	//CAN nodes
