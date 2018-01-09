@@ -79,7 +79,7 @@ void can_init()
 	CANIDT3 = 0;
 	CANIDT4 = 0;
 	
-	CANIDM1 = 0b11110110; // Set mask to allow certain bits to be different (lowest 4 bits & 7th bit[128])
+	CANIDM1 = 0b11111110; // Set mask to allow certain bits to be different (lowest 4 bits)
 	CANIDM2 = 0b00000000;
 	
 	CANCDMOB = (( 1 << CONMOB1 ) | ( 0 << IDE ) | ( 8 << DLC0));  // Enable Reception | 11 bit | IDE DLC8

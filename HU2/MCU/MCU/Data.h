@@ -26,4 +26,13 @@ extern uint16_t GAS1MIN, GAS1MAX, GAS2MIN, GAS2MAX, BRAKEMIN, BRAKEMAX;
 extern volatile enum _error _errorcode;
 extern volatile enum uiscreen ui_current_screen;
 
+extern volatile AMS_OVERALL amsd_overall;
+extern volatile AMS_DIAGNOSTIC amsd_diagnostic;
+extern volatile AMS_VOLTAGE amsd_voltage;
+extern volatile AMS_CELL_MODULE_TEMP amsd_cell_module_temp;
+extern volatile AMS_CELL_TEMP amsd_cell_temp;
+extern volatile AMS_CELL_BALANCING amsd_cell_balancing;
+//extern volatile struct AMS_CONFIGURATION amsd_configuration;
+//extern volatile struct AMS_LOGIN amsd_login;
+
 #endif

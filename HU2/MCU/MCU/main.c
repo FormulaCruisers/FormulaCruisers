@@ -113,6 +113,18 @@ uint16_t GAS2MAX = 0x238;
 uint16_t BRAKEMIN = 0x014;
 uint16_t BRAKEMAX = 0x030;
 
+
+//AMS data
+volatile AMS_OVERALL amsd_overall;
+volatile AMS_DIAGNOSTIC amsd_diagnostic;
+volatile AMS_VOLTAGE amsd_voltage;
+volatile AMS_CELL_MODULE_TEMP amsd_cell_module_temp;
+volatile AMS_CELL_TEMP amsd_cell_temp;
+volatile AMS_CELL_BALANCING amsd_cell_balancing;
+//volatile struct AMS_CONFIGURATION amsd_configuration;
+//volatile struct AMS_LOGIN amsd_login;
+
+
 //Debug value
 extern volatile uint32_t tx_count;
 

@@ -28,13 +28,4 @@ uint8_t transmit_data[8];
 
 extern volatile uint32_t test_value;
 
-volatile AMS_OVERALL amsd_overall;
-volatile AMS_DIAGNOSTIC amsd_diagnostic;
-volatile AMS_VOLTAGE amsd_voltage;
-volatile AMS_CELL_MODULE_TEMP amsd_cell_module_temp;
-volatile AMS_CELL_TEMP amsd_cell_temp;
-volatile AMS_CELL_BALANCING amsd_cell_balancing;
-//volatile struct AMS_CONFIGURATION amsd_configuration;
-//volatile struct AMS_LOGIN amsd_login;
-
 #endif

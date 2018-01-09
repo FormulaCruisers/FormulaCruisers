@@ -7,6 +7,7 @@ Contains the definitions for all screens(i.e. states)
 #define _UI_H
 
 #include "Defines.h"
+#include "AMS.h"
 
 char Linebuffer[4][21];
 
@@ -46,6 +47,8 @@ extern uint16_t boot_count;
 
 extern volatile uint8_t test_sensor;
 extern volatile uint32_t test_value;
+
+extern volatile AMS_OVERALL amsd_overall;
 
 void lcd_refresh();
 void lcd_quickrefresh();
