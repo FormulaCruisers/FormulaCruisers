@@ -6,7 +6,9 @@ This is a central header file containing a lot of defined constants that are use
 #define _Definesh_
 #include <avr/io.h>
 
+#ifndef F_CPU
 #define F_CPU 16000000UL	// Define processor clock speed for compiler
+#endif
 
 #define SOFTWARE_VERSION			"Software: V2.123    "  //Version should be 2.xxx where xxx is amount of commits(do "git rev-list HEAD --count" to check)
 
@@ -77,8 +79,8 @@ This is a central header file containing a lot of defined constants that are use
 
 /*************** ECU 2  ***************/
 // Data request
-#define RPM_BACK_LEFT				0x51
-#define RPM_BACK_RIGHT				0x52
+//#define RPM_BACK_LEFT				0x51
+//#define RPM_BACK_RIGHT				0x52
 #define SHUTDOWN					0x61
 
 // Commands

@@ -6,7 +6,6 @@ The CAN rx interrupt is enabled here, but not handled in this file. (See Data.c)
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <util/delay.h>
-#include "Defines.h"
 #include "CAN.h"
 
 volatile uint32_t tx_count = 0;
@@ -43,6 +42,10 @@ void data_send16_nh(uint16_t data, uint16_t node)
 {
 	uint8_t d[] = {data & 255, /*<-- Low byte | High byte -->*/ (data >> 8) & 255};
 	data_send_arr_nh(d, node, 2);
+}
+void data_send0(uint16_t addr)
+{
+	can_tx(addr, 0);
 }
 
 //***** CAN initalization *****************************************************
