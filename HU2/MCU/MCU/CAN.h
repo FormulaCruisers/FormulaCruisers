@@ -10,6 +10,7 @@ Contains definitions for CAN messages
 
 #include <avr/io.h>
 #include "Defines.h"
+#include "AMS.h"
 
 void data_send_arr(uint8_t header, uint8_t buffer[], uint16_t node, uint8_t bufferlen);
 void data_send8(uint8_t header, uint8_t data, uint16_t node);
@@ -26,5 +27,14 @@ void can_tx(uint16_t Address, uint8_t DLC);
 uint8_t transmit_data[8];
 
 extern volatile uint32_t test_value;
+
+volatile AMS_OVERALL amsd_overall;
+volatile AMS_DIAGNOSTIC amsd_diagnostic;
+volatile AMS_VOLTAGE amsd_voltage;
+volatile AMS_CELL_MODULE_TEMP amsd_cell_module_temp;
+volatile AMS_CELL_TEMP amsd_cell_temp;
+volatile AMS_CELL_BALANCING amsd_cell_balancing;
+//volatile struct AMS_CONFIGURATION amsd_configuration;
+//volatile struct AMS_LOGIN amsd_login;
 
 #endif

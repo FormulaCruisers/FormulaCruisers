@@ -256,11 +256,11 @@ enum AMS_PARAMETER
 	 PM_Min_PWM_Output = 0x191C,
 };
 
-bool is16bit(enum AMS_PARAMETER param) { return (param == 0x1806 || (param & 0x0100) > 0); }//The rule of & 0x0100 for 16 bit is not true for param 0x1806... this one is actually 16 bit but would return as 8.
-bool is32bit(enum AMS_PARAMETER param) { return (param & 0x0200) > 0; }
+//uint8_t is16bit(enum AMS_PARAMETER param) { return (param == 0x1806 || (param & 0x0100) > 0); }//The rule of & 0x0100 for 16 bit is not true for param 0x1806... this one is actually 16 bit but would return as 8.
+//uint8_t is32bit(enum AMS_PARAMETER param) { return (param & 0x0200) > 0; }
 
 
-struct AMS_OVERALL
+typedef struct AMS_OVERALL
 {
 	//INPUT SIGNALS
 	uint8_t IS_Ignition_Key : 1;
@@ -285,9 +285,9 @@ struct AMS_OVERALL
 	uint16_t N_Chargingduration;				//In minutes
 	enum AMS_CHARGING_ERROR Last_Charging_Error : 8;
 	uint8_t N_Livecells_LSB;
-};
+} AMS_OVERALL;
 
-struct AMS_DIAGNOSTIC
+typedef struct AMS_DIAGNOSTIC
 {
 	//Protection flags LSB
 	uint8_t PF_Undervoltage : 1;
@@ -322,9 +322,9 @@ struct AMS_DIAGNOSTIC
 	uint8_t BF_Reserved1 : 2;
 	
 	uint8_t RESERVED[4];
-};
+} AMS_DIAGNOSTIC;
 
-struct AMS_VOLTAGE
+typedef struct AMS_VOLTAGE
 {
 	uint8_t Cell_Voltage_Min;		//Multiplied by 100 and is 2V lower than the actual value
 	uint8_t	Cell_Voltage_Max;		//"
@@ -335,68 +335,68 @@ struct AMS_VOLTAGE
 	uint8_t Total_Voltage_b2;		//"
 
 	uint8_t RESERVED[1];
-};
+} AMS_VOLTAGE;
 
-struct AMS_CELL_MODULE_TEMP
+typedef struct AMS_CELL_MODULE_TEMP
 {
 	uint8_t Cell_Module_Temp_Min;		//In degrees Celsius, starting at 100. So a value of 115 would be 15 deg C.
 	uint8_t Cell_Module_Temp_Max;		//"
 	uint8_t Cell_Module_Temp_Average;	//"
 	
 	uint8_t RESERVED[5];
-};
+} AMS_CELL_MODULE_TEMP;
 
-struct AMS_CELL_TEMP
+typedef struct AMS_CELL_TEMP
 {
 	uint8_t Cell_Module_Temp_Min;		//In degrees Celsius, starting at 100. So a value of 115 would be 15 deg C.
 	uint8_t Cell_Module_Temp_Max;		//"
 	uint8_t Cell_Module_Temp_Average;	//"
 	
 	uint8_t RESERVED[5];
-};
+} AMS_CELL_TEMP;
 
-struct AMS_CELL_BALANCING 
+typedef struct AMS_CELL_BALANCING 
 {
 	uint8_t Cell_Balancing_Min;			//From 0 to 255, where 255 is 100%
 	uint8_t Cell_Balancing_Max;			//"
 	uint8_t Cell_Balancing_Average;		//"
 	
 	uint8_t RESERVED[5];
-};
+} AMS_CELL_BALANCING;
 
-struct AMS_CHARGE_STATE
+typedef struct AMS_CHARGE_STATE
 {
 	uint16_t Current;				//Multiplied by 10
 	uint16_t Estimated_Charge;		//"
 	uint8_t Estimated_Charge_State;	//In whole percents
 	
 	uint8_t RESERVED[3];
-};
+} AMS_CHARGE_STATE;
 
-struct AMS_ENERGY
+typedef struct AMS_ENERGY
 {
 	uint16_t Estimated_Consumption;		//In Wh per KM
 	uint16_t Estimated_Energy;			//In Wh divided by 10
 	uint16_t Estimated_Distance_Left;	//In Wh multiplied by 10
 	uint16_t Distance_Traveled;			//In KM multiplied by 10
-};
+} AMS_ENERGY;
 
-struct AMS_STATISTIC
+typedef struct AMS_STATISTIC
 {
 	uint8_t ID;
 	enum AMS_STATISTIC_DATATYPE Datatype : 8;
 	uint32_t Data;
 	
 	uint8_t RESERVED[2];
-};
+} AMS_STATISTIC;
 
-struct AMS_EVENT
+typedef struct AMS_EVENT
 {
 	uint8_t ID;
 	enum AMS_EVENT_DATATYPE Datatype : 8;
 	uint32_t data;
 	
 	uint8_t RESERVED[2];
-};
+} AMS_EVENT;
 
 #endif /* AMS_H_ */

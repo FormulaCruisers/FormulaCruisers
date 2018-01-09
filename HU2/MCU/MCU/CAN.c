@@ -66,9 +66,23 @@ void can_init()
 		CANSTMOB = 0x00;		// Clear mob status register;
 	}
 	
-	CANIE2 = (( 1 << IEMOB1 ) | ( 0 << IEMOB0 ));  // IEMOB1 = MOB1 Enable interrupts on mob1 for reception and transmission
+	CANIE2 = ((1 << IEMOB3) | ( 1 << IEMOB1 ) | ( 0 << IEMOB0 ));  // Enable interrupts on MOb3 and MOb1
 	CANGIE = ( 1 << ENIT ) | ( 1 << ENRX ) | ( 0 << ENTX );   // Enable interrupts on receive
 	CANGCON |= ( 1 << 1 );	// Enable mode. CAN channel enters in enable mode once 11 recessive bits have been read
+	
+	
+	//AMS messages on CAN page 3
+	CANPAGE = (3 << 4);
+	
+	CANIDT1 = AMS_BASE >> 3;
+	CANIDT2 = (AMS_BASE << 5) & 0xFF;
+	CANIDT3 = 0;
+	CANIDT4 = 0;
+	
+	CANIDM1 = 0b11110110; // Set mask to allow certain bits to be different (lowest 4 bits & 7th bit[128])
+	CANIDM2 = 0b00000000;
+	
+	CANCDMOB = (( 1 << CONMOB1 ) | ( 0 << IDE ) | ( 8 << DLC0));  // Enable Reception | 11 bit | IDE DLC8
 }
 
 //***** CAN Creating RX *****************************************************
@@ -81,7 +95,7 @@ void can_rx(uint16_t NODE_ID)
 	CANIDT3 = 0x00; 		// ""
 	CANIDT4 = 0x00; 		// ""
 	
-	CANIDM1 = 0b11111111;   // Receive Address
+	CANIDM1 = 0b11111111;   // Receive Address mask
 	CANIDM2 = 0b11100000;	//
 
 	CANCDMOB = (( 1 << CONMOB1 ) | ( 0 << IDE ) | ( 8 << DLC0));  // Enable Reception | 11 bit | IDE DLC8
