@@ -63,7 +63,7 @@ This is a central header file containing a lot of defined constants that are use
 /*************** Node 2 ***************/
 #define GAS_1						0x29 //ADC0
 #define GAS_2						0x2A //ADC1
-#define BRAKE						0x2B //ADC2
+#define BRAKE						0x2B //ADC2 //Not connected anymore
 
 /*************** Node 3 ***************/
 #define RPM_BACK_LEFT				0x30 //PPS0

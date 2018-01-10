@@ -159,7 +159,7 @@ ISR(TIMER0_COMP_vect)
 		switch(ttt)
 		{
 			case 0:
-				data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){BRAKE}, NODEID2, 1);
+				//data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){BRAKE}, NODEID2, 1); //Not connected anymore
 				data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){RPM_FRONT_RIGHT, RPM_FRONT_LEFT}, NODEID1, 2);
 				data_send0(AMS_MSG_OVERALL);
 				break;
