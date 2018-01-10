@@ -3,6 +3,7 @@ This file contains the entry point of the program and the main loop.
 The base state machine(by way of screens) is controlled in this file.
  */
 
+#define _NOCAN
 
 #include "Defines.h"
 
@@ -132,8 +133,10 @@ ISR(TIMER0_COMP_vect)
 {	
 	//tx_count = TCNT0;
 	TCNT0 = 0;
-	
+
+#ifndef _NOCAN	
 	data_send8(CAN_REQUEST_DATA, SHUTDOWN, ECU2ID);
+#endif
 	
 	//*
 	debounce(&btnblue, PIND & (1<<BUTTONBLUE));
@@ -150,6 +153,7 @@ ISR(TIMER0_COMP_vect)
 	}
 	
 	//Request gas/brake values
+#ifndef _NOCAN
 	if(ui_current_screen != SCREEN_TEST)
 	{
 		switch(ttt)
@@ -162,20 +166,24 @@ ISR(TIMER0_COMP_vect)
 			case 1:
 				data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){STEERING_POS}, NODEID1, 1);
 				data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){GAS_1, GAS_2}, NODEID2, 2);
+				data_send0(AMS_MSG_VOLTAGE);
 				break;
 		}
 	}
+#endif
 	
 	if(_errorcode != ERROR_NONE)
 	{
 		//Reset literally everything possible
 		if(errortimer < 0xFF) errortimer++;
+#ifndef _NOCAN
 		if(errortimer == 1) data_send_ecu(RUN_ENABLE, _LOW);
 		if(errortimer == 2) data_send_ecu(MAIN_RELAIS, _LOW);
 		if(errortimer == 3) data_send_ecu(PREDISCHARGE, _LOW);
 		if(errortimer == 4) data_send_ecu(MOTOR_CONTROLLER, _LOW);
 		if(errortimer == 5) data_send_ecu(PUMP_ENABLE, _LOW);
 		if(errortimer == 6) data_send_ecu(BRAKELIGHT, _LOW);
+#endif
 		
 		//Change into error screen
 		change_screen(SCREEN_ERROR);
@@ -215,7 +223,9 @@ ISR(TIMER0_COMP_vect)
 			
 			if(btnblue == 1)
 			{
+#ifndef _NOCAN
 				data_send_ecu(MOTOR_CONTROLLER, _HIGH);
+#endif
 				//After enabling, the motor controller needs some time to start accepting messages. Because of this, add 200*(1000/500) = 400ms delay.
 				stimer = -200;
 				if(_errorcode == ERROR_NONE) change_screen(SCREEN_SAVING);
@@ -248,14 +258,15 @@ ISR(TIMER0_COMP_vect)
 				if(_errorcode == ERROR_NONE)
 				{
 					predistimer = PREDISCHARGE_TIMER;
+#ifndef _NOCAN
 					data_send_ecu(PREDISCHARGE, _HIGH);
+					data_send_ecu(PUMP_ENABLE, _HIGH);
+#endif
 					change_screen(SCREEN_PREDISCHARGING);
 				
 					readybeep = RTDS_TIME;
 					// TODO: Uncomment when beep should be implemented
 					//PORTC |= 1 << RTDS
-				
-					data_send_ecu(PUMP_ENABLE, _HIGH);
 				}
 			}
 			
@@ -274,7 +285,9 @@ ISR(TIMER0_COMP_vect)
 			predistimer -= 2;
 			if(predistimer == 0)
 			{
+#ifndef _NOCAN
 				data_send_ecu(MAIN_RELAIS, _HIGH);
+#endif
 				change_screen(SCREEN_STATUS);
 			}
 			break;
@@ -283,12 +296,16 @@ ISR(TIMER0_COMP_vect)
 		case SCREEN_STATUS:
 			if(btngreen == 1)
 			{
+#ifndef _NOCAN
 				data_send_ecu(RUN_ENABLE, _HIGH);
+#endif
 				change_screen(SCREEN_DRIVING);
 			}
 			if(btn1 && btn2)
 			{
+#ifndef _NOCAN
 				data_send_ecu(RUN_ENABLE, _HIGH);
+#endif
 				change_screen(SCREEN_DRIVETEST);
 			}
 			break;
@@ -309,10 +326,12 @@ ISR(TIMER0_COMP_vect)
 					
 				struct slips sp = detectSlip(rpm_bl, rpm_br, tq);
 				tq = solveSlip(sp, tq);
-					
+
+#ifndef _NOCAN					
 				data_send_motor_d(MC_SET_TORQUE, -tq.right_perc, ENGINE_MAX, MCDR); //Right driver should get a negative value to drive forward
 				_delay_us(2);	//Experimental: 2 µs delay between drivers instead of using timer
 				data_send_motor_d(MC_SET_TORQUE, tq.left_perc, ENGINE_MAX, MCDL);
+#endif
 			}
 			break;
 		
@@ -366,12 +385,14 @@ ISR(TIMER0_COMP_vect)
 			else
 			{
 				engine_max_perc = vsettings[3];
+#ifndef _NOCAN
 				if(stimer == 1)      data_send_motor(MC_N_LIMIT, vsettings[0], 0x7FFF, MCDL);
 				else if(stimer == 2) data_send_motor(MC_N_LIMIT, vsettings[0], 0x7FFF, MCDR);
 				else if(stimer == 3) data_send_motor(MC_I_MAXPK_PERCENT, vsettings[1], 0x3FFF, MCDL);
 				else if(stimer == 4) data_send_motor(MC_I_MAXPK_PERCENT, vsettings[1], 0x3FFF, MCDR);
 				else if(stimer == 5) data_send_motor(MC_I_CONEFF_PERCENT, vsettings[2], 0x3FFF, MCDL);
 				else if(stimer == 6) data_send_motor(MC_I_CONEFF_PERCENT, vsettings[2], 0x3FFF, MCDR);
+#endif
 				stimer++;
 			}
 			break;
@@ -430,7 +451,11 @@ ISR(TIMER0_COMP_vect)
 			else if(tnode == 0x30) actualnode = NODEID3;
 			else if(tnode == 0x40) actualnode = NODEID4;
 			else break;
+			
+#ifndef _NOCAN
 			data_send8(CAN_REQUEST_DATA, test_sensor, actualnode);
+#endif
+			
 			break;
 		
 		//Drive test screen, used for setting a specific motor value and keeping it there
@@ -442,11 +467,13 @@ ISR(TIMER0_COMP_vect)
 				
 				struct torques tq = getDifferential(dt_engv, steerpos);
 				
+#ifndef _NOCAN
 				if(btnblue == 1) data_send_motor_d(MC_SET_TORQUE, 0, ENGINE_MAX, MCDR);
 				if(btnblue == 2) data_send_motor_d(MC_SET_TORQUE, 0, ENGINE_MAX, MCDL);
 				
 				if(btngreen == 1) data_send_motor_d(MC_SET_TORQUE, -tq.right_perc, ENGINE_MAX, MCDR);
 				if(btngreen == 2) data_send_motor_d(MC_SET_TORQUE, tq.left_perc, ENGINE_MAX, MCDL);
+#endif
 			}
 			break;
 			
@@ -455,7 +482,10 @@ ISR(TIMER0_COMP_vect)
 			if(btn2 == 1 || btn2 == 0xFF) pump_pwm = ((pump_pwm == 0xFF) ? 0xFF : pump_pwm + 1);
 			if(btn1 == 1 || btn1 == 0xFF) pump_pwm = ((pump_pwm == 0) ? 0 : pump_pwm - 1);
 			if(btnblue == 1 || btngreen == 1) pump_pwm = 0;
+
+#ifndef _NOCAN
 			data_send_ecu(PUMP_ENABLE, pump_pwm);
+#endif
 			
 			if(btngreen == 1) change_screen(SCREEN_WELCOME);
 			
@@ -489,12 +519,16 @@ ISR(TIMER0_COMP_vect)
 	if(brakeperc >= BL_SWITCHON && !brakelighton)
 	{
 		brakelighton = true;
+#ifndef _NOCAN
 		data_send_ecu(BRAKELIGHT, _HIGH);
+#endif
 	}
 	else if(brakeperc < BL_SWITCHOFF && brakelighton)
 	{
 		brakelighton = false;
+#ifndef _NOCAN
 		data_send_ecu(BRAKELIGHT, _LOW);
+#endif
 	}
 
 	//mod-2 timer increase

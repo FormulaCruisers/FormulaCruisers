@@ -329,10 +329,8 @@ typedef struct AMS_VOLTAGE
 	uint8_t Cell_Voltage_Min;		//Multiplied by 100 and is 2V lower than the actual value
 	uint8_t	Cell_Voltage_Max;		//"
 	uint8_t Cell_Voltage_Average;	//"
-	uint8_t Total_Voltage_b1;		//Multiplied by 100 (What is this ordering?)
-	uint8_t Total_Voltage_b0;		//"
-	uint8_t Total_Voltage_b3;		//"
-	uint8_t Total_Voltage_b2;		//"
+	uint16_t Total_Voltage_LSW;		//Multiplied by 100 (weird byte ordering [1 0 3 2])
+	uint16_t Total_Voltage_MSW;		//"
 
 	uint8_t RESERVED[1];
 } AMS_VOLTAGE;

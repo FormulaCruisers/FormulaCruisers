@@ -102,7 +102,7 @@ void get_screen(char buffer[4][21], enum uiscreen s)
 			snprintf(buffer[0], sizeof buffer[0], "Gas1:%3d%% Gas2:%3d%% ", gas1perc, gas2perc);
 			snprintf(buffer[1], sizeof buffer[1], "Brake:%3d%%          ", brakeperc);
 			snprintf(buffer[2], sizeof buffer[2], "Green = calibrate   ");
-			snprintf(buffer[3], sizeof buffer[3], "%4d                ", (amsd_overall.N_Livecells_LSB + (amsd_overall.N_Livecells_MSB << 8)));
+			snprintf(buffer[3], sizeof buffer[3], "%3d cells -> %.2fV", (amsd_overall.N_Livecells_LSB + (amsd_overall.N_Livecells_MSB << 8)), amsd_voltage.Total_Voltage_LSW / 100.f);
 			//snprintf(buffer[3], sizeof buffer[3], "Press blue to begin ");
 			break;
 
@@ -151,7 +151,7 @@ void get_screen(char buffer[4][21], enum uiscreen s)
 			snprintf(buffer[0], sizeof buffer[0], "Press both pedals to");
 			snprintf(buffer[1], sizeof buffer[1], "their maximum       ");
 			snprintf(buffer[2], sizeof buffer[2], "                    ");
-			snprintf(buffer[3], sizeof buffer[3], "Then, press green   ");
+			snprintf(buffer[3], sizeof buffer[3], "Then press green    ");
 			break;
 		
 		
