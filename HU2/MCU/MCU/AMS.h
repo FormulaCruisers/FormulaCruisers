@@ -280,12 +280,12 @@ typedef struct AMS_OVERALL
 	uint8_t OS_Contactor_PreCharge : 1;
 	
 	//The rest
-	uint8_t N_Livecells_MSB;
+	uint8_t N_Livecells_H;
 	enum AMS_CHARGING_STAGE Charging_Stage : 8;
-	uint8_t N_ChargingdurationH;				//In minutes
-	uint8_t N_ChargingdurationL;				//In minutes
+	uint8_t N_Chargingduration_H;				//In minutes
+	uint8_t N_Chargingduration_L;				//In minutes
 	enum AMS_CHARGING_ERROR Last_Charging_Error : 8;
-	uint8_t N_Livecells_LSB;
+	uint8_t N_Livecells_L;
 } AMS_OVERALL;
 
 typedef struct AMS_DIAGNOSTIC

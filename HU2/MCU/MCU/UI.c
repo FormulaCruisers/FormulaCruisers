@@ -102,7 +102,7 @@ void get_screen(char buffer[4][21], enum uiscreen s)
 			snprintf(buffer[0], sizeof buffer[0], "Gas1:%3d%% Gas2:%3d%% ", gas1perc, gas2perc);
 			snprintf(buffer[1], sizeof buffer[1], "Brake:%3d%%          ", brakeperc);
 			snprintf(buffer[2], sizeof buffer[2], "Green = calibrate   ");
-			snprintf(buffer[3], sizeof buffer[3], "%d                  ", amsd_overall.N_ChargingdurationL);
+			snprintf(buffer[3], sizeof buffer[3], "%d                  ", amsd_overall.N_Chargingduration_L);
 			//snprintf(buffer[3], sizeof buffer[3], "Press blue to begin ");
 			break;
 
