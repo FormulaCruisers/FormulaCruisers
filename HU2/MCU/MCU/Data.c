@@ -42,6 +42,8 @@ ISR(CANIT_vect)
 	CANPAGE = ( 0 << MOBNB3 ) | ( 0 << MOBNB2 ) | ( 1 << MOBNB1 ) | ( 1 << MOBNB0 ); // select CANMOB 0011 = MOB3
 	if (CANSTMOB & ( 1 << RXOK))
 	{
+		rx_count++;
+		
 		//Should only go here if AMS has sent a message
 		uint16_t rx_addr = (CANIDT1 << 3) | ((CANIDT2 & 0b11100000) >> 5);
 		

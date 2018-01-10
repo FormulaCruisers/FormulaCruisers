@@ -282,7 +282,8 @@ typedef struct AMS_OVERALL
 	//The rest
 	uint8_t N_Livecells_MSB;
 	enum AMS_CHARGING_STAGE Charging_Stage : 8;
-	uint16_t N_Chargingduration;				//In minutes
+	uint8_t N_ChargingdurationH;				//In minutes
+	uint8_t N_ChargingdurationL;				//In minutes
 	enum AMS_CHARGING_ERROR Last_Charging_Error : 8;
 	uint8_t N_Livecells_LSB;
 } AMS_OVERALL;
@@ -329,8 +330,10 @@ typedef struct AMS_VOLTAGE
 	uint8_t Cell_Voltage_Min;		//Multiplied by 100 and is 2V lower than the actual value
 	uint8_t	Cell_Voltage_Max;		//"
 	uint8_t Cell_Voltage_Average;	//"
-	uint16_t Total_Voltage_LSW;		//Multiplied by 100 (weird byte ordering [1 0 3 2])
-	uint16_t Total_Voltage_MSW;		//"
+	uint8_t Total_Voltage_LSW_H;	//Multiplied by 100 (weird byte ordering...)
+	uint8_t Total_Voltage_LSW_L;	//"
+	uint8_t Total_Voltage_MSW_H;	//"
+	uint8_t Total_Voltage_MSW_L;	//"
 
 	uint8_t RESERVED[1];
 } AMS_VOLTAGE;
@@ -364,8 +367,10 @@ typedef struct AMS_CELL_BALANCING
 
 typedef struct AMS_CHARGE_STATE
 {
-	uint16_t Current;				//Multiplied by 10
-	uint16_t Estimated_Charge;		//"
+	uint8_t Current_H;				//Multiplied by 10
+	uint8_t Current_L;				//"
+	uint8_t Estimated_Charge_H;		//"
+	uint8_t Estimated_Charge_L;		//"
 	uint8_t Estimated_Charge_State;	//In whole percents
 	
 	uint8_t RESERVED[3];
@@ -373,17 +378,24 @@ typedef struct AMS_CHARGE_STATE
 
 typedef struct AMS_ENERGY
 {
-	uint16_t Estimated_Consumption;		//In Wh per KM
-	uint16_t Estimated_Energy;			//In Wh divided by 10
-	uint16_t Estimated_Distance_Left;	//In Wh multiplied by 10
-	uint16_t Distance_Traveled;			//In KM multiplied by 10
+	uint8_t Estimated_Consumption_H;	//In Wh per KM
+	uint8_t Estimated_Consumption_L;	//"
+	uint8_t Estimated_Energy_H;			//In Wh divided by 10
+	uint8_t Estimated_Energy_L;			//"
+	uint8_t Estimated_Distance_Left_H;	//In Wh multiplied by 10
+	uint8_t Estimated_Distance_Left_L;	//"
+	uint8_t Distance_Traveled_H;		//In KM multiplied by 10
+	uint8_t Distance_Traveled_L;		//"
 } AMS_ENERGY;
 
 typedef struct AMS_STATISTIC
 {
 	uint8_t ID;
 	enum AMS_STATISTIC_DATATYPE Datatype : 8;
-	uint32_t Data;
+	uint8_t data_3;
+	uint8_t data_2;
+	uint8_t data_1;
+	uint8_t data_0;
 	
 	uint8_t RESERVED[2];
 } AMS_STATISTIC;
@@ -392,7 +404,10 @@ typedef struct AMS_EVENT
 {
 	uint8_t ID;
 	enum AMS_EVENT_DATATYPE Datatype : 8;
-	uint32_t data;
+	uint8_t data_3;
+	uint8_t data_2;
+	uint8_t data_1;
+	uint8_t data_0;
 	
 	uint8_t RESERVED[2];
 } AMS_EVENT;

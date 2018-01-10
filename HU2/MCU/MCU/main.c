@@ -3,7 +3,7 @@ This file contains the entry point of the program and the main loop.
 The base state machine(by way of screens) is controlled in this file.
  */
 
-#define _NOCAN
+//#define _NOCAN //Uncomment this to disable all CAN messages in the main loop
 
 #include "Defines.h"
 
