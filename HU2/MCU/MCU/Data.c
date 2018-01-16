@@ -9,6 +9,7 @@ This file contains more specific data sending functions, as well as the interrup
 #include "Data.h"
 #include "CAN.h"
 #include "Error.h"
+#include "sd_raw.h"
 
 extern volatile uint32_t rx_count;
 
@@ -70,6 +71,7 @@ ISR(CANIT_vect)
 		receive_data[5] = CANMSG;
 		receive_data[6] = CANMSG;
 		receive_data[7] = CANMSG;
+		
 skip:
 		CANSTMOB = 0x00; // Clear RXOK flag
 		CANCDMOB = (( 1 << CONMOB1 ) | ( 0 << IDE ) | ( 8 << DLC0)); //CAN MOb Control and DLC Register: (1<<CONMOB1) = enable reception. (0<<IDE) = can standard rev 2.0A ( id length = 11 bits), (3 << DLC0) 3 Bytes in the data field of the message.

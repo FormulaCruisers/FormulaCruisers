@@ -3,8 +3,9 @@ This file contains the entry point of the program and the main loop.
 The base state machine(by way of screens) is controlled in this file.
  */
 
-//#define _NOCAN //Uncomment this to disable all CAN messages in the main loop
-#define USE_SD_CARD
+#define _NOCAN //Uncomment this to disable all CAN messages in the main loop
+#define USE_SD_CARD //Enable CAN
+//#define REGULAR_LOG //Enable regular logging
 
 #include "Defines.h"
 
@@ -130,12 +131,24 @@ volatile AMS_CELL_BALANCING amsd_cell_balancing;
 //Debug value
 extern volatile uint32_t tx_count;
 
-volatile uint32_t debugval = 0;
+uint16_t logtimer = 0;
 
 ISR(TIMER0_COMP_vect)
 {	
 	//tx_count = TCNT0;
 	TCNT0 = 0;
+	
+#ifdef USE_SD_CARD
+#ifdef REGULAR_LOG
+	if(logtimer++ > LOG_DELAY)
+	{
+		logtimer = 0;
+		char lbuf[49];
+		snprintf(lbuf, sizeof(lbuf), "%1d%04x%04x%04x%04x%04x%04x%04x%04x%04x%04x%04x%04x", shutdownon, gas1, gas2, brake, rpm_fl, rpm_fr, rpm_bl, rpm_br, steerpos, templeft, tempright, flowleft, flowright);
+		sd_log("DATA:", (uint8_t*)lbuf, sizeof(lbuf));
+	}
+#endif
+#endif
 
 #ifndef _NOCAN	
 	data_send8(CAN_REQUEST_DATA, SHUTDOWN, ECU2ID);
@@ -187,6 +200,8 @@ ISR(TIMER0_COMP_vect)
 		if(errortimer == 5) data_send_ecu(PUMP_ENABLE, _LOW);
 		if(errortimer == 6) data_send_ecu(BRAKELIGHT, _LOW);
 #endif
+		
+		if(errortimer == 1) sd_log_s("[ERROR]", get_error(_errorcode));
 		
 		//Change into error screen
 		change_screen(SCREEN_ERROR);

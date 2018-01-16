@@ -134,37 +134,6 @@ static uint16_t sd_raw_send_command_r2(uint8_t command, uint32_t arg);
  * \returns 0 on failure, 1 on success.
  */
 
-uint8_t sd_flush_buffer(){
-	if(sd_raw_write_block(sd_next_block, sdbuffer, sd_current_pos + 1)){
-		memset(sdbuffer, 0xff, BLOCK_SIZE);
-		sd_current_pos = 0;
-		sd_next_block++;
-		eeprom_write_dword(&ee_sd_start_block, sd_next_block);
-		return 1;
-	}
-	return 0; //Error, _errorcode has already been set by sd_raw_write_block()
-}
-
-uint8_t sd_write(char* buffer, int len){
-	for(int i = 0; i < len; i++){
-		sd_check_and_flush();
-		sdbuffer[sd_current_pos] = buffer[i];
-		sd_current_pos++;
-	}
-	return 1;
-}
-
-uint8_t sd_check_and_flush(){
-	if(sd_current_pos >= BLOCK_SIZE){
-		return sd_flush_buffer();
-	}
-	return 1;
-}
-
-uint8_t sd_write_nullterminated(char* buffer){ //for zero-terminated strings
-	return sd_write(buffer, strlen((buffer) + 1));
-}
-
 uint8_t sd_raw_init()
 {
 	/* enable outputs for MOSI, SCK, SS, input for MISO */
@@ -225,9 +194,10 @@ uint8_t sd_raw_init()
 	
 	/* Get the start block from EEPROM*/
 	sd_next_block = eeprom_read_dword(&ee_sd_start_block);
-	char buffer[8];
-	snprintf(buffer, sizeof(buffer), "BOOT%03d", boot_count % 1000);
-	sd_write_nullterminated(buffer);
+	char buffer[9];
+	snprintf(buffer, sizeof(buffer), "BOOT%03u\n", boot_count % 1000);
+	sd_write_nt_string(buffer);
+	sd_prewrite_buffer();
 
 	/* deaddress card */
 	unselect_card();
@@ -376,7 +346,8 @@ uint16_t sd_raw_send_command_r2(uint8_t command, uint32_t arg)
 	return response;
 }
 
-uint8_t sd_raw_read_block(uint32_t block, uint8_t* buffer, int len){
+uint8_t sd_raw_read_block(uint32_t block, uint8_t* buffer, int len)
+{
 	int r;
 	uint16_t i;
 	select_card();
@@ -601,4 +572,70 @@ void SPI_MasterInit(void)
 	/* Enable SPI, Master, set clock rate fck/128 */
 	SPCR = (1<<SPE) | (1<<MSTR) | (1<<SPR1) | (1<<SPR0);
 	SPSR &= ~(1 << SPI2X); //no double clock frequency
+}
+
+
+
+
+
+
+
+
+//////////////////////////////////////////////////////////////////////////
+// Normal functions start here
+//////////////////////////////////////////////////////////////////////////
+uint8_t sd_prewrite_buffer()
+{
+	return sd_raw_write_block(sd_next_block, sdbuffer, sd_current_pos + 1);
+}
+
+uint8_t sd_flush_buffer()
+{
+	if(sd_raw_write_block(sd_next_block, sdbuffer, sd_current_pos + 1))
+	{
+		memset(sdbuffer, 0xff, BLOCK_SIZE);
+		sd_current_pos = 0;
+		sd_next_block++;
+		eeprom_write_dword(&ee_sd_start_block, sd_next_block);
+		return 1;
+	}
+	return 0; //Error, _errorcode has already been set by sd_raw_write_block()
+}
+
+uint8_t sd_write(char* buffer, int len)
+{
+	for(int i = 0; i < len; i++)
+	{
+		sd_check_and_flush();
+		sdbuffer[sd_current_pos] = buffer[i];
+		sd_current_pos++;
+	}
+	return 1;
+}
+
+uint8_t sd_check_and_flush()
+{
+	if(sd_current_pos >= BLOCK_SIZE)
+	{
+		return sd_flush_buffer();
+	}
+	return 1;
+}
+
+uint8_t sd_write_nt_string(char* buffer)
+{ //for zero-terminated strings
+	return sd_write(buffer, strlen(buffer));
+}
+
+uint8_t sd_log(char* pre, uint8_t* data, uint8_t dlen)
+{
+	sd_write_nt_string(pre);
+	sd_write((char*)data, dlen);
+	sd_write("\n", 1);
+}
+uint8_t sd_log_s(char* pre, char* data)
+{
+	sd_write_nt_string(pre);
+	sd_write_nt_string(data);
+	sd_write("\n", 1);
 }

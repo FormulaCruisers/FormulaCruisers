@@ -10,7 +10,7 @@ This is a central header file containing a lot of defined constants that are use
 #define F_CPU 16000000UL	// Define processor clock speed for compiler
 #endif
 
-#define SOFTWARE_VERSION			"Software: V2.132     "  //Version should be 2.xxx where xxx is amount of commits(do "git rev-list HEAD --count" to check)
+#define SOFTWARE_VERSION			"Software: V2.134     "  //Version should be 2.xxx where xxx is amount of commits(do "git rev-list HEAD --count" to check)
 
 #define RTDS						PC7 //Loud ready beep
 #define RTDS_TIME					1000 //1000 / 500 = 2 seconds    //Has to be between 1 and 3 seconds!
@@ -50,6 +50,9 @@ This is a central header file containing a lot of defined constants that are use
 #define STEER_MAX					0x0DC
 #define STEER_MIN					0x144
 #define STEER_MIDDLE				(STEER_MAX+STEER_MIN)/2
+
+//Log
+#define LOG_DELAY					250 //250/500 = 0.5s per log
 
 //Counter values
 #define _TM0						100 //500 Hz

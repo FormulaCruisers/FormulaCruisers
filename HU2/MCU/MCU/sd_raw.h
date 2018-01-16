@@ -97,10 +97,13 @@ uint8_t sd_raw_write_block(uint32_t block, const uint8_t* buffer,int len);
 void sd_raw_wait_ready();
 
 void SPI_MasterInit(void);
+uint8_t sd_prewrite_buffer();
 uint8_t sd_flush_buffer();
 uint8_t sd_write(char* buffer, int len);
 uint8_t sd_check_and_flush();
-uint8_t sd_write_nullterminated(char* buffer);
+uint8_t sd_write_nt_string(char* buffer);
+uint8_t sd_log(char* pre, uint8_t* data, uint8_t dlen);
+uint8_t sd_log_s(char* pre, char* data);
 
 extern volatile uint32_t debugval;
 
