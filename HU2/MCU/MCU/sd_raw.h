@@ -102,4 +102,6 @@ uint8_t sd_write(char* buffer, int len);
 uint8_t sd_check_and_flush();
 uint8_t sd_write_nullterminated(char* buffer);
 
+extern volatile uint32_t debugval;
+
 #endif //SD_RAW_H

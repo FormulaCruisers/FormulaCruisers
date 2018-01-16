@@ -4,6 +4,7 @@ The base state machine(by way of screens) is controlled in this file.
  */
 
 //#define _NOCAN //Uncomment this to disable all CAN messages in the main loop
+#define USE_SD_CARD
 
 #include "Defines.h"
 
@@ -128,6 +129,8 @@ volatile AMS_CELL_BALANCING amsd_cell_balancing;
 
 //Debug value
 extern volatile uint32_t tx_count;
+
+volatile uint32_t debugval = 0;
 
 ISR(TIMER0_COMP_vect)
 {	

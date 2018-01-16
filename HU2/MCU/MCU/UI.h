@@ -48,6 +48,8 @@ extern uint16_t boot_count;
 extern volatile uint8_t test_sensor;
 extern volatile uint32_t test_value;
 
+extern volatile uint32_t debugval;
+
 extern volatile AMS_OVERALL amsd_overall;
 extern volatile AMS_VOLTAGE amsd_voltage;
 

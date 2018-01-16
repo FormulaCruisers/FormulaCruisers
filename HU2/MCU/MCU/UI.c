@@ -58,6 +58,8 @@ void lcd_refresh()
 	rx_count = 0;
 	tx_count = 0;
 	
+	snprintf(Linebuffer[2], sizeof Linebuffer[2], "0x%lx;", debugval);
+	
 	lcd_quickrefresh();
 }
 

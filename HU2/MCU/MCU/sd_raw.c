@@ -12,6 +12,7 @@ The SPI_MasterInit() function is originally Copyright (c) 2008 Atmel Corporation
 #include <string.h>
 #include <avr/eeprom.h>
 #include <stdio.h>
+#include <avr/interrupt.h>
 
 extern volatile enum _error _errorcode;
 extern uint8_t sdbuffer[BLOCK_SIZE];
@@ -19,6 +20,12 @@ extern uint16_t sd_current_pos;
 uint32_t EEMEM ee_sd_start_block = 0;
 uint32_t sd_next_block;
 extern uint16_t boot_count;
+
+#define DDR_SPI DDRB
+#define DD_SS PB0
+#define DD_SCK PB1
+#define DD_MOSI PB2
+#define DD_MISO PB3
 
 /* commands available in SPI mode */
 
@@ -590,8 +597,8 @@ uint8_t sd_raw_get_info(struct sd_raw_info* info)
 void SPI_MasterInit(void)
 {
 	/* Set MOSI, SCK, SS output, all others input */
-	PORTB = (1<<PB2) | (1<<PB1) | (1<<PB0);
+	DDR_SPI  = (1<<DD_MOSI) | (1<<DD_SCK) | (1<<DD_SS);
 	/* Enable SPI, Master, set clock rate fck/128 */
-	SPCR = (1<<SPE) | (1<<MSTR)| (1<<SPR1) | (1<<SPR0);
+	SPCR = (1<<SPE) | (1<<MSTR) | (1<<SPR1) | (1<<SPR0);
 	SPSR &= ~(1 << SPI2X); //no double clock frequency
 }
