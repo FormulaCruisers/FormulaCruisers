@@ -41,26 +41,8 @@ ISR(CANIT_vect)
 		
 		uint8_t j = 0;
 		if (receive_data[0] == CAN_REQUEST_DATA)
-		{ //if first data received is 3D = General data request
-			uint8_t i = 1;
-			while(i < length)
-			{
-				if (receive_data[i] == SHUTDOWN)
-				{
-					DDRD &= ~(1<<PD7);
-					if((PIND & (1 << PD7)))
-					{
-						transmit_data[j++] = receive_data[i];
-						transmit_data[j++] = 0xFF;
-					}
-					else
-					{
-						transmit_data[j++] = receive_data[i];
-						transmit_data[j++] = 0x00;
-					}
-					i++;
-				}
-			}
+		{
+			//Don't do anything anymore :)
 		}
 		else
 		{
@@ -181,6 +163,23 @@ ISR(CANIT_vect)
 
 	CANPAGE = ( 0 << MOBNB3 ) | ( 0 << MOBNB2 ) | ( 0 << MOBNB1 ) | ( 0 << MOBNB0 ); // select 0000 = CANMOB0
 	
+}
+
+ISR(TIMER2_COMP_vect)
+{
+	DDRD &= ~(1<<PD7);
+	if((PIND & (1 << PD7)))
+	{
+		transmit_data[0] = 0xFF;
+		transmit_data[1] = 0xFF;
+	}
+	else
+	{
+		transmit_data[0] = 0x00;
+		transmit_data[1] = 0x00;
+	}
+	CANPAGE = ( 0 << MOBNB3 ) | ( 0 << MOBNB2 ) | ( 0 << MOBNB1 ) | ( 1 << MOBNB0 ); //Select MOb 1
+	can_tx(FUNCTION, 8);
 }
 
 

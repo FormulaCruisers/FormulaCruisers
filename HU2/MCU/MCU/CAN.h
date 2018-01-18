@@ -26,6 +26,6 @@ void can_tx(uint16_t Address, uint8_t DLC);
 
 uint8_t transmit_data[8];
 
-extern volatile uint32_t test_value;
+extern volatile uint64_t test_value;
 
 #endif

@@ -45,8 +45,8 @@ extern volatile int16_t steerpos;
 extern volatile uint8_t dt_engv, pump_pwm;
 extern uint16_t boot_count;
 
-extern volatile uint8_t test_sensor;
-extern volatile uint32_t test_value;
+extern volatile uint8_t test_mob;
+extern volatile uint64_t test_value;
 
 extern volatile uint32_t debugval;
 

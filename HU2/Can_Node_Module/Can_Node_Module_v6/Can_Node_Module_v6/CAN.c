@@ -20,6 +20,8 @@ uint8_t receive_data[8];
 uint8_t transmit_data[8];
 
 uint8_t is_enabled[16] = {0};
+	
+uint8_t sensors[4] = {0};
 
 uint8_t sp = 0;
 
@@ -36,35 +38,22 @@ ISR(CANIT_vect)
 	
 	if(ReceiveAddress == FUNCTION)
 	{
-		//for ( int8_t i = 0; i < length; i++ ){
-		//	ReceiveData[i] = CANMSG; // Get data, INDX auto increments CANMSG
-		//}
-		//Loop unrolling
-		receive_data[0] = CANMSG;
-		receive_data[1] = CANMSG; //CAN nodes should *always* receive at least two bytes of data. This assumes that that is indeed the case.
-		if(length > 2)
+		if(CANMSG == 0x3D)
 		{
-			//Only should happen in multi-request messages
-			for (uint8_t i = 2; i < length; i++)
-			receive_data[i] = CANMSG;
-		}
-		uint8_t j = 0;
-		if(receive_data[0] == 0x3D)
-		{	
-			//Allow for multiple requests to be sent at once
-			for(uint8_t i = 1; i < length; i++)
+			for(uint8_t i = 0; i < length - 1; i++)
 			{
-				uint8_t message = receive_data[i];
-				transmit_data[j++] = message;
+				uint8_t message = CANMSG;
 				
-				//Split the received message
-				uint8_t req = message & 0x07;
-				uint8_t is_adc = (message & 0x08) > 0;
+				//Store in sensors array
+				sensors[i] = message;
 				
+				//Enable the pins and interrupts if necessary
 				if(!is_enabled[message])
 				{
+					uint8_t is_adc = (message & 0x08) > 0;
 					if(!is_adc)
 					{
+						uint8_t req = message & 0x07;
 						if(req == 0)
 						{
 							EIMSK |= (1<<INT7) || (1<<INT6);	//PPS0 is INT7 and INT6
@@ -90,28 +79,48 @@ ISR(CANIT_vect)
 					}
 					is_enabled[message] = 1;
 				}
-				
-				if(is_adc)
-				{
-					getADC(req);
-					transmit_data[j++] = R_L;
-					transmit_data[j++] = R_H;
-				}
-				else
-				{
-					transmit_data[j++] = pulsetime[req];
-					transmit_data[j++] = (pulsetime[req] >> 8);
-				}
 			}
-			can_tx(MASTERID, j); //Transmit data depending on the number of message received
 		}
 	}
 	
 	CANSTMOB = 0x00; // Clear RXOK flag
 	CANCDMOB = (( 1 << CONMOB1 ) | ( 0 << IDE ) | ( 3 << DLC0)); //CAN MOb Control and DLC Register: (1<<CONMOB1) = enable reception. (0<<IDE) = can standard rev 2.0A ( id length = 11 bits), (3 << DLC0) 3 Bytes in the data field of the message.
-
-	CANPAGE = ( 0 << MOBNB3 ) | ( 0 << MOBNB2 ) | ( 0 << MOBNB1 ) | ( 0 << MOBNB0 ); // select 0000 = CANMOB0
 }
+
+ISR(TIMER2_COMP_vect)
+{
+	uint8_t c = 0;
+	for(uint8_t i = 0; i < 4; i++)
+	{
+		//Loop through all requested sensors and see if any need to be sent. If so, send them
+		if(sensors[i] != 0)
+		{
+			c++;
+			uint8_t req = sensors[i] & 0x07;
+			uint8_t is_adc = (sensors[i] & 0x08) > 0;
+			if(is_adc)
+			{
+				getADC(req);
+				transmit_data[i*2] = R_L;
+				transmit_data[i*2+1] = R_H;
+			}
+			else
+			{
+				transmit_data[i*2] = pulsetime[req];
+				transmit_data[i*2+1] = (pulsetime[req] >> 8);
+			}
+		}
+	}
+	
+	//If anything is being sent, send it. Otherwise, don't bother
+	if(c > 0)
+	{
+		CANPAGE = ( 0 << MOBNB3 ) | ( 0 << MOBNB2 ) | ( 0 << MOBNB1 ) | ( 1 << MOBNB0 ); //Select MOb 1
+		can_tx(FUNCTION, 8);
+	}
+}
+
+
 
 
 

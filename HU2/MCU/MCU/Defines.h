@@ -10,7 +10,7 @@ This is a central header file containing a lot of defined constants that are use
 #define F_CPU 16000000UL	// Define processor clock speed for compiler
 #endif
 
-#define SOFTWARE_VERSION			"Software: V2.134     "  //Version should be 2.xxx where xxx is amount of commits(do "git rev-list HEAD --count" to check)
+#define SOFTWARE_VERSION			"Software: V2.134    "  //Version should be 2.xxx where xxx is amount of commits(do "git rev-list HEAD --count" to check)
 
 #define RTDS						PC7 //Loud ready beep
 #define RTDS_TIME					1000 //1000 / 500 = 2 seconds    //Has to be between 1 and 3 seconds!
@@ -58,6 +58,28 @@ This is a central header file containing a lot of defined constants that are use
 #define _TM0						100 //500 Hz
 #define _TM2						192 //13.5 Hz?
 
+
+//MOB defines
+#define MOBCOUNT				5
+
+#define MOB_STEERING_POS		0
+#define MOB_RPM_FRONT_LEFT		1
+#define MOB_RPM_FRONT_RIGHT		2
+
+#define MOB_GAS1				0
+#define MOB_GAS2				1
+#define MOB_BRAKE				2
+
+#define MOB_RPM_BACK_LEFT		0
+#define MOB_FLOW_LEFT			1
+#define MOB_TEMP_LEFT			2
+
+#define MOB_RPM_BACK_RIGHT		0
+#define MOB_FLOW_RIGHT			1
+#define MOB_TEMP_RIGHT			2
+
+#define MOB_SHUTDOWN			0
+
 /*************** Node 1 ***************/
 #define STEERING_POS				0x18 //ADC3
 #define RPM_FRONT_LEFT				0x13 //PPS3
@@ -72,7 +94,6 @@ This is a central header file containing a lot of defined constants that are use
 #define RPM_BACK_LEFT				0x30 //PPS0
 #define FLOW_LEFT					0x32 //PPS2
 #define TEMP_LEFT					0x39 //ADC1		//00a3 = 17 c
-
 
 /*************** Node 4 ***************/
 #define RPM_BACK_RIGHT				0x40 //PPS0

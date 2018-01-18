@@ -98,8 +98,8 @@ uint16_t sd_current_pos = 0;
 //test screen variables
 volatile uint8_t dt_engv = 0;
 volatile uint8_t pump_pwm = 0;
-volatile uint8_t test_sensor = 0x10;
-volatile uint32_t test_value = 0x00000000;
+volatile uint8_t test_mob = 0;
+volatile uint64_t test_value = 0;
 
 //Calibration values
 uint16_t EEMEM ee_Gas1_min = 0x301;
@@ -137,6 +137,51 @@ ISR(TIMER0_COMP_vect)
 {	
 	//tx_count = TCNT0;
 	TCNT0 = 0;
+
+#pragma region variable getting
+	//Read all MOb messages
+#ifndef _NOCAN	
+	steerpos = g(NODEID1, MOB_STEERING_POS) - STEER_MIDDLE;
+	rpm_fl = 500000.d / (double)g(NODEID1, MOB_RPM_FRONT_LEFT);
+	rpm_fr = 500000.d / (double)g(NODEID1, MOB_RPM_FRONT_RIGHT);
+	
+	gas1 = g(NODEID2, MOB_GAS1);
+	gas2 = g(NODEID2, MOB_GAS2);
+	brake = g(NODEID2, MOB_BRAKE);
+	
+	rpm_bl = 500000.d / (double)g(NODEID2, MOB_RPM_BACK_LEFT);
+	flowleft = g(NODEID2, MOB_FLOW_LEFT);
+	templeft = g(NODEID2, MOB_TEMP_LEFT);
+	
+	rpm_br = 500000.d / (double)g(NODEID2, MOB_RPM_BACK_RIGHT);
+	flowright = g(NODEID2, MOB_FLOW_RIGHT);
+	tempright = g(NODEID2, MOB_TEMP_RIGHT);
+	
+	shutdownon = g(ECU2ID, MOB_SHUTDOWN) ? 1 : 0;
+
+	//Processing of all variables
+	//Gas and brake percentages
+	gas1perc = (gas1 < GAS1MIN) ? 0 : ((gas1 > GAS1MAX) ? (GAS1MAX - GAS1MIN) : (gas1 - GAS1MIN));
+	gas1perc = (gas1perc * 100) / (GAS1MAX - GAS1MIN);
+	gas2perc = (gas2 < GAS2MIN) ? 0 : ((gas2 > GAS2MAX) ? (GAS2MAX - GAS2MIN) : (gas2 - GAS2MIN));
+	gas2perc = (gas2perc * 100) / (GAS2MAX - GAS2MIN);
+	brakeperc = (brake < BRAKEMIN) ? 0 : ((brake > BRAKEMAX) ? (BRAKEMAX - BRAKEMIN) : (brake - BRAKEMIN));
+	brakeperc = (brakeperc * 100) / (BRAKEMAX - BRAKEMIN);
+	
+	//RPM
+	if(rpm_fl > 10000) rpm_fl = 0;
+	if(rpm_fr > 10000) rpm_fr = 0;
+	if(rpm_bl > 10000) rpm_bl = 0;
+	if(rpm_br > 10000) rpm_br = 0;
+	
+	//Flow vars
+	if(flowleft == 0xFFFF)	flowleft = 0;
+	else					flowleft = (uint16_t)(500000.d / (double)flowleft);
+	if(flowright == 0xFFFF)	flowright = 0;
+	else					flowright = (uint16_t)(500000.d / (double)flowright);
+	
+#endif
+#pragma endregion variable getting
 	
 #ifdef USE_SD_CARD
 #ifdef REGULAR_LOG
@@ -148,10 +193,6 @@ ISR(TIMER0_COMP_vect)
 		sd_log("DATA:", (uint8_t*)lbuf, sizeof(lbuf));
 	}
 #endif
-#endif
-
-#ifndef _NOCAN	
-	data_send8(CAN_REQUEST_DATA, SHUTDOWN, ECU2ID);
 #endif
 	
 	//*
@@ -170,21 +211,14 @@ ISR(TIMER0_COMP_vect)
 	
 	//Request gas/brake values
 #ifndef _NOCAN
-	if(ui_current_screen != SCREEN_TEST)
+	switch(ttt)
 	{
-		switch(ttt)
-		{
-			case 0:
-				//data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){BRAKE}, NODEID2, 1); //Not connected anymore
-				data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){RPM_FRONT_RIGHT, RPM_FRONT_LEFT}, NODEID1, 2);
-				data_send0(AMS_MSG_OVERALL);
-				break;
-			case 1:
-				data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){STEERING_POS}, NODEID1, 1);
-				data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){GAS_1, GAS_2}, NODEID2, 2);
-				data_send0(AMS_MSG_VOLTAGE);
-				break;
-		}
+		case 0:
+			data_send0(AMS_MSG_OVERALL);
+			break;
+		case 1:
+			data_send0(AMS_MSG_VOLTAGE);
+			break;
 	}
 #endif
 	
@@ -340,7 +374,7 @@ ISR(TIMER0_COMP_vect)
 				
 			if(_errorcode == ERROR_NONE)
 			{
-				struct torques tq = getDifferential(gas1eng, steerpos);
+				struct torques tq = getDifferential(gas1perc, steerpos);
 					
 				struct slips sp = detectSlip(rpm_bl, rpm_br, tq);
 				tq = solveSlip(sp, tq);
@@ -445,34 +479,15 @@ ISR(TIMER0_COMP_vect)
 		
 		//sensor testing screen
 		case SCREEN_TEST:
-			if(btnblue == 1 || btnblue == 0xFF) test_sensor += 0x10;
-			else if(btn2 == 1 || btn2 == 0xFF) test_sensor = ((test_sensor + 0x01) & 0x0F) + (test_sensor & 0xF0);
-			else if(btn1 == 1 || btn1 == 0xFF) test_sensor = ((test_sensor - 0x01) & 0x0F) + (test_sensor & 0xF0);
+			if(btn2 == 1 || btn2 == 0xFF) test_mob = (test_mob == MOBCOUNT - 1) ? 0 : test_mob + 1;
+			else if(btn1 == 1 || btn1 == 0xFF) test_mob = (test_mob == 0) ? MOBCOUNT - 1 : test_mob - 1;
 			
 			if((btn1 == 1 && btn2 > 0) || (btn1 > 0 && btn2 == 1)) change_screen(SCREEN_PUMPTEST);
 		
-			//Skip 4-7 and 12-15 because those are never used
-			if((test_sensor & 0x04) > 0)
-			{
-				if(test_sensor & 0x01)	test_sensor ^= 0b00000100;
-				else					test_sensor ^= 0b00001100;
-			}
-		
 			//Return button
 			if(btngreen == 1) change_screen(SCREEN_WELCOME);
-		
-			//Figure out which node to send it to
-			uint8_t tnode = (test_sensor & 0xF0);
-			uint16_t actualnode;
-			if(tnode == 0x10) actualnode = NODEID1;
-			else if(tnode == 0x20) actualnode = NODEID2;
-			else if(tnode == 0x30) actualnode = NODEID3;
-			else if(tnode == 0x40) actualnode = NODEID4;
-			else break;
 			
-#ifndef _NOCAN
-			data_send8(CAN_REQUEST_DATA, test_sensor, actualnode);
-#endif
+			test_value = (uint64_t)getrawmob(test_mob);
 			
 			break;
 		
@@ -628,6 +643,13 @@ int main()
 	can_rx(MASTERID);
 #ifdef USE_SD_CARD
 	sd_raw_init();
+#endif
+
+#ifndef _NOCAN
+	data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){STEERING_POS, RPM_FRONT_LEFT, RPM_FRONT_RIGHT}, NODEID1, 3);
+	data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){GAS_1, GAS_2, BRAKE}, NODEID2, 3);
+	data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){RPM_BACK_LEFT, FLOW_LEFT, TEMP_LEFT}, NODEID3, 3);
+	data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){RPM_BACK_RIGHT, FLOW_RIGHT, TEMP_RIGHT}, NODEID4, 3);
 #endif
 	
 	//Set CPU into sleep mode(simultaneously enabling interrupts)

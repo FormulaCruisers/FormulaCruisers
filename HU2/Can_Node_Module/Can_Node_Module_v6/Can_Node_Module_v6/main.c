@@ -25,6 +25,11 @@ int main(void)
 	int_ADC();				// ADC initialization
 	int_ExternalInterrupt();
 	
+	TCCR2A = (1 << WGM21) | (1 << CS20) | (1 << CS21) | (1 << CS22);	//1024 prescaler, CTC mode
+	OCR2A = 20;															//300-400Hz
+	TIMSK2 = (1 << OCIE2A);												//Enable compare match interrupt
+	
+	
 	sei();					// enables interrupts
 	
 	while(1){}

@@ -162,9 +162,9 @@ void get_screen(char buffer[4][21], enum uiscreen s)
 		
 			
 		case SCREEN_TEST:
-			snprintf(buffer[0], sizeof buffer[0], "Read from:0x%02x      ", test_sensor);
-			snprintf(buffer[1], sizeof buffer[1], "Raw value:0x%08lx", test_value);
-			snprintf(buffer[2], sizeof buffer[2], "Blue cycles nodes   ");
+			snprintf(buffer[0], sizeof buffer[0], "Read from:0x%02x      ", test_mob);
+			snprintf(buffer[1], sizeof buffer[1], "0x%016llx    ", test_value);
+			snprintf(buffer[2], sizeof buffer[2], "                    ");
 			snprintf(buffer[3], sizeof buffer[3], "Green closes menu   ");
 			break;
 			
