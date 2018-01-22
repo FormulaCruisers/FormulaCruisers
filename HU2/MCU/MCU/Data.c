@@ -61,6 +61,8 @@ uint64_t getrawmob(uint8_t node)
 
 	uint64_t ret = 0;
 	
+	waitonmob(num);
+	
 	//Read CANMSGs into ret
 	for(uint8_t i = 0; i < 8; i++)
 	{
@@ -74,10 +76,18 @@ uint64_t getrawmob(uint8_t node)
 uint16_t getonmob(uint8_t num)
 {
 	CANPAGE &= 0b11111000;				//Set index to 0
-	CANPAGE |= (num * 2) & 0b00000111;	//OR index with the value requested
+	CANPAGE |= (num * 2) & 0b00000111;	//OR index with the value requested	
+	waitonmob(num);
 	uint8_t lo = CANMSG;
 	uint8_t hi = CANMSG;
 	return (hi<<8) + lo;
+}
+
+// Wait for MOb to be free
+void waitonmob(uint8_t num)
+{
+	if(num < 8)	{ while ( CANEN2 & (1 << num)); }
+	else		{ while ( CANEN1 & (1 << (num - 8))); }
 }
 
 

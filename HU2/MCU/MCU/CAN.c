@@ -48,6 +48,19 @@ void data_send0(uint16_t addr)
 	can_tx(addr, 0);
 }
 
+//CAN MOb setup:
+// MOb 0 = Transmission MOb only
+// MOb 1 = Interrupt on reception, set to address MASTERID only. Unused
+// MOb 2 = Unused
+// MOb 3 = Interrupt on reception, set to receive most AMS messages.
+// MOb 4 = Receives data only on address NODEID1
+// MOb 5 = Receives data only on address NODEID2
+// MOb 6 = Receives data only on address NODEID3
+// MOb 7 = Receives data only on address NODEID4
+// MOb 8 = Receives data only on address ECU2ID
+// MOb 9-14 = Unused
+
+
 //***** CAN initalization *****************************************************
 void can_init()
 {	
