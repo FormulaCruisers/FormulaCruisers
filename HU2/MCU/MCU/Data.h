@@ -16,6 +16,7 @@ uint16_t g(uint8_t node, uint8_t val);
 void selectmob(uint8_t node);
 uint64_t getrawmob(uint8_t node);
 uint16_t getonmob(uint8_t num);
+void waitonmob(uint8_t num)
 
 extern volatile double gas1eng;
 extern volatile uint16_t gas1, gas2, brake, gas1perc, gas2perc, brakeperc;

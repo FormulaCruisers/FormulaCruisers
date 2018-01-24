@@ -1,5 +1,5 @@
 /* DATA.C
-This file contains more specific data sending functions, as well as the interrupt for the CAN rx.
+This file contains more specific data sending functions, the variable getting from MObs, as well as the interrupt for the CAN rx.
 */
 
 #include <string.h>			//Only for memcpy
@@ -86,8 +86,9 @@ uint16_t getonmob(uint8_t num)
 // Wait for MOb to be free
 void waitonmob(uint8_t num)
 {
-	if(num < 8)	{ while ( CANEN2 & (1 << num)); }
-	else		{ while ( CANEN1 & (1 << (num - 8))); }
+	while(CANGSTA & (1<<RXBSY));
+	//if(num < 8)	{ while ( CANEN2 & (1 << num)); }
+	//else		{ while ( CANEN1 & (1 << (num - 8))); }
 }
 
 
@@ -135,6 +136,18 @@ skip:
 	}
 	
 	//CAN nodes
+	for(uint8_t i = 0; i < 5; i++)
+	{
+		CANPAGE = (i + 4) << 4;
+		if (CANSTMOB & (1 << RXOK))
+		{
+			//Clear RXOK flag and re-enable reception
+			CANSTMOB = 0x00;
+			CANCDMOB = (( 1 << CONMOB1 ) | ( 0 << IDE ) | ( 8 << DLC0));
+		}
+	}
+	
+	//AMS and IMD interrupt
 	CANPAGE = ( 0 << MOBNB3 ) | ( 0 << MOBNB2 ) | ( 0 << MOBNB1 ) | ( 1 << MOBNB0 ); // select CANMOB 0001 = MOB1
 	if (CANSTMOB & ( 1 << RXOK))
 	{
@@ -155,7 +168,6 @@ skip:
 				receive_data[2] = CANMSG;
 				if(length > 3)
 				{
-					//Should only happen with multiple-request responses
 					for (uint8_t i = 3; i < length; i++)
 						receive_data[i] = CANMSG;
 				}

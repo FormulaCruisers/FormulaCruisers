@@ -50,7 +50,7 @@ void data_send0(uint16_t addr)
 
 //CAN MOb setup:
 // MOb 0 = Transmission MOb only
-// MOb 1 = Interrupt on reception, set to address MASTERID only. Unused
+// MOb 1 = Interrupt on reception, set to address MASTERID only. Used for AMS and IMD shutdown signals.
 // MOb 2 = Unused
 // MOb 3 = Interrupt on reception, set to receive most AMS messages.
 // MOb 4 = Receives data only on address NODEID1

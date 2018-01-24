@@ -1,5 +1,5 @@
 /* DIFFERENTIAL.C
-Some basic functions for calculating the electronic (torque vectoring)
+Some basic functions for calculating the electronic differential (i.e. torque vectoring)
  */ 
 
 #include <math.h>
