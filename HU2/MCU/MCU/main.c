@@ -143,14 +143,13 @@ ISR(TIMER0_COMP_vect)
 
 	//Read all MOb messages
 //#ifndef _NOCAN	
-	if(sentimer < 6)
-	{
-		if(sentimer == 1) data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){STEERING_POS, RPM_FRONT_LEFT, RPM_FRONT_RIGHT}, NODEID1, 3);
-		if(sentimer == 2) data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){GAS_1, GAS_2, BRAKE}, NODEID2, 3);
-		if(sentimer == 3) data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){RPM_BACK_LEFT, FLOW_LEFT, TEMP_LEFT}, NODEID3, 3);
-		if(sentimer == 4) data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){RPM_BACK_RIGHT, FLOW_RIGHT, TEMP_RIGHT}, NODEID4, 3);
-		sentimer++;
-	}
+
+	if(sentimer == 1) data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){STEERING_POS, RPM_FRONT_LEFT, RPM_FRONT_RIGHT}, NODEID1, 3);
+	if(sentimer == 2) data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){GAS_1, GAS_2, BRAKE}, NODEID2, 3);
+	if(sentimer == 3) data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){RPM_BACK_LEFT, FLOW_LEFT, TEMP_LEFT}, NODEID3, 3);
+	if(sentimer == 4) data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){RPM_BACK_RIGHT, FLOW_RIGHT, TEMP_RIGHT}, NODEID4, 3);
+	sentimer++;
+	if(sentimer > 200) sentimer = 0;
 
 	steerpos = g(NODEID1, MOB_STEERING_POS) - STEER_MIDDLE;
 	rpm_fl = 500000.d / (double)g(NODEID1, MOB_RPM_FRONT_LEFT);

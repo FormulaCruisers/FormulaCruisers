@@ -141,7 +141,7 @@ skip:
 	}
 	
 	//CAN nodes
-	for(uint8_t i = 0; i < 5; i++)
+	for(uint8_t i = 0; i < MOBCOUNT; i++)
 	{
 		CANPAGE = (i + 4) << 4;
 		if (CANSTMOB & (1 << RXOK))
