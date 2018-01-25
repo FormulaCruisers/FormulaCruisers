@@ -79,7 +79,7 @@ void can_init()
 		CANSTMOB = 0x00;		// Clear mob status register;
 	}
 	
-	CANIE2 = ((1 << IEMOB3) | ( 1 << IEMOB1 ) | ( 0 << IEMOB0 ));  // Enable interrupts on MOb3 and MOb1
+	CANIE2 = ((1<<IEMOB4) | (1<<IEMOB5) | (1 << IEMOB3) | ( 1 << IEMOB1 ) | ( 0 << IEMOB0 ));  // Enable interrupts on MOb3 and MOb1
 	CANGIE = ( 1 << ENIT ) | ( 1 << ENRX ) | ( 0 << ENTX );   // Enable interrupts on receive
 	CANGCON |= ( 1 << 1 );	// Enable mode. CAN channel enters in enable mode once 11 recessive bits have been read
 	

@@ -12,11 +12,13 @@ void data_send_ecu_a(uint8_t count, uint8_t ndarr[]);
 void data_send_motor(uint8_t header, uint8_t data, int32_t mul, uint16_t node);
 void data_send_motor_d(uint8_t header, double data, int32_t mul, uint16_t node);
 
-uint16_t g(uint8_t node, uint8_t val);
-void selectmob(uint8_t node);
-uint64_t getrawmob(uint8_t node);
+uint16_t g(uint16_t node, uint8_t val);
+void selectmob(uint16_t node);
+uint8_t gnum(uint16_t node);
+uint64_t getrawmob(uint16_t node);
 uint16_t getonmob(uint8_t num);
-void waitonmob(uint8_t num)
+uint32_t gr(uint16_t node, uint8_t part);
+void waitonmob();
 
 extern volatile double gas1eng;
 extern volatile uint16_t gas1, gas2, brake, gas1perc, gas2perc, brakeperc;

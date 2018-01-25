@@ -7,6 +7,7 @@ This includes all of the screen states.
 #include <avr/interrupt.h>
 #include <stdio.h>
 #include "Defines.h"
+#include "Data.h"
 #include "lcd.h"
 #include "UI.h"
 #include "Error.h"
@@ -55,7 +56,7 @@ void lcd_refresh()
 	
 	//snprintf(Linebuffer[3], sizeof Linebuffer[3], "%8lu %8lu ", rx_count, tx_count);
 	
-	rx_count = 0;
+	//rx_count = 0;
 	tx_count = 0;
 	
 	lcd_quickrefresh();
@@ -68,10 +69,10 @@ void lcd_quickrefresh()
 	{
 		lcd_gotoxy(0, y);
 		lcd_puts(Linebuffer[y]);
-#ifdef USE_SD_CARD
-		sd_write(Linebuffer[y], 20);
-		sd_write("0", 1);
-#endif //USE_SD_CARD
+//#ifdef USE_SD_CARD
+//		sd_write(Linebuffer[y], 20);
+//		sd_write("0", 1);
+//#endif //USE_SD_CARD
 	}
 }
 
@@ -80,6 +81,8 @@ void change_screen(enum uiscreen s)
 	ui_current_screen = s;
 	lcd_refresh();	
 }
+
+extern uint8_t raws[5][8];
 
 void get_screen(char buffer[4][21], enum uiscreen s)
 {
@@ -101,8 +104,8 @@ void get_screen(char buffer[4][21], enum uiscreen s)
 		case SCREEN_START:
 			snprintf(buffer[0], sizeof buffer[0], "Gas1:%3d%% Gas2:%3d%% ", gas1perc, gas2perc);
 			snprintf(buffer[1], sizeof buffer[1], "Brake:%3d%%          ", brakeperc);
-			snprintf(buffer[2], sizeof buffer[2], "Green = calibrate   ");
-			snprintf(buffer[3], sizeof buffer[3], "%d                  ", amsd_overall.N_Chargingduration_L);
+			snprintf(buffer[2], sizeof buffer[2], "Rpm: FL%5u FR%5u", rpm_fl, rpm_fr);
+			snprintf(buffer[3], sizeof buffer[3], "Steerpos: %5d     ", steerpos);
 			//snprintf(buffer[3], sizeof buffer[3], "Press blue to begin ");
 			break;
 

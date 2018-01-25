@@ -39,29 +39,35 @@ void data_send_motor_d(uint8_t header, double data, int32_t mul, uint16_t node)
 
 
 //GETTER
-uint16_t g(uint8_t node, uint8_t val)
+uint16_t g(uint16_t node, uint8_t val)
 {
 	selectmob(node);	
 	return getonmob(val);
 }
 
-void selectmob(uint8_t node)
+uint8_t gnum(uint16_t node)
 {
-	if(node == NODEID1 || node == 0) CANPAGE = 4 << 4;
-	else if(node == NODEID2 || node == 1) CANPAGE = 5 << 4;
-	else if(node == NODEID3 || node == 2) CANPAGE = 6 << 4;
-	else if(node == NODEID4 || node == 3) CANPAGE = 7 << 4;
-	else if(node == ECU2ID || node == 4) CANPAGE = 8 << 4;
+	if(node == NODEID1 || node == 0) return 0;
+	else if(node == NODEID2 || node == 1) return 1;
+	else if(node == NODEID3 || node == 2) return 2;
+	else if(node == NODEID4 || node == 3) return 3;
+	else if(node == ECU2ID || node == 4) return 4;
+	return -1;
 }
 
-uint64_t getrawmob(uint8_t node)
+void selectmob(uint16_t node)
+{
+	CANPAGE = (gnum(node) + 4) << 4;
+}
+
+uint64_t getrawmob(uint16_t node)
 {
 	selectmob(node);
 	CANPAGE &= 0b11111000;				//Set index to 0
 
 	uint64_t ret = 0;
 	
-	waitonmob(num);
+	waitonmob();
 	
 	//Read CANMSGs into ret
 	for(uint8_t i = 0; i < 8; i++)
@@ -77,14 +83,14 @@ uint16_t getonmob(uint8_t num)
 {
 	CANPAGE &= 0b11111000;				//Set index to 0
 	CANPAGE |= (num * 2) & 0b00000111;	//OR index with the value requested	
-	waitonmob(num);
+	waitonmob();
 	uint8_t lo = CANMSG;
 	uint8_t hi = CANMSG;
 	return (hi<<8) + lo;
 }
 
 // Wait for MOb to be free
-void waitonmob(uint8_t num)
+void waitonmob()
 {
 	while(CANGSTA & (1<<RXBSY));
 	//if(num < 8)	{ while ( CANEN2 & (1 << num)); }
@@ -96,12 +102,11 @@ void waitonmob(uint8_t num)
 
 
 ISR(CANIT_vect)
-{	
+{
 	//AMS
 	CANPAGE = ( 0 << MOBNB3 ) | ( 0 << MOBNB2 ) | ( 1 << MOBNB1 ) | ( 1 << MOBNB0 ); // select CANMOB 0011 = MOB3
 	if (CANSTMOB & ( 1 << RXOK))
 	{
-		rx_count++;
 		
 		//Should only go here if AMS has sent a message
 		uint16_t rx_addr = (CANIDT1 << 3) | ((CANIDT2 & 0b11100000) >> 5);
@@ -141,6 +146,7 @@ skip:
 		CANPAGE = (i + 4) << 4;
 		if (CANSTMOB & (1 << RXOK))
 		{
+			
 			//Clear RXOK flag and re-enable reception
 			CANSTMOB = 0x00;
 			CANCDMOB = (( 1 << CONMOB1 ) | ( 0 << IDE ) | ( 8 << DLC0));
@@ -152,7 +158,6 @@ skip:
 	if (CANSTMOB & ( 1 << RXOK))
 	{
 		//rx_count = TCNT0;
-		rx_count++;
 
 		uint8_t length = ( CANCDMOB & 0x0F );
 		

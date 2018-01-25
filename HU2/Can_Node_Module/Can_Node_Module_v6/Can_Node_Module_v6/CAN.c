@@ -46,39 +46,6 @@ ISR(CANIT_vect)
 				
 				//Store in sensors array
 				sensors[i] = message;
-				
-				//Enable the pins and interrupts if necessary
-				if(!is_enabled[message])
-				{
-					uint8_t is_adc = (message & 0x08) > 0;
-					if(!is_adc)
-					{
-						uint8_t req = message & 0x07;
-						if(req == 0)
-						{
-							EIMSK |= (1<<INT7) || (1<<INT6);	//PPS0 is INT7 and INT6
-							PORTE	|= 0b10000000; // Input 5   INT7   PullUp
-							PORTE	|= 0b01000000; // Input 6   INT6   PullUp
-						}
-						if(req == 1)
-						{
-							EIMSK |= (1<<INT4) || (1<<INT3);	//PPS1 is INT4 and INT3
-							PORTD	|= 0b00001000; // Input 3   INT3   PullUp
-							PORTE	|= 0b00010000; // Input 4   INT4   PullUp
-						}
-						if(req == 2)
-						{
-							EIMSK |= (1<<INT2);				//PPS2 is INT2
-							PORTD	|= 0b00000100; // Input 2   INT2   PullUp
-						}
-						if(req == 3)
-						{
-							EIMSK |= (1<<INT1);				//PPS3 is INT1
-							PORTD	|= 0b00000010; // Input 1   INT1   PullUp
-						}
-					}
-					is_enabled[message] = 1;
-				}
 			}
 		}
 	}
@@ -106,6 +73,28 @@ ISR(TIMER2_COMP_vect)
 			}
 			else
 			{
+				if(req == 0)
+				{
+					EIMSK |= (1<<INT7) || (1<<INT6);	//PPS0 is INT7 and INT6
+					PORTE	|= 0b10000000; // Input 5   INT7   PullUp
+					PORTE	|= 0b01000000; // Input 6   INT6   PullUp
+				}
+				if(req == 1)
+				{
+					EIMSK |= (1<<INT4) || (1<<INT3);	//PPS1 is INT4 and INT3
+					PORTD	|= 0b00001000; // Input 3   INT3   PullUp
+					PORTE	|= 0b00010000; // Input 4   INT4   PullUp
+				}
+				if(req == 2)
+				{
+					EIMSK |= (1<<INT2);				//PPS2 is INT2
+					PORTD	|= 0b00000100; // Input 2   INT2   PullUp
+				}
+				if(req == 3)
+				{
+					EIMSK |= (1<<INT1);				//PPS3 is INT1
+					PORTD	|= 0b00000010; // Input 1   INT1   PullUp
+				}
 				transmit_data[i*2] = pulsetime[req];
 				transmit_data[i*2+1] = (pulsetime[req] >> 8);
 			}

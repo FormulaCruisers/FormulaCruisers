@@ -4,8 +4,8 @@ The base state machine(by way of screens) is controlled in this file.
  */
 
 #define _NOCAN //Uncomment this to disable all CAN messages in the main loop
-#define USE_SD_CARD //Enable CAN
-//#define REGULAR_LOG //Enable regular logging
+//#define USE_SD_CARD //Enable CAN
+//#define REGULAR_LOG //Enable regularly logging
 
 #include "Defines.h"
 
@@ -133,14 +133,25 @@ extern volatile uint32_t tx_count;
 
 uint16_t logtimer = 0;
 
+//Timer to set up sensors of can nodes
+uint8_t sentimer = 0;
+
 ISR(TIMER0_COMP_vect)
 {	
 	//tx_count = TCNT0;
 	TCNT0 = 0;
 
-#pragma region variable getting
 	//Read all MOb messages
-#ifndef _NOCAN	
+//#ifndef _NOCAN	
+	if(sentimer < 6)
+	{
+		if(sentimer == 1) data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){STEERING_POS, RPM_FRONT_LEFT, RPM_FRONT_RIGHT}, NODEID1, 3);
+		if(sentimer == 2) data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){GAS_1, GAS_2, BRAKE}, NODEID2, 3);
+		if(sentimer == 3) data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){RPM_BACK_LEFT, FLOW_LEFT, TEMP_LEFT}, NODEID3, 3);
+		if(sentimer == 4) data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){RPM_BACK_RIGHT, FLOW_RIGHT, TEMP_RIGHT}, NODEID4, 3);
+		sentimer++;
+	}
+
 	steerpos = g(NODEID1, MOB_STEERING_POS) - STEER_MIDDLE;
 	rpm_fl = 500000.d / (double)g(NODEID1, MOB_RPM_FRONT_LEFT);
 	rpm_fr = 500000.d / (double)g(NODEID1, MOB_RPM_FRONT_RIGHT);
@@ -169,10 +180,10 @@ ISR(TIMER0_COMP_vect)
 	brakeperc = (brakeperc * 100) / (BRAKEMAX - BRAKEMIN);
 	
 	//RPM
-	if(rpm_fl > 10000) rpm_fl = 0;
-	if(rpm_fr > 10000) rpm_fr = 0;
-	if(rpm_bl > 10000) rpm_bl = 0;
-	if(rpm_br > 10000) rpm_br = 0;
+	if(rpm_fl > 10000 || rpm_fl < 8) rpm_fl = 0;
+	if(rpm_fr > 10000 || rpm_fr < 8) rpm_fr = 0;
+	if(rpm_bl > 10000 || rpm_bl < 8) rpm_bl = 0;
+	if(rpm_br > 10000 || rpm_br < 8) rpm_br = 0;
 	
 	//Flow vars
 	if(flowleft == 0xFFFF)	flowleft = 0;
@@ -180,8 +191,7 @@ ISR(TIMER0_COMP_vect)
 	if(flowright == 0xFFFF)	flowright = 0;
 	else					flowright = (uint16_t)(500000.d / (double)flowright);
 	
-#endif
-#pragma endregion variable getting
+//#endif
 	
 #ifdef USE_SD_CARD
 #ifdef REGULAR_LOG
@@ -234,8 +244,10 @@ ISR(TIMER0_COMP_vect)
 		if(errortimer == 5) data_send_ecu(PUMP_ENABLE, _LOW);
 		if(errortimer == 6) data_send_ecu(BRAKELIGHT, _LOW);
 #endif
-		
+
+#ifdef USE_SD_CARD		
 		if(errortimer == 1) sd_log_s("[ERROR]", get_error(_errorcode));
+#endif
 		
 		//Change into error screen
 		change_screen(SCREEN_ERROR);
@@ -328,6 +340,7 @@ ISR(TIMER0_COMP_vect)
 				GAS1MIN = gas1 + CALIB_SLACK;
 				GAS2MIN = gas2 + CALIB_SLACK;
 				BRAKEMIN = brake + CALIB_SLACK;
+				change_screen(SCREEN_CALIBRATE);
 			}
 			break;
 		
@@ -464,6 +477,7 @@ ISR(TIMER0_COMP_vect)
 				eeprom_write_word(&ee_Gas2_max, GAS2MAX);
 				eeprom_write_word(&ee_Brake_min, BRAKEMIN);
 				eeprom_write_word(&ee_Brake_max, BRAKEMAX);
+				change_screen(SCREEN_START);
 			}
 			break;
 		
@@ -643,13 +657,6 @@ int main()
 	can_rx(MASTERID);
 #ifdef USE_SD_CARD
 	sd_raw_init();
-#endif
-
-#ifndef _NOCAN
-	data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){STEERING_POS, RPM_FRONT_LEFT, RPM_FRONT_RIGHT}, NODEID1, 3);
-	data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){GAS_1, GAS_2, BRAKE}, NODEID2, 3);
-	data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){RPM_BACK_LEFT, FLOW_LEFT, TEMP_LEFT}, NODEID3, 3);
-	data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){RPM_BACK_RIGHT, FLOW_RIGHT, TEMP_RIGHT}, NODEID4, 3);
 #endif
 	
 	//Set CPU into sleep mode(simultaneously enabling interrupts)
