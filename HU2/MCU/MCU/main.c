@@ -145,7 +145,7 @@ ISR(TIMER0_COMP_vect)
 //#ifndef _NOCAN	
 
 	if(sentimer == 1) data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){STEERING_POS, RPM_FRONT_LEFT, RPM_FRONT_RIGHT}, NODEID1, 3);
-	if(sentimer == 2) data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){GAS_1, GAS_2, BRAKE}, NODEID2, 3);
+	if(sentimer == 2) data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){GAS_1, GAS_2}, NODEID2, 3);
 	if(sentimer == 3) data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){RPM_BACK_LEFT, FLOW_LEFT, TEMP_LEFT}, NODEID3, 3);
 	if(sentimer == 4) data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){RPM_BACK_RIGHT, FLOW_RIGHT, TEMP_RIGHT}, NODEID4, 3);
 	sentimer++;
@@ -157,7 +157,6 @@ ISR(TIMER0_COMP_vect)
 	
 	gas1 = g(NODEID2, MOB_GAS1);
 	gas2 = g(NODEID2, MOB_GAS2);
-	brake = g(NODEID2, MOB_BRAKE);
 	
 	rpm_bl = 500000.d / (double)g(NODEID2, MOB_RPM_BACK_LEFT);
 	flowleft = g(NODEID2, MOB_FLOW_LEFT);
@@ -175,8 +174,6 @@ ISR(TIMER0_COMP_vect)
 	gas1perc = (gas1perc * 100) / (GAS1MAX - GAS1MIN);
 	gas2perc = (gas2 < GAS2MIN) ? 0 : ((gas2 > GAS2MAX) ? (GAS2MAX - GAS2MIN) : (gas2 - GAS2MIN));
 	gas2perc = (gas2perc * 100) / (GAS2MAX - GAS2MIN);
-	brakeperc = (brake < BRAKEMIN) ? 0 : ((brake > BRAKEMAX) ? (BRAKEMAX - BRAKEMIN) : (brake - BRAKEMIN));
-	brakeperc = (brakeperc * 100) / (BRAKEMAX - BRAKEMIN);
 	
 	//RPM
 	if(rpm_fl > 10000 || rpm_fl < 8) rpm_fl = 0;

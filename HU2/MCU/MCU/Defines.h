@@ -68,7 +68,6 @@ This is a central header file containing a lot of defined constants that are use
 
 #define MOB_GAS1				0
 #define MOB_GAS2				1
-#define MOB_BRAKE				2
 
 #define MOB_RPM_BACK_LEFT		0
 #define MOB_FLOW_LEFT			1
