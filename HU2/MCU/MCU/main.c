@@ -45,7 +45,7 @@ volatile uint16_t rpm_fl = 0;
 volatile uint16_t rpm_fr = 0;
 volatile uint16_t rpm_bl = 0;
 volatile uint16_t rpm_br = 0;
-volatile int16_t steerpos = 0;
+volatile double steerpos = 0;
 
 volatile uint16_t flowleft = 0;
 volatile uint16_t flowright = 0;
@@ -151,7 +151,7 @@ ISR(TIMER0_COMP_vect)
 	sentimer++;
 	if(sentimer > 200) sentimer = 0;
 
-	steerpos = g(NODEID1, MOB_STEERING_POS) - STEER_MIDDLE;
+	steerpos = (int16_t)(g(NODEID1, MOB_STEERING_POS) - STEER_MIDDLE) * 0.6d; //Multiplied by 0.6 to get the central turning angle
 	rpm_fl = 500000.d / (double)g(NODEID1, MOB_RPM_FRONT_LEFT);
 	rpm_fr = 500000.d / (double)g(NODEID1, MOB_RPM_FRONT_RIGHT);
 	

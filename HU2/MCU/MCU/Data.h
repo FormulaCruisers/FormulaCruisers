@@ -25,7 +25,7 @@ extern volatile uint16_t gas1, gas2, brake, gas1perc, gas2perc, brakeperc;
 extern volatile uint16_t rpm_fl, rpm_fr, rpm_br, rpm_bl, flowleft, flowright, templeft, tempright;
 extern volatile uint8_t shutdownon, ams_shutdown, imd_shutdown;
 extern volatile uint32_t engine_max_perc;
-extern volatile int16_t steerpos;
+extern volatile double steerpos;
 extern volatile uint8_t test_mob;
 extern volatile uint64_t test_value;
 
