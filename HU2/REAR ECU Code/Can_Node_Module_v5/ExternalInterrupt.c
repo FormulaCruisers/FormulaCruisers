@@ -54,13 +54,13 @@ void int_ExternalInterrupt(void)
 ISR(TIMER0_COMP_vect)
 {
 	//On compare match, turn off pumps
-	if(pump_pwm != 0xFF) PORTC &= ~(1<<PC5);
+	//if(pump_pwm != 0xFF) PORTC &= ~(1<<PC5);
 }
 
 ISR(TIMER0_OVF_vect)
 {
 	//On overflow, turn on pumps
-	PORTC |= 1<<PC5;
+	//PORTC |= 1<<PC5;
 }
 
 ISR(INT4_vect)

@@ -20,7 +20,7 @@ void data_send8_nh(uint8_t data, uint16_t node);
 void data_send16_nh(uint16_t data, uint16_t node);
 void data_send0(uint16_t addr);
 
-void can_init();
+void can_init(void);
 void can_rx(uint16_t NODE_ID);
 void can_tx(uint16_t Address, uint8_t DLC);
 

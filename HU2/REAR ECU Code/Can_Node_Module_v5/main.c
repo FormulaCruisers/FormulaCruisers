@@ -29,7 +29,7 @@ int main(void)
 	TIMSK2 = (1 << OCIE2A);												//Enable compare match interrupt
 	
 	sei();					// enables interrupts
-	return(0);
+	while(1);
 }
 
 

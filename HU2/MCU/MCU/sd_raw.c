@@ -124,7 +124,7 @@ extern uint16_t boot_count;
 
 /* private helper functions */
 static void sd_raw_send_byte(uint8_t b);
-static uint8_t sd_raw_rec_byte();
+static uint8_t sd_raw_rec_byte(void);
 static uint8_t sd_raw_send_command_r1(uint8_t command, uint32_t arg);
 static uint16_t sd_raw_send_command_r2(uint8_t command, uint32_t arg);
 
@@ -632,10 +632,12 @@ uint8_t sd_log(char* pre, uint8_t* data, uint8_t dlen)
 	sd_write_nt_string(pre);
 	sd_write((char*)data, dlen);
 	sd_write("\n", 1);
+	return 1;
 }
 uint8_t sd_log_s(char* pre, char* data)
 {
 	sd_write_nt_string(pre);
 	sd_write_nt_string(data);
 	sd_write("\n", 1);
+	return 1;
 }

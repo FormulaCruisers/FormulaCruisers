@@ -57,10 +57,10 @@ extern volatile enum _error _errorcode;
 extern uint16_t GAS1MIN, GAS1MAX, GAS2MIN, GAS2MAX, BRAKEMIN, BRAKEMAX;
 
 char* get_error(enum _error e);
-void e_checkranges();
-void e_checkdiscrepancy();
-void e_checksensors();
-void e_checkflow();
-void e_checkCAN();
+void e_checkranges(void);
+void e_checkdiscrepancy(void);
+void e_checksensors(void);
+void e_checkflow(void);
+void e_checkCAN(void);
 
 #endif

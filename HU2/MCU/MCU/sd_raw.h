@@ -90,17 +90,17 @@ struct sd_raw_info
 	uint8_t format;
 };
 
-uint8_t sd_raw_init();
+uint8_t sd_raw_init(void);
 uint8_t sd_raw_get_info(struct sd_raw_info* info);
 uint8_t sd_raw_read_block(uint32_t block, uint8_t* buffer,int len);
 uint8_t sd_raw_write_block(uint32_t block, const uint8_t* buffer,int len);
-void sd_raw_wait_ready();
+void sd_raw_wait_ready(void);
 
 void SPI_MasterInit(void);
-uint8_t sd_prewrite_buffer();
-uint8_t sd_flush_buffer();
+uint8_t sd_prewrite_buffer(void);
+uint8_t sd_flush_buffer(void);
 uint8_t sd_write(char* buffer, int len);
-uint8_t sd_check_and_flush();
+uint8_t sd_check_and_flush(void);
 uint8_t sd_write_nt_string(char* buffer);
 uint8_t sd_log(char* pre, uint8_t* data, uint8_t dlen);
 uint8_t sd_log_s(char* pre, char* data);

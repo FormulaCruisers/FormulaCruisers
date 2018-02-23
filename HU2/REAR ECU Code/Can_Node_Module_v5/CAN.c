@@ -57,7 +57,7 @@ ISR(CANIT_vect)
 					{
 						PORTC	|= (1 << PC0);
 					}
-					else
+					else 
 					{
 						PORTC	&= ~(1 << PC0);
 					}
@@ -139,14 +139,10 @@ ISR(CANIT_vect)
 					pump_pwm = receive_data[i+i];
 					if(pump_pwm > 0)
 					{
-						//If PWM should happen, turn on the interrupt
-						OCR0A = pump_pwm;
-						TIMSK0 = (1<<OCIE0A) | (1<<TOIE0);
+						PORTC |= (1<<PC5);
 					}
 					else
 					{
-						//Else, turn off interrupt and turn off pumps
-						TIMSK0 = 0;
 						PORTC &= ~(1<<PC5);
 					}
 					transmit_data[j++] = PUMP;

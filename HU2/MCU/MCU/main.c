@@ -3,7 +3,7 @@ This file contains the entry point of the program and the main loop.
 The base state machine(by way of screens) is controlled in this file.
  */
 
-#define _NOCAN //Uncomment this to disable all CAN messages in the main loop
+//#define _NOCAN //Uncomment this to disable all CAN messages in the main loop
 //#define USE_SD_CARD //Enable CAN
 //#define REGULAR_LOG //Enable regularly logging
 
@@ -608,7 +608,7 @@ void debounce(uint8_t* btn, uint8_t val)
 	}
 }
 
-int main()
+int main(void)
 {
 	vsettings[0] = eeprom_read_word(&ee_MC_N_LIMIT);
 	vsettings[1] = eeprom_read_word(&ee_MC_CURRENT_MAXPK);
