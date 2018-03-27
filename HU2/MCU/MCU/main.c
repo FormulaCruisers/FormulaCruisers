@@ -9,6 +9,7 @@ The base state machine(by way of screens) is controlled in this file.
 
 #include "Defines.h"
 
+
 #include <avr/io.h>
 #include <avr/sleep.h>
 #include <avr/interrupt.h>
@@ -145,7 +146,7 @@ ISR(TIMER0_COMP_vect)
 //#ifndef _NOCAN	
 
 	if(sentimer == 1) data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){STEERING_POS, RPM_FRONT_LEFT, RPM_FRONT_RIGHT}, NODEID1, 3);
-	if(sentimer == 2) data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){GAS_1, GAS_2}, NODEID2, 3);
+	if(sentimer == 2) data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){GAS_1, GAS_2}, NODEID2, 2);
 	if(sentimer == 3) data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){RPM_BACK_LEFT, FLOW_LEFT, TEMP_LEFT}, NODEID3, 3);
 	if(sentimer == 4) data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){RPM_BACK_RIGHT, FLOW_RIGHT, TEMP_RIGHT}, NODEID4, 3);
 	sentimer++;
@@ -153,16 +154,19 @@ ISR(TIMER0_COMP_vect)
 
 	steerpos = (int16_t)(g(NODEID1, MOB_STEERING_POS) - STEER_MIDDLE) * 0.6d; //Multiplied by 0.6 to get the central turning angle
 	rpm_fl = 500000.d / (double)g(NODEID1, MOB_RPM_FRONT_LEFT);
+	//rpm_fl = rmp_fl*2*pi*0.27/60*3.6; //Velocity in km/h
 	rpm_fr = 500000.d / (double)g(NODEID1, MOB_RPM_FRONT_RIGHT);
+	//rpm_fr = rmp_fl*2*pi*0.27/60; //Velocity in m/s
+	
 	
 	gas1 = g(NODEID2, MOB_GAS1);
 	gas2 = g(NODEID2, MOB_GAS2);
 	
-	rpm_bl = 500000.d / (double)g(NODEID2, MOB_RPM_BACK_LEFT);
+	rpm_bl = 500000.d / (double)g(NODEID2, MOB_RPM_BACK_LEFT); straal * 2pi * (rpn_br) / 60 * 3.6
 	flowleft = g(NODEID2, MOB_FLOW_LEFT);
 	templeft = g(NODEID2, MOB_TEMP_LEFT);
 	
-	rpm_br = 500000.d / (double)g(NODEID2, MOB_RPM_BACK_RIGHT);
+	rpm_br = 500000.d / (double)g(NODEID2, MOB_RPM_BACK_RIGHT); straal * 2pi * (rpn_br) / 60 
 	flowright = g(NODEID2, MOB_FLOW_RIGHT);
 	tempright = g(NODEID2, MOB_TEMP_RIGHT);
 	
@@ -320,13 +324,13 @@ ISR(TIMER0_COMP_vect)
 					predistimer = PREDISCHARGE_TIMER;
 #ifndef _NOCAN
 					data_send_ecu(PREDISCHARGE, _HIGH);
-					data_send_ecu(PUMP_ENABLE, _HIGH);
+					//data_send_ecu(PUMP_ENABLE, _HIGH);
 #endif
 					change_screen(SCREEN_PREDISCHARGING);
 				
-					readybeep = RTDS_TIME;
+					//readybeep = RTDS_TIME;
 					// TODO: Uncomment when beep should be implemented
-					//PORTC |= 1 << RTDS
+	//				PORTC |= 1 << RTDS;
 				}
 			}
 			
@@ -343,9 +347,11 @@ ISR(TIMER0_COMP_vect)
 		//5 seconds of this screen while predischarging.
 		//Also checks the pumps to see if they have any flow, otherwise turn off!
 		case SCREEN_PREDISCHARGING:
+			data_send_ecu(PUMP_ENABLE, _HIGH);
 			predistimer -= 2;
 			if(predistimer == 0)
 			{
+				
 #ifndef _NOCAN
 				data_send_ecu(MAIN_RELAIS, _HIGH);
 #endif
@@ -385,7 +391,7 @@ ISR(TIMER0_COMP_vect)
 			{
 				struct torques tq = getDifferential(gas1perc, steerpos);
 					
-				struct slips sp = detectSlip(rpm_bl, rpm_br, tq);
+				struct slips sp = detectSlip(rpm_bl, rpm_br, tq);	
 				tq = solveSlip(sp, tq);
 
 #ifndef _NOCAN					
@@ -395,8 +401,7 @@ ISR(TIMER0_COMP_vect)
 #endif
 			}
 			break;
-		
-		
+	
 		
 		
 		
@@ -508,7 +513,8 @@ ISR(TIMER0_COMP_vect)
 				if(btn2 == 1 || btn2 == 0xFF) dt_engv = ((dt_engv == 100) ? 100 : dt_engv + 1);
 				if(btn1 == 1 || btn1 == 0xFF) dt_engv = ((dt_engv == 0) ? 0 : dt_engv - 1);
 				
-				struct torques tq = getDifferential(dt_engv, steerpos);
+				//struct torques tq = getDifferential(dt_engv, steerpos);
+				
 				
 #ifndef _NOCAN
 				if(btnblue == 1) data_send_motor_d(MC_SET_TORQUE, 0, ENGINE_MAX, MCDR);
@@ -582,7 +588,7 @@ ISR(TIMER0_COMP_vect)
 	{
 		// TODO: Uncomment when beep should be implemented
 		//PORTC &= ~(1<<RTDS);
-		readybeep = 0;
+		//readybeep = 0;
 	}
 	
 	//Check for any CAN errors at the end of the loop
