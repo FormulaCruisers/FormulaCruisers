@@ -53,8 +53,8 @@ extern volatile uint32_t debugval;
 extern volatile AMS_OVERALL amsd_overall;
 extern volatile AMS_VOLTAGE amsd_voltage;
 
-void lcd_refresh();
-void lcd_quickrefresh();
+void lcd_refresh(void);
+void lcd_quickrefresh(void);
 void change_screen(enum uiscreen s);
 void get_screen(char buffer[4][21], enum uiscreen s);
 

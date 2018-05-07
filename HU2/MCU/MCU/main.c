@@ -154,21 +154,34 @@ ISR(TIMER0_COMP_vect)
 
 	steerpos = (int16_t)(g(NODEID1, MOB_STEERING_POS) - STEER_MIDDLE) * 0.6d; //Multiplied by 0.6 to get the central turning angle
 	rpm_fl = 500000.d / (double)g(NODEID1, MOB_RPM_FRONT_LEFT);
-	//rpm_fl = rmp_fl*2*pi*0.27/60*3.6; //Velocity in km/h
+	//rpm_fl = rpm_fl*2*pi*0.27/60*3.6; //Velocity in km/h
 	rpm_fr = 500000.d / (double)g(NODEID1, MOB_RPM_FRONT_RIGHT);
-	//rpm_fr = rmp_fl*2*pi*0.27/60; //Velocity in m/s
+	//rpm_fr = rpm_fl*2*pi*0.27/60; //Velocity in m/s
 	
 	
 	gas1 = g(NODEID2, MOB_GAS1);
 	gas2 = g(NODEID2, MOB_GAS2);
 	
-	rpm_bl = 500000.d / (double)g(NODEID2, MOB_RPM_BACK_LEFT); straal * 2pi * (rpn_br) / 60 * 3.6
-	flowleft = g(NODEID2, MOB_FLOW_LEFT);
-	templeft = g(NODEID2, MOB_TEMP_LEFT);
+	//Node 3
+	rpm_bl = 500000.d / (double)g(NODEID3, MOB_RPM_BACK_LEFT); //straal * 2pi * (rpn_br) / 60 * 3.6
+	flowleft = g(NODEID3, MOB_FLOW_LEFT);
+	templeft = g(NODEID3, MOB_TEMP_LEFT);
 	
-	rpm_br = 500000.d / (double)g(NODEID2, MOB_RPM_BACK_RIGHT); straal * 2pi * (rpn_br) / 60 
-	flowright = g(NODEID2, MOB_FLOW_RIGHT);
-	tempright = g(NODEID2, MOB_TEMP_RIGHT);
+	//Node 4
+	rpm_br = 500000.d / (double)g(NODEID4, MOB_RPM_BACK_RIGHT); //straal * 2pi * (rpn_br) / 60 
+	flowright = g(NODEID4, MOB_FLOW_RIGHT);
+	tempright= g(NODEID4, MOB_TEMP_RIGHT);
+	
+	tempright = (tempright - 65570);//*0.26;		//temp right in voltage 0-255 (0-5 volt) 
+	tempright = tempright*0.26;
+	tempright = 1.96*tempright;						// 0-255 to 0 to 5 volt *100
+	tempright = (tempright*-.2344)+ 91.622;			//linealisering for temp calculations
+	//tempright = tempright
+
+
+
+	//tempright = -4.7037*((tempright*(5/255))*(tempright*(5/255))*(tempright*(5/255))) + 38.992*((tempright*(5/255))*(tempright*(5/255))) - 117.24*(tempright*(5/255)) + 148.4;		// temp in graden
+
 	
 	shutdownon = g(ECU2ID, MOB_SHUTDOWN) ? 1 : 0;
 
@@ -342,18 +355,20 @@ ISR(TIMER0_COMP_vect)
 				BRAKEMIN = brake + CALIB_SLACK;
 				change_screen(SCREEN_CALIBRATE);
 			}
+			
 			break;
 		
 		//5 seconds of this screen while predischarging.
 		//Also checks the pumps to see if they have any flow, otherwise turn off!
 		case SCREEN_PREDISCHARGING:
-			data_send_ecu(PUMP_ENABLE, _HIGH);
+			
 			predistimer -= 2;
 			if(predistimer == 0)
 			{
 				
 #ifndef _NOCAN
-				data_send_ecu(MAIN_RELAIS, _HIGH);
+				//data_send_ecu(MAIN_RELAIS, _HIGH);
+				data_send_ecu(PUMP_ENABLE, _HIGH);
 #endif
 				change_screen(SCREEN_STATUS);
 			}
@@ -361,6 +376,7 @@ ISR(TIMER0_COMP_vect)
 		
 		//The screen that appears after predischarging; Only one press of the green LAUNCH button to start driving. (run_enable)
 		case SCREEN_STATUS:
+		
 			if(btngreen == 1)
 			{
 #ifndef _NOCAN
@@ -375,6 +391,7 @@ ISR(TIMER0_COMP_vect)
 #endif
 				change_screen(SCREEN_DRIVETEST);
 			}
+			//data_send_ecu(PUMP_ENABLE, _HIGH); //put on the pumps after predischarge (against voltage drop)
 			break;
 		
 		//The screen that appears when actually driving.
@@ -389,10 +406,13 @@ ISR(TIMER0_COMP_vect)
 				
 			if(_errorcode == ERROR_NONE)
 			{
-				struct torques tq = getDifferential(gas1perc, steerpos);
+				//struct torques tq = getDifferential(gas1perc, steerpos);
 					
-				struct slips sp = detectSlip(rpm_bl, rpm_br, tq);	
-				tq = solveSlip(sp, tq);
+				//struct slips sp = detectSlip(rpm_bl, rpm_br, tq);	
+				//tq = solveSlip(sp, tq);
+				struct torques tq;
+				tq.right_perc = gas1perc;
+				tq.left_perc = gas1perc;
 
 #ifndef _NOCAN					
 				data_send_motor_d(MC_SET_TORQUE, -tq.right_perc, ENGINE_MAX, MCDR); //Right driver should get a negative value to drive forward
@@ -514,7 +534,9 @@ ISR(TIMER0_COMP_vect)
 				if(btn1 == 1 || btn1 == 0xFF) dt_engv = ((dt_engv == 0) ? 0 : dt_engv - 1);
 				
 				//struct torques tq = getDifferential(dt_engv, steerpos);
-				
+				struct torques tq;
+				tq.right_perc = dt_engv;
+				tq.left_perc = dt_engv;
 				
 #ifndef _NOCAN
 				if(btnblue == 1) data_send_motor_d(MC_SET_TORQUE, 0, ENGINE_MAX, MCDR);

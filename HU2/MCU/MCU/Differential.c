@@ -46,13 +46,12 @@ struct torques getDifferential(double Tmid, double steerpos)
 	if(ret.left_perc > 100)
 	{
 		//ret.right_perc *= (100 / ret.left_perc);
-		ret.right_perc = 100;							//testing for no diff
 		ret.left_perc = 100;
 	}
 	if(ret.right_perc > 100)
 	{
 		//ret.left_perc *= (100 / ret.right_perc);
-		ret.left_perc = 100;						//testing for no diff
+		
 		ret.right_perc = 100;
 	}
 	
