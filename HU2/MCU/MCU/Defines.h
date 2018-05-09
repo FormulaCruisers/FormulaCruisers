@@ -10,7 +10,7 @@ This is a central header file containing a lot of defined constants that are use
 #define F_CPU 16000000UL	// Define processor clock speed for compiler
 #endif
 
-#define SOFTWARE_VERSION			"Software: V2.1499    "  //Version should be 2.xxx where xxx is amount of commits(do "git rev-list HEAD --count" to check)
+#define SOFTWARE_VERSION			"Software: V2.1500    "  //Version should be 2.xxx where xxx is amount of commits(do "git rev-list HEAD --count" to check)
 
 #define RTDS						PC7 //Loud ready beep
 #define RTDS_TIME					10 //1000 / 500 = 2 seconds    //Has to be between 1 and 3 seconds!
@@ -68,6 +68,7 @@ This is a central header file containing a lot of defined constants that are use
 
 #define MOB_GAS1				0
 #define MOB_GAS2				1
+#define MOB_BRAKE				2
 
 #define MOB_RPM_BACK_LEFT		0
 #define MOB_FLOW_LEFT			1

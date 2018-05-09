@@ -4,8 +4,8 @@ The base state machine(by way of screens) is controlled in this file.
  */
 
 //#define _NOCAN //Uncomment this to disable all CAN messages in the main loop
-//#define USE_SD_CARD //Enable CAN
-//#define REGULAR_LOG //Enable regularly logging
+#define USE_SD_CARD //Enable CAN
+#define REGULAR_LOG //Enable regularly logging
 
 #include "Defines.h"
 
@@ -36,6 +36,7 @@ volatile uint16_t brake = 0;
 volatile uint16_t gas1perc = 0;
 volatile uint16_t gas2perc = 0;
 volatile uint16_t brakeperc = 0;
+volatile uint16_t velocity = 0;
 volatile double gas1eng = 0;
 
 volatile uint32_t engine_max_perc = 100;
@@ -146,7 +147,7 @@ ISR(TIMER0_COMP_vect)
 //#ifndef _NOCAN	
 
 	if(sentimer == 1) data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){STEERING_POS, RPM_FRONT_LEFT, RPM_FRONT_RIGHT}, NODEID1, 3);
-	if(sentimer == 2) data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){GAS_1, GAS_2}, NODEID2, 2);
+	if(sentimer == 2) data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){GAS_1, GAS_2, BRAKE}, NODEID2, 3);
 	if(sentimer == 3) data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){RPM_BACK_LEFT, FLOW_LEFT, TEMP_LEFT}, NODEID3, 3);
 	if(sentimer == 4) data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){RPM_BACK_RIGHT, FLOW_RIGHT, TEMP_RIGHT}, NODEID4, 3);
 	sentimer++;
@@ -158,14 +159,24 @@ ISR(TIMER0_COMP_vect)
 	rpm_fr = 500000.d / (double)g(NODEID1, MOB_RPM_FRONT_RIGHT);
 	//rpm_fr = rpm_fl*2*pi*0.27/60; //Velocity in m/s
 	
+	//speed in km/h
+	velocity = ((rpm_fr + rpm_fl) / 2.0) * 0.2538;
 	
 	gas1 = g(NODEID2, MOB_GAS1);
 	gas2 = g(NODEID2, MOB_GAS2);
+	brake = g(NODEID2, MOB_BRAKE);
 	
 	//Node 3
 	rpm_bl = 500000.d / (double)g(NODEID3, MOB_RPM_BACK_LEFT); //straal * 2pi * (rpn_br) / 60 * 3.6
 	flowleft = g(NODEID3, MOB_FLOW_LEFT);
 	templeft = g(NODEID3, MOB_TEMP_LEFT);
+	
+	templeft = (templeft - 65570);//*0.26;		//temp right in voltage 0-255 (0-5 volt) 
+	templeft = templeft*0.26;
+	templeft = 1.96*templeft;						// 0-255 to 0 to 5 volt *100
+	templeft = (templeft*-.2344)+ 91.622;			//linealisering for temp calculations
+	//tempright = tempright
+	
 	
 	//Node 4
 	rpm_br = 500000.d / (double)g(NODEID4, MOB_RPM_BACK_RIGHT); //straal * 2pi * (rpn_br) / 60 
@@ -191,6 +202,8 @@ ISR(TIMER0_COMP_vect)
 	gas1perc = (gas1perc * 100) / (GAS1MAX - GAS1MIN);
 	gas2perc = (gas2 < GAS2MIN) ? 0 : ((gas2 > GAS2MAX) ? (GAS2MAX - GAS2MIN) : (gas2 - GAS2MIN));
 	gas2perc = (gas2perc * 100) / (GAS2MAX - GAS2MIN);
+	brakeperc = (brake < BRAKEMIN) ? 0 : ((brake > BRAKEMAX) ? (BRAKEMAX - BRAKEMIN) : (brake - BRAKEMIN));
+	brakeperc = (brakeperc * 100) / (BRAKEMAX - BRAKEMIN);
 	
 	//RPM
 	if(rpm_fl > 10000 || rpm_fl < 8) rpm_fl = 0;
@@ -212,7 +225,7 @@ ISR(TIMER0_COMP_vect)
 	{
 		logtimer = 0;
 		char lbuf[49];
-		snprintf(lbuf, sizeof(lbuf), "%1d%04x%04x%04x%04x%04x%04x%04x%04x%04x%04x%04x%04x", shutdownon, gas1, gas2, brake, rpm_fl, rpm_fr, rpm_bl, rpm_br, steerpos, templeft, tempright, flowleft, flowright);
+		snprintf(lbuf, sizeof(lbuf), "%1d%04x%04x%04x%04x%04x%04x%04x%04x%04x%04x%04x%04x%04x", shutdownon, gas1, gas2, brake, rpm_fl, rpm_fr, rpm_bl, rpm_br, steerpos, templeft, tempright, flowleft, flowright,velocity);
 		sd_log("DATA:", (uint8_t*)lbuf, sizeof(lbuf));
 	}
 #endif

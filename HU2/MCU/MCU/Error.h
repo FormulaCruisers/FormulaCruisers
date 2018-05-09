@@ -51,7 +51,7 @@ enum _error
 	ERROR_UNKNOWN,			//For unknown errors
 };
 
-extern volatile uint16_t gas1, gas2, brake, gas1perc, gas2perc, brakeperc, flowleft, flowright;
+extern volatile uint16_t gas1, gas2, brake, gas1perc, gas2perc, brakeperc, flowleft, flowright, velocity;
 extern volatile enum _error _errorcode;
 
 extern uint16_t GAS1MIN, GAS1MAX, GAS2MIN, GAS2MAX, BRAKEMIN, BRAKEMAX;
