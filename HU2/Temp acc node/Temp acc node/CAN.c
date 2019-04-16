@@ -12,177 +12,117 @@ Also contains the interrupt for CAN rx.
 //***** Libraries *********************************************
 #include <avr/io.h>
 #include <avr/interrupt.h>
-#include <util/delay.h>
 #include "CAN.h"
-#include "ExternalInterrupt.h"
+//#include "ExternalInterrupt.h"
 
 uint8_t receive_data[8];
 uint8_t transmit_data[8];
 
-bool predison = false;
+uint8_t is_enabled[16] = {0};
+	
+uint8_t sensors[4] = {0};
+
+uint8_t sp = 0;
 
 //***** Reception ISR **********************************
 ISR(CANIT_vect)
-{
+{	
 	int8_t length;
 	
 	CANPAGE = ( 0 << MOBNB3 ) | ( 0 << MOBNB2 ) | ( 0 << MOBNB1 ) | ( 1 << MOBNB0 ); // select CANMOB 0001 = MOB1
+
+	length = ( CANCDMOB & 0x0F );	// DLC, number of bytes to be received
 	
-	uint16_t rx_addr = (CANIDT1 << 3) | ((CANIDT2 & 0b11100000) >> 5);
+	uint16_t ReceiveAddress = (CANIDT1 << 3) | ((CANIDT2 & 0b11100000) >> 5);
 	
-	cantimer = 0;
-	
-	if(rx_addr == ECU2ID)
+	if(ReceiveAddress == FUNCTION)
 	{
-		length = ( CANCDMOB & 0x0F );	// DLC, number of bytes to be received
-		for ( int8_t i = 0; i < length; i++ ){
-			receive_data[i] = CANMSG; // Get data, INDX auto increments CANMSG
-		}
-		
-		uint8_t j = 0;
-		if (receive_data[0] == CAN_REQUEST_DATA)
+		if(CANMSG == 0x3D)
 		{
-			//Don't do anything anymore :)
-		}
-		else
-		{
-			uint8_t i = 0;
-			while(i < length)
+			for(uint8_t i = 0; i < length - 1; i++)
 			{
-				//Run enable
-				if (receive_data[i] == RUN_ENABLE)
-				{
-					DDRC	|= (1 << PC0);
-					if(receive_data[i+1])
-					{
-						PORTC	|= (1 << PC0);
-					}
-					else 
-					{
-						PORTC	&= ~(1 << PC0);
-					}
-					transmit_data[j++] = RUN_ENABLE;
-					i++;
-				}
+				uint8_t message = CANMSG;
 				
-				//Motor controller
-				if (receive_data[i] == MOTOR_CONTROLLER)
-				{
-					DDRC	|= (1 << PC1);
-					if(receive_data[i+1])
-					{
-						PORTC	|= (1 << PC1);
-					}
-					else
-					{
-						PORTC	&= ~(1 << PC1);
-					}
-					transmit_data[j++] = MOTOR_CONTROLLER;
-					i++;
-				}
-				
-				//Brakelight
-				if (receive_data[i] == BRAKELIGHT)
-				{
-					DDRC	|= (1 << PC4);
-					if(receive_data[i+1])
-					{
-						PORTC	|= (1 << PC4);
-					}
-					else
-					{
-						PORTC	&= ~(1 << PC4);
-					}
-					transmit_data[j++] = BRAKELIGHT;
-					i++;
-				}
-				
-				//Predischarge
-				if (receive_data[i] == PRE_DISCHARGE)
-				{
-					DDRC |= (1 << PC3);
-				
-					if(receive_data[i+1])
-					{
-						predison = true;
-						PORTC	|= (1 << PC3);
-					}
-					else
-					{
-						predison = false;
-						PORTC	&= ~(1 << PC3);
-					}
-					transmit_data[j++] = PRE_DISCHARGE;
-					i++;
-				}
-				
-				//Main relais(which will not turn on if the predischarge is not on)
-				if (receive_data[i] == MAINRELAIS)
-				{
-					DDRC	|= (1 << PC2);
-					if(receive_data[i+1] && predison)
-					{
-						PORTC	|= (1 << PC2);
-					}
-					else
-					{
-						PORTC	&= ~(1 << PC2);
-					}
-					transmit_data[j++] = MAINRELAIS;
-					i++;
-				}
-				
-				//Pump
-				if (receive_data[i] == PUMP)
-				{
-					DDRC	|= (1 << PC5);
-					pump_pwm = receive_data[i+i];
-					if(pump_pwm > 0)
-					{
-						PORTC |= (1<<PC5);
-					}
-					else
-					{
-						PORTC &= ~(1<<PC5);
-					}
-					transmit_data[j++] = PUMP;
-					i++;
-				}
-				i++;
+				//Store in sensors array
+				sensors[i] = message;
 			}
 		}
-		can_tx(MASTERID, j); //Transmit data depending on the number of message received
 	}
 	
 	CANSTMOB = 0x00; // Clear RXOK flag
 	CANCDMOB = (( 1 << CONMOB1 ) | ( 0 << IDE ) | ( 3 << DLC0)); //CAN MOb Control and DLC Register: (1<<CONMOB1) = enable reception. (0<<IDE) = can standard rev 2.0A ( id length = 11 bits), (3 << DLC0) 3 Bytes in the data field of the message.
-
-	CANPAGE = ( 0 << MOBNB3 ) | ( 0 << MOBNB2 ) | ( 0 << MOBNB1 ) | ( 0 << MOBNB0 ); // select 0000 = CANMOB0
-	
 }
 
 ISR(TIMER2_COMP_vect)
 {
-	DDRD &= ~(1<<PD7);
-	if((PIND & (1 << PD7)))
+	uint8_t c = 0;
+	for(uint8_t i = 0; i < 4; i++)
 	{
-		transmit_data[0] = 0xFF;
-		transmit_data[1] = 0xFF;
+		//Loop through all requested sensors and see if any need to be sent. If so, send them
+		if(1)//(sensors[i] != 0)
+		{
+			c++;
+			transmit_data[2] = 0x0f; // test message
+			
+			
+			/*
+			uint8_t req = sensors[i] & 0x07;
+			uint8_t is_adc = (sensors[i] & 0x08) > 0;
+			if(is_adc)
+			{
+				getADC(req);
+				transmit_data[i*2] = R_L;
+				transmit_data[i*2+1] = R_H;
+			}
+			else
+			{
+				if(req == 0)
+				{
+					EIMSK |= (1<<INT7) || (1<<INT6);	//PPS0 is INT7 and INT6
+					PORTE	|= 0b10000000; // Input 5   INT7   PullUp
+					PORTE	|= 0b01000000; // Input 6   INT6   PullUp
+				}
+				if(req == 1)
+				{
+					EIMSK |= (1<<INT4) || (1<<INT3);	//PPS1 is INT4 and INT3
+					PORTD	|= 0b00001000; // Input 3   INT3   PullUp
+					PORTE	|= 0b00010000; // Input 4   INT4   PullUp
+				}
+				if(req == 2)
+				{
+					EIMSK |= (1<<INT2);				//PPS2 is INT2
+					PORTD	|= 0b00000100; // Input 2   INT2   PullUp
+				}
+				if(req == 3)
+				{
+					EIMSK |= (1<<INT1);				//PPS3 is INT1
+					PORTD	|= 0b00000010; // Input 1   INT1   PullUp
+				}
+				transmit_data[i*2] = pulsetime[req];
+				transmit_data[i*2+1] = (pulsetime[req] >> 8);
+			}*/
+			
+			
+		}
 	}
-	else
+	
+	//If anything is being sent, send it. Otherwise, don't bother
+	if(c > 0)
 	{
-		transmit_data[0] = 0x00;
-		transmit_data[1] = 0x00;
+		CANPAGE = ( 0 << MOBNB3 ) | ( 0 << MOBNB2 ) | ( 0 << MOBNB1 ) | ( 1 << MOBNB0 ); //Select MOb 1
+		can_tx(FUNCTION, 8);
 	}
-	CANPAGE = ( 0 << MOBNB3 ) | ( 0 << MOBNB2 ) | ( 0 << MOBNB1 ) | ( 1 << MOBNB0 ); //Select MOb 1
-	can_tx(FUNCTION, 8);
 }
 
 
 
+
+
 //***** CAN ialization *****************************************************
-void can_init(uint16_t Baud)
-{
+void can_init(uint16_t Baud){
+	DDRD = 0x80;
+	PORTD &= ~(1<<PD7); // Enable Can-chip
+	
 	CANGCON = ( 1 << SWRES );   // Software reset
 	
 	CANTCON = 0x00;       // CAN timing prescaler set to 0;
@@ -228,7 +168,7 @@ void can_init(uint16_t Baud)
 
 //***** CAN Creating RX *****************************************************
 void can_rx(uint16_t NODE_ID)
-{	
+{
 	CANPAGE = ( 0 << MOBNB3 ) | ( 0 << MOBNB2 ) | ( 0 << MOBNB1 ) | ( 1 << MOBNB0 ); // select 0001 = CANMOB1
 	
 	CANIDT1 = NODE_ID >> 3; // Receive Address
@@ -262,16 +202,8 @@ void can_tx(uint16_t Address, uint8_t DLC)
 	}
 	
 	CANCDMOB = (( 1 << CONMOB0 ) | ( 0 << IDE ) | ( DLC << DLC0)); //CAN MOb Control and DLC Register: (1<<CONMOB1) = enable reception. (0<<IDE) = can standard rev 2.0A ( id length = 11 bits), (DLC << DLC0) Set *DLC* Bytes in the data field of the message.
-	
-	int i = 0;
-	while ( ! ( CANSTMOB & ( 1 << TXOK ) ) )
-	{
-		//if TX_OK is not set in 6 sec function automatically breaks.
-		i++;
-		_delay_ms(1);
-		if (i > 300) break;
-	}	
-	// wait for TXOK flag set
+
+	while ( ! ( CANSTMOB & ( 1 << TXOK ) ) );	// wait for TXOK flag set
 	
 	CANCDMOB = 0x00; //Clear CAN Mob Control and DLC Register
 
@@ -279,5 +211,7 @@ void can_tx(uint16_t Address, uint8_t DLC)
 	
 	CANPAGE = ( 0 << MOBNB3 ) | ( 0 << MOBNB2 ) | ( 0 << MOBNB1 ) | ( 1 << MOBNB0 ); // select 0001 = MOB1
 }
+
+
 
 #endif

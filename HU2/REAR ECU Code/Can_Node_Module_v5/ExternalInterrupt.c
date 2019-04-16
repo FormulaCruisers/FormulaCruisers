@@ -51,17 +51,25 @@ void int_ExternalInterrupt(void)
 			| (0 << ISC40);
 }
 
+//unexpected interrupt handler
+ISR(BADISR_vect)
+{
+	// user code here
+	// no code
+	
+}
+
 ISR(TIMER0_COMP_vect)
 {
 	//On compare match, turn off pumps
 	//if(pump_pwm != 0xFF) PORTC &= ~(1<<PC5);
 }
 
-ISR(TIMER0_OVF_vect)
-{
+//ISR(TIMER0_OVF_vect)
+//{
 	//On overflow, turn on pumps
 	//PORTC |= 1<<PC5;
-}
+//}
 
 ISR(INT4_vect)
 {

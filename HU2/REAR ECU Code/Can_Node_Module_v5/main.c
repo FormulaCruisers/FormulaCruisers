@@ -10,15 +10,26 @@ Contains the entry point of the program
 //***** Libraries *********************************************
 #include <avr/io.h>
 #include <avr/interrupt.h>
+#include <avr/wdt.h>
 #include <util/delay.h>		// include delays for _delay_ms();
 #include <stdbool.h>
+
 
 //***** Initialization ***********************************************
 void chip_init (void);
 
-//***** MAIN CODE ***********************************************
+
+
+
+//***** MAIN CODE **********************************************
+
 int main(void)
 {
+	//get_mcusr();
+	wdt_disable();
+	//wdt_enable(WDTO_2S);
+	//wdt_reset();
+	
 	chip_init();			// Chip initialization
 	can_init(BAUD); 		// Can initialization
 	can_rx(FUNCTION);
@@ -28,8 +39,24 @@ int main(void)
 	OCR2A = 20;															//300-400Hz
 	TIMSK2 = (1 << OCIE2A);												//Enable compare match interrupt
 	
+	//DDRC	|= (1 << PC2);
+	//DDRC	|= (1 << PC3);
+	//DDRC	|= (1 << PC4);
+	
+	
+	
+	//PORTC	|= (1 << PC4);
+	//PORTC	|= (1 << PC3);
+	//PORTC	|= (1 << PC2);
+
+
 	sei();					// enables interrupts
-	while(1);
+	//wdt_disable();
+
+	while(1)	
+	{
+		
+	}
 }
 
 
