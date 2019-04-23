@@ -55,63 +55,8 @@ ISR(CANIT_vect)
 
 ISR(TIMER2_COMP_vect)
 {
-	uint8_t c = 0;
-	for(uint8_t i = 0; i < 4; i++)
-	{
-		//Loop through all requested sensors and see if any need to be sent. If so, send them
-		if(1)//(sensors[i] != 0)
-		{
-			c++;
-			transmit_data[2] = 0x0f; // test message
-			
-			
-			/*
-			uint8_t req = sensors[i] & 0x07;
-			uint8_t is_adc = (sensors[i] & 0x08) > 0;
-			if(is_adc)
-			{
-				getADC(req);
-				transmit_data[i*2] = R_L;
-				transmit_data[i*2+1] = R_H;
-			}
-			else
-			{
-				if(req == 0)
-				{
-					EIMSK |= (1<<INT7) || (1<<INT6);	//PPS0 is INT7 and INT6
-					PORTE	|= 0b10000000; // Input 5   INT7   PullUp
-					PORTE	|= 0b01000000; // Input 6   INT6   PullUp
-				}
-				if(req == 1)
-				{
-					EIMSK |= (1<<INT4) || (1<<INT3);	//PPS1 is INT4 and INT3
-					PORTD	|= 0b00001000; // Input 3   INT3   PullUp
-					PORTE	|= 0b00010000; // Input 4   INT4   PullUp
-				}
-				if(req == 2)
-				{
-					EIMSK |= (1<<INT2);				//PPS2 is INT2
-					PORTD	|= 0b00000100; // Input 2   INT2   PullUp
-				}
-				if(req == 3)
-				{
-					EIMSK |= (1<<INT1);				//PPS3 is INT1
-					PORTD	|= 0b00000010; // Input 1   INT1   PullUp
-				}
-				transmit_data[i*2] = pulsetime[req];
-				transmit_data[i*2+1] = (pulsetime[req] >> 8);
-			}*/
-			
-			
-		}
-	}
-	
-	//If anything is being sent, send it. Otherwise, don't bother
-	if(c > 0)
-	{
-		CANPAGE = ( 0 << MOBNB3 ) | ( 0 << MOBNB2 ) | ( 0 << MOBNB1 ) | ( 1 << MOBNB0 ); //Select MOb 1
-		can_tx(FUNCTION, 8);
-	}
+	CANPAGE = ( 0 << MOBNB3 ) | ( 0 << MOBNB2 ) | ( 0 << MOBNB1 ) | ( 1 << MOBNB0 ); //Select MOb 1
+	can_tx(FUNCTION, 8);
 }
 
 

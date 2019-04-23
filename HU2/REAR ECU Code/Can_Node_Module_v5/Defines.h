@@ -37,6 +37,8 @@ This is a central header file containing a lot of defined constants that are use
 #define NODEID3		0x203 // NODE ID 3	Coolant  Node L
 #define NODEID4		0x204 // NODE ID 4	Coolant  Node R
 #define ECU2ID		0x205 // NODE ID 5  ECU 2
+#define ACCTMPNODE1	0x206 // NODE ID accumulator temperature 1
+#define ACCTMPNODE2	0x207 // NODE ID accumulator temperature 2
 #define MCDL		0x210
 #define MCDR		0x211
 

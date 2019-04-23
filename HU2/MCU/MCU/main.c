@@ -54,6 +54,9 @@ volatile uint16_t flowright = 0;
 volatile uint16_t templeft = 0;
 volatile uint16_t tempright = 0;
 
+volatile uint8_t acctmp1 = 0;
+volatile uint8_t acctmp2 = 0;
+
 uint16_t readybeep = 0;
 
 volatile uint16_t predistimer = PREDISCHARGE_TIMER;
@@ -148,8 +151,8 @@ ISR(TIMER0_COMP_vect)
 
 	if(sentimer == 1) data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){STEERING_POS, RPM_FRONT_LEFT, RPM_FRONT_RIGHT}, NODEID1, 3);
 	if(sentimer == 2) data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){GAS_1, GAS_2, BRAKE}, NODEID2, 3);
-	if(sentimer == 3) data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){RPM_BACK_LEFT, FLOW_LEFT, TEMP_LEFT}, NODEID3, 3);
-	if(sentimer == 4) data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){RPM_BACK_RIGHT, FLOW_RIGHT, TEMP_RIGHT}, NODEID4, 3);
+	//if(sentimer == 3) data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){RPM_BACK_LEFT, FLOW_LEFT, TEMP_LEFT}, NODEID3, 3);
+	//if(sentimer == 4) data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){RPM_BACK_RIGHT, FLOW_RIGHT, TEMP_RIGHT}, NODEID4, 3);
 	sentimer++;
 	if(sentimer > 200) sentimer = 0;
 
@@ -189,7 +192,8 @@ ISR(TIMER0_COMP_vect)
 	tempright = (tempright*-.2344)+ 91.622;			//linealisering for temp calculations
 	//tempright = tempright
 
-
+	acctmp1 = g(ACCTMPNODE1, MOB_ACCTEMP_MAX);
+	acctmp2 = g(ACCTMPNODE2, MOB_ACCTEMP_MAX);
 
 	//tempright = -4.7037*((tempright*(5/255))*(tempright*(5/255))*(tempright*(5/255))) + 38.992*((tempright*(5/255))*(tempright*(5/255))) - 117.24*(tempright*(5/255)) + 148.4;		// temp in graden
 
@@ -318,6 +322,8 @@ ISR(TIMER0_COMP_vect)
 #endif
 				//After enabling, the motor controller needs some time to start accepting messages. Because of this, add 200*(1000/500) = 400ms delay.
 				stimer = -200;
+				
+				//Go to screen_saving before starting to grab values from EEPROM and send them to the MCs
 				if(_errorcode == ERROR_NONE) change_screen(SCREEN_SAVING);
 			}
 						

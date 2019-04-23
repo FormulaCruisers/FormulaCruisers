@@ -52,6 +52,8 @@ uint8_t gnum(uint16_t node)
 	else if(node == NODEID3 || node == 2) return 2;
 	else if(node == NODEID4 || node == 3) return 3;
 	else if(node == ECU2ID || node == 4) return 4;
+	else if(node == ACCTMPNODE1 || node == 5) return 5;
+	else if(node == ACCTMPNODE2 || node == 6) return 6;
 	return -1;
 }
 

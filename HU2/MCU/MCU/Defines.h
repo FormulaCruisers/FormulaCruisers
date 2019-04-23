@@ -60,7 +60,7 @@ This is a central header file containing a lot of defined constants that are use
 
 
 //MOB defines
-#define MOBCOUNT				5
+#define MOBCOUNT				7
 
 #define MOB_STEERING_POS		0
 #define MOB_RPM_FRONT_LEFT		1
@@ -77,6 +77,8 @@ This is a central header file containing a lot of defined constants that are use
 #define MOB_RPM_BACK_RIGHT		0
 #define MOB_FLOW_RIGHT			1
 #define MOB_TEMP_RIGHT			2
+
+#define MOB_ACCTEMP_MAX			0
 
 #define MOB_SHUTDOWN			0
 
@@ -118,7 +120,6 @@ This is a central header file containing a lot of defined constants that are use
 #define IMDSHUTDOWN					0x99
 #define AMSSHUTDOWN					0x98
 
-
 // CAN node IDs
 #define MASTERID	0x317 // Transmit Address Master
 #define NODEID1		0x201 // NODE ID 1: Steering Node
@@ -126,7 +127,8 @@ This is a central header file containing a lot of defined constants that are use
 #define NODEID3		0x203 // NODE ID 3: Coolant  Node L
 #define NODEID4		0x204 // NODE ID 4: Coolant  Node R
 #define ECU2ID		0x205 // NODE ID 5: ECU 2
-
+#define ACCTMPNODE1	0x206 // NODE ID accumulator temperature 1
+#define ACCTMPNODE2	0x207 // NODE ID accumulator temperature 2
 #define MCDL		0x210 // Motor driver left
 #define MCDR		0x211 // Motor driver right (Should get negative value to drive forward)
 

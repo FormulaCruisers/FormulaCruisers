@@ -97,8 +97,8 @@ void can_init()
 	CANCDMOB = (( 1 << CONMOB1 ) | ( 0 << IDE ) | ( 8 << DLC0));  // Enable Reception | 11 bit | IDE DLC8
 	
 	//Give each node its own MOb
-	uint16_t NODES[5] = {NODEID1, NODEID2, NODEID3, NODEID4, ECU2ID};
-	for(uint8_t i = 0; i < 5; i++)
+	uint16_t NODES[MOBCOUNT] = {NODEID1, NODEID2, NODEID3, NODEID4, ECU2ID, ACCTMPNODE1, ACCTMPNODE2};
+	for(uint8_t i = 0; i < MOBCOUNT; i++)
 	{
 		CANPAGE = (i + 4) << 4;
 		CANIDT1 = NODES[i] >> 3;
