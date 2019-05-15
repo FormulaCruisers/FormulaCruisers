@@ -360,9 +360,7 @@ ISR(TIMER0_COMP_vect)
 #endif
 					change_screen(SCREEN_PREDISCHARGING);
 				
-					//readybeep = RTDS_TIME;
-					// TODO: Uncomment when beep should be implemented
-	//				PORTC |= 1 << RTDS;
+					
 				}
 			}
 			
@@ -401,6 +399,10 @@ ISR(TIMER0_COMP_vect)
 #ifndef _NOCAN
 				data_send_ecu(RUN_ENABLE, _HIGH);
 #endif
+				//ready to drive sound
+				readybeep = RTDS_TIME;
+				PORTC |= 1 << RTDS;
+				
 				change_screen(SCREEN_DRIVING);
 			}
 			if(btn1 && btn2)
@@ -408,6 +410,10 @@ ISR(TIMER0_COMP_vect)
 #ifndef _NOCAN
 				data_send_ecu(RUN_ENABLE, _HIGH);
 #endif
+				//ready to drive sound
+				readybeep = RTDS_TIME;
+				PORTC |= 1 << RTDS;
+				
 				change_screen(SCREEN_DRIVETEST);
 			}
 			//data_send_ecu(PUMP_ENABLE, _HIGH); //put on the pumps after predischarge (against voltage drop)
@@ -624,12 +630,16 @@ ISR(TIMER0_COMP_vect)
 	//mod-2 timer increase
 	ttt = 1 - ttt;
 	
-	if(readybeep > 1) readybeep--;
-	else if(readybeep == 1)
+	if(readybeep > 1) 
+	{
+		//delay(500);
+		readybeep--;
+	}
+	else if(readybeep <= 1)
 	{
 		// TODO: Uncomment when beep should be implemented
-		//PORTC &= ~(1<<RTDS);
-		//readybeep = 0;
+		PORTC &= ~(1<<RTDS);
+		readybeep = 0;
 	}
 	
 	//Check for any CAN errors at the end of the loop

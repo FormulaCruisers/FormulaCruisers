@@ -13,7 +13,7 @@ This is a central header file containing a lot of defined constants that are use
 #define SOFTWARE_VERSION			"Software: V2.1500    "  //Version should be 2.xxx where xxx is amount of commits(do "git rev-list HEAD --count" to check)
 
 #define RTDS						PC7 //Loud ready beep
-#define RTDS_TIME					10 //1000 / 500 = 2 seconds    //Has to be between 1 and 3 seconds!
+#define RTDS_TIME					1100 //1000 / 500 = 2 seconds    //Has to be between 1 and 3 seconds!
 
 //Dashboard buttons and LEDs
 #define BUTTON1						PD0

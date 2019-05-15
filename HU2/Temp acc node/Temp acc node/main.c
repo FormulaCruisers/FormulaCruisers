@@ -49,6 +49,10 @@ int main(void)
 	volatile float meastemp[12];
 	volatile float volts;
 	
+	CLKPR = ( 1 << CLKPCE );  		// Set Clock Prescaler change enable
+	CLKPR = 0x00;				// no prescaler CLK 16Mhz
+	
+	
 	can_init(BAUD); 		// Can initialization
 	can_rx(FUNCTION);	
 	setup_ADC();			// setup ADC
@@ -64,7 +68,7 @@ int main(void)
 
     while (1) 
     {
-		//_delay_ms(100);              // 50ms delay
+		_delay_ms(100);              // 50ms delay
 		//test = ReadADC();
 		
 		PORTC &= !(1 << Mplxch2A);
