@@ -4,7 +4,5 @@
 
 CAN.c
 
-ExternalInterrupt.c
-
 main.c
 

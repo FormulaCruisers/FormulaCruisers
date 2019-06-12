@@ -4,7 +4,7 @@ The base state machine(by way of screens) is controlled in this file.
  */
 
 //#define _NOCAN //Uncomment this to disable all CAN messages in the main loop
-#define USE_SD_CARD //Enable CAN
+#define USE_SD_CARD //Enable SD card
 #define REGULAR_LOG //Enable regularly logging
 
 #include "Defines.h"
@@ -38,8 +38,6 @@ volatile uint16_t gas2perc = 0;
 volatile uint16_t brakeperc = 0;
 volatile uint16_t velocity = 0;
 volatile double gas1eng = 0;
-
-volatile uint32_t engine_max_perc = 100;
 
 volatile uint8_t shutdownon = 0;
 
@@ -75,16 +73,6 @@ uint8_t animttt = 0;			//Timer for animation frame incrementation
 uint16_t welcome_anim_ttt = 0;	//Welcome screen timer for when to show the animation
 
 uint8_t errortimer = 0;			//Timer to turn off literally everything when an error occurs
-
-///////////// Settings menu stuff
-volatile uint8_t selsetting = 0;						//The index of the selected variable to change
-volatile uint8_t vsettings[SETTINGS_COUNT] = {0};		//List of all variables
-uint16_t EEMEM ee_MC_N_LIMIT = 100;						//N Limit (Drive 0x34)
-uint16_t EEMEM ee_MC_CURRENT_MAXPK = 100;				//I Max Peak (Drive 0xC4)
-uint16_t EEMEM ee_MC_CURRENT_CONEFF = 100;				//I Continuous Efficiency (Drive 0xC5)
-uint16_t EEMEM ee_MC_MAX_VAL = 100;						//Engine percentage
-volatile uint8_t ischanging = 0;						//Whether or not the cursor is on the bottom(changing value) or on the top(changing index)
-int16_t stimer = 0;										//Timer for saving the settings individually
 
 void debounce(uint8_t* btn, uint8_t val);
 
@@ -140,6 +128,22 @@ uint16_t logtimer = 0;
 
 //Timer to set up sensors of can nodes
 uint8_t sentimer = 0;
+
+
+///////////// Settings menu stuff
+volatile uint8_t selsetting = 0;						//The index of the selected variable to change
+volatile uint8_t vsettings[SETTINGS_COUNT] = {0};		//List of all variables
+volatile uint8_t ischanging = 0;						//Whether or not the cursor is on the bottom(changing value) or on the top(changing index)
+int16_t stimer = 0;										//Timer for saving the settings individually
+
+uint16_t EEMEM ee_MC_N_LIMIT = 100;						//N Limit (Drive 0x34)
+uint16_t EEMEM ee_MC_CURRENT_MAXPK = 100;				//I Max Peak (Drive 0xC4)
+uint16_t EEMEM ee_MC_CURRENT_CONEFF = 100;				//I Continuous Efficiency (Drive 0xC5)
+uint16_t EEMEM ee_MC_MAX_VAL = 100;						//Engine percentage
+uint16_t EEMEM ee_MC_DIFF_FAC = 0;						//Differential percentage
+
+volatile uint32_t engine_max_perc = 100;
+volatile uint8_t differential_perc = 100;
 
 ISR(TIMER0_COMP_vect)
 {	
@@ -431,7 +435,7 @@ ISR(TIMER0_COMP_vect)
 				
 			if(_errorcode == ERROR_NONE)
 			{
-				//struct torques tq = getDifferential(gas1perc, steerpos);
+				//struct torques tq = getDifferential(gas1perc, steerpos, vsettings[4]);
 					
 				//struct slips sp = detectSlip(rpm_bl, rpm_br, tq);	
 				//tq = solveSlip(sp, tq);
@@ -479,6 +483,7 @@ ISR(TIMER0_COMP_vect)
 				eeprom_write_word(&ee_MC_CURRENT_MAXPK, vsettings[1]);
 				eeprom_write_word(&ee_MC_CURRENT_CONEFF, vsettings[2]);
 				eeprom_write_word(&ee_MC_MAX_VAL, vsettings[3]);
+				eeprom_write_word(&ee_MC_DIFF_FAC, vsettings[4]);
 					
 				//Send values to the motor controller
 				stimer = 0;
@@ -496,6 +501,7 @@ ISR(TIMER0_COMP_vect)
 			else
 			{
 				engine_max_perc = vsettings[3];
+				differential_perc = vsettings[4];
 #ifndef _NOCAN
 				if(stimer == 1)      data_send_motor(MC_N_LIMIT, vsettings[0], 0x7FFF, MCDL);
 				else if(stimer == 2) data_send_motor(MC_N_LIMIT, vsettings[0], 0x7FFF, MCDR);
@@ -671,12 +677,14 @@ int main(void)
 	vsettings[1] = eeprom_read_word(&ee_MC_CURRENT_MAXPK);
 	vsettings[2] = eeprom_read_word(&ee_MC_CURRENT_CONEFF);
 	vsettings[3] = eeprom_read_word(&ee_MC_MAX_VAL);
+	vsettings[4] = eeprom_read_word(&ee_MC_DIFF_FAC);
 	
 	//In case there is a weird value, reset to defaults.
 	if(vsettings[0] > 100) vsettings[0] = 100;
 	if(vsettings[1] > 100) vsettings[1] = 100;
 	if(vsettings[2] > 100) vsettings[2] = 100;
 	if(vsettings[3] > 100) vsettings[3] = 100;
+	if(vsettings[4] > 100) vsettings[4] = 100;
 	
 	boot_count = eeprom_read_word(&ee_boot_count);
 	eeprom_write_word(&ee_boot_count, boot_count+1);

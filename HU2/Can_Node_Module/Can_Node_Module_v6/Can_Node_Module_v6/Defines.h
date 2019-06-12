@@ -21,6 +21,6 @@ This is a central header file containing a lot of defined constants that are use
 #define MCDL		0x210
 #define MCDR		0x211
 
-#define FUNCTION NODEID4
+#define FUNCTION ACCTMPNODE1
 
 #endif

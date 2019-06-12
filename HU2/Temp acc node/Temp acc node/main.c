@@ -33,7 +33,7 @@
 #include <avr/interrupt.h>
 #include "CAN.h"
 
-//decelerations
+//declarations
 uint8_t setmplxch (int channel);
 void setup_ADC(void);
 void setup_mplx(void);
@@ -44,32 +44,41 @@ uint8_t SendValue(float * temperature, uint8_t * mobloc, uint8_t len);
 
 int main(void)
 {
-	volatile uint8_t test;
-	volatile uint8_t measvalue[12];
-	volatile float meastemp[12];
-	volatile float volts;
+	//uint8_t measvalue[12];
+	//float meastemp[12];
 	
 	CLKPR = ( 1 << CLKPCE );  		// Set Clock Prescaler change enable
 	CLKPR = 0x00;				// no prescaler CLK 16Mhz
 	
 	
 	can_init(BAUD); 		// Can initialization
-	can_rx(FUNCTION);	
-	setup_ADC();			// setup ADC
-	setup_mplx();			//setup multiplexers
+	//can_rx(FUNCTION);	
+	//setup_ADC();			// setup ADC
+	//setup_mplx();			//setup multiplexers
 	
-	//stsrt interupts
+	//start interrupts
 	TCCR2A = (1 << WGM21) | (1 << CS20) | (1 << CS21) | (1 << CS22);	//1024 prescaler, CTC mode
 	OCR2A = 200;														//30-40Hz
 	TIMSK2 = (1 << OCIE2A);												//Enable compare match interrupt
 	
-	sei();
+	DDRB=0xff;
+	PORTB=0x00;
+	
+	//sei();
 	
 
-    while (1) 
-    {
+    while (1)
+	{
+		_delay_ms(100);
+		transmit_data[2]=0x42;
+		can_tx(FUNCTION, 8);
+		
+		
+		//_delay_ms(1000);
+		//PORTB^=0xff;
+	}
+    /*{
 		_delay_ms(100);              // 50ms delay
-		//test = ReadADC();
 		
 		PORTC &= !(1 << Mplxch2A);
 		PORTC &= !(1 << Mplxch2B);
@@ -80,11 +89,7 @@ int main(void)
 		PORTA &= !(1 << Mplxch1B);
 		PORTA &= !(1 << Mplxch1C);
 		//connect to channel 1
-		
-//		_delay_ms(100);
-		test = ReadADC();
-		volts = 0.013*test;
-		//_delay_ms(100);
+	
 		
 		for(int i = 0; i < 12; i++)
 		{
@@ -95,8 +100,8 @@ int main(void)
 			meastemp[i] = VoltToTemp(0.013 * measvalue[i]);
 		}
 		
-		SendValue(meastemp, &transmit_data, 12);
-    }
+		SendValue(&meastemp, &transmit_data, 12);
+    }//*/
 }
 
 /*
@@ -328,7 +333,10 @@ uint8_t SendValue(float *temperature, uint8_t *mobloc, uint8_t len)
 	
 	for (int i = 0; i < len; i++)
 	{
-		if (message < (uint8_t) temperature[i] && (uint8_t) temperature[i] != 206) message = (uint8_t) temperature[i]; //if temp is bigger then last & it is not unusable value (206)
+		if (message < (uint8_t) temperature[i] && (uint8_t) temperature[i] != 206)
+		{
+			message = (uint8_t) temperature[i]; //if temp is bigger than last & it is not unusable value (206)
+		}
 	}
 	*mobloc = message;
 	return message; 

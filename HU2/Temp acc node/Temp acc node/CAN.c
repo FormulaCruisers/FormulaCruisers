@@ -13,7 +13,6 @@ Also contains the interrupt for CAN rx.
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include "CAN.h"
-//#include "ExternalInterrupt.h"
 
 uint8_t receive_data[8];
 uint8_t transmit_data[8];
@@ -27,35 +26,20 @@ uint8_t sp = 0;
 //***** Reception ISR **********************************
 ISR(CANIT_vect)
 {	
-	int8_t length;
-	
-	CANPAGE = ( 0 << MOBNB3 ) | ( 0 << MOBNB2 ) | ( 0 << MOBNB1 ) | ( 1 << MOBNB0 ); // select CANMOB 0001 = MOB1
-
-	length = ( CANCDMOB & 0x0F );	// DLC, number of bytes to be received
-	
-	uint16_t ReceiveAddress = (CANIDT1 << 3) | ((CANIDT2 & 0b11100000) >> 5);
-	
-	if(ReceiveAddress == FUNCTION)
+	DDRB=0xff;
+	PORTB^=0xff;
+	if (CANSTMOB & (1 << RXOK))
 	{
-		if(CANMSG == 0x3D)
-		{
-			for(uint8_t i = 0; i < length - 1; i++)
-			{
-				uint8_t message = CANMSG;
-				
-				//Store in sensors array
-				sensors[i] = message;
-			}
-		}
-	}
 	
-	CANSTMOB = 0x00; // Clear RXOK flag
-	CANCDMOB = (( 1 << CONMOB1 ) | ( 0 << IDE ) | ( 3 << DLC0)); //CAN MOb Control and DLC Register: (1<<CONMOB1) = enable reception. (0<<IDE) = can standard rev 2.0A ( id length = 11 bits), (3 << DLC0) 3 Bytes in the data field of the message.
+		//Clear RXOK flag and re-enable reception
+		CANSTMOB = 0x00;
+		CANCDMOB = (( 1 << CONMOB1 ) | ( 0 << IDE ) | ( 8 << DLC0));
+	}
 }
 
 ISR(TIMER2_COMP_vect)
 {
-	CANPAGE = ( 0 << MOBNB3 ) | ( 0 << MOBNB2 ) | ( 0 << MOBNB1 ) | ( 1 << MOBNB0 ); //Select MOb 1
+	transmit_data[1]=0x69;
 	can_tx(FUNCTION, 8);
 }
 
@@ -124,7 +108,7 @@ void can_rx(uint16_t NODE_ID)
 	CANIDM1 = 0b11111111;   // Receive Address
 	CANIDM2 = 0b11100000;	//
 
-	CANCDMOB = (( 1 << CONMOB1 ) | ( 0 << IDE ) | ( 3 << DLC0));  // Enable Reception | 11 bit | IDE DLC8
+	CANCDMOB = (( 1 << CONMOB1 ) | ( 0 << IDE ) | ( 8 << DLC0));  // Enable Reception | 11 bit | IDE DLC8
 }
 
 //***** CAN Creating TX *****************************************************
@@ -146,9 +130,16 @@ void can_tx(uint16_t Address, uint8_t DLC)
 		CANMSG = transmit_data[i]; //CAN Data Message Register: setting the data in the message register
 	}
 	
+	
 	CANCDMOB = (( 1 << CONMOB0 ) | ( 0 << IDE ) | ( DLC << DLC0)); //CAN MOb Control and DLC Register: (1<<CONMOB1) = enable reception. (0<<IDE) = can standard rev 2.0A ( id length = 11 bits), (DLC << DLC0) Set *DLC* Bytes in the data field of the message.
 
-	while ( ! ( CANSTMOB & ( 1 << TXOK ) ) );	// wait for TXOK flag set
+	while ( ! ( CANSTMOB & ( 1 << TXOK ) ) )
+	{
+		if(CANSTMOB & (1<<BERR)) PORTB++;
+		//else PORTB = 0x00;
+	}	// wait for TXOK flag set
+	
+	PORTB = 0x00;
 	
 	CANCDMOB = 0x00; //Clear CAN Mob Control and DLC Register
 

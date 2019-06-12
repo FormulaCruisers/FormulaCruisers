@@ -12,6 +12,7 @@ This includes all of the screen states.
 #include "UI.h"
 #include "Error.h"
 #include "sd_raw.h"
+#include "Differential.h"
 
 extern volatile uint8_t anim;	//Actual animation frame number
 extern volatile uint8_t av;		//Normalized animation frame number
@@ -24,7 +25,8 @@ char* anim4 = "                    .`,(_)-HU2--(_).>                ";
 char* fsettings[SETTINGS_COUNT] = {	"Speed limit %      ",
 									"Max pkcurrent %    ",
 									"Curr. con-eff %    ",
-									"Max engine *1k(0-?)" };
+									"Max engine *1k(0-?)",
+									"Diff. amount (in %)" };
 char settingcursor[2] = "> ";	//Cursor for settings screen
 
 extern volatile uint32_t rx_count, tx_count;
@@ -104,8 +106,8 @@ void get_screen(char buffer[4][21], enum uiscreen s)
 		case SCREEN_START:
 			snprintf(buffer[0], sizeof buffer[0], "Gas1:%3d%% Gas2:%3d%% ", gas1perc, gas2perc);
 			snprintf(buffer[1], sizeof buffer[1], "Steerpos: %3d       ", (int16_t)steerpos);
-			//snprintf(buffer[2], sizeof buffer[2], "Rpm: FL%5u FR%5u", rpm_fl, rpm_fr);
-			snprintf(buffer[2], sizeof buffer[2], "acc temps: %3u, %3u ", acctmp1, acctmp2);
+			snprintf(buffer[2], sizeof buffer[2], "Rpm: FL%5u FR%5u", rpm_fl, rpm_fr);
+			//snprintf(buffer[2], sizeof buffer[2], "acc temps: %3u, %3u ", acctmp1, acctmp2);
 			snprintf(buffer[3], sizeof buffer[3], "Press blue to predis");
 			break;
 

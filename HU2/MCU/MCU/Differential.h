@@ -20,7 +20,7 @@ struct slips
 	uint8_t right;
 };
 
-struct torques getDifferential(double Tmid, double steerangle);
+struct torques getDifferential(double Tmid, double steerangle, uint8_t percentage);
 struct slips detectSlip(double rpmleft, double rpmright, struct torques input);
 struct torques solveSlip(struct slips slip, struct torques input);
 

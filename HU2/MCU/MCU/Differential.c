@@ -8,7 +8,7 @@ Some basic functions for calculating the electronic differential (i.e. torque ve
 const double l2_over_w = (2 * 150) / 130;
 
 //Steerangle should be positive when steering right, negative when steering left.
-struct torques getDifferential(double Tmid, double steerpos)
+struct torques getDifferential(double Tmid, double steerpos, uint8_t percentage)
 {
 	struct torques ret;
 	
@@ -20,7 +20,7 @@ struct torques getDifferential(double Tmid, double steerpos)
 		return ret;
 	}
 	
-	double steerangle = steerpos * 0.008; //TODO: Calibrate this to get an accurate calculation
+	double steerangle = steerpos * 0.0090623; //TODO: Check this calibration value
 	
 	//To not get stupid values
 	if(steerangle < 0.01 && steerangle > -0.01)
@@ -30,14 +30,14 @@ struct torques getDifferential(double Tmid, double steerpos)
 		return ret;
 	}
 	
-	double c = tan(steerangle);
+	double c = tan(steerangle) * (percentage * 0.01);
 	
 	//Boundary fixing for c. Don't want to get weird negative values. (though these should never happen anyway)
 	if(c > l2_over_w - 0.1) c = l2_over_w - 0.1;
 	if(c < -l2_over_w + 0.1) c = -l2_over_w + 0.1;
 	
 	//This is where the magic happens
-	double mul_l = (l2_over_w + c) / (l2_over_w - c);
+	double mul_l = ((l2_over_w + c) / (l2_over_w - c));
 	ret.factor = mul_l;
 	ret.left_perc = Tmid * mul_l;
 	ret.right_perc = Tmid / mul_l;
