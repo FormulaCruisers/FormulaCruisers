@@ -23,7 +23,7 @@ This is a central header file containing a lot of defined constants that are use
 #define IMDLED						PE7
 #define AMSLED						PE5
 
-#define DEBOUNCE_TIME				8 // 8*(1000/500) = 16 ms == Time to debounce a button
+#define DEBOUNCE_TIME				16 // 16*(1000/500) = 24 ms == Time to debounce a button
 
 #define _HIGH						0xFF
 #define _LOW						0x00
@@ -34,6 +34,11 @@ This is a central header file containing a lot of defined constants that are use
 #define RX_WAIT_LIMIT				200 //200 cycles
 
 #define SETTINGS_COUNT				5
+#define SETTING_N_LIMIT		0
+#define SETTING_CUR_MAXPK	1
+#define SETTING_CUR_CONEFF	2
+#define SETTING_MAX_VAL		3
+#define SETTING_DIFF_FAC	4
 
 #define ENGINE_MAX					0x7FFF //32767
 

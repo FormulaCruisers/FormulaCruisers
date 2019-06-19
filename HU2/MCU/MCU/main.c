@@ -4,8 +4,8 @@ The base state machine(by way of screens) is controlled in this file.
  */
 
 //#define _NOCAN //Uncomment this to disable all CAN messages in the main loop
-#define USE_SD_CARD //Enable SD card
-#define REGULAR_LOG //Enable regularly logging
+//#define USE_SD_CARD //Enable SD card
+//#define REGULAR_LOG //Enable regularly logging
 
 #include "Defines.h"
 
@@ -157,6 +157,7 @@ ISR(TIMER0_COMP_vect)
 	if(sentimer == 2) data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){GAS_1, GAS_2, BRAKE}, NODEID2, 3);
 	//if(sentimer == 3) data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){RPM_BACK_LEFT, FLOW_LEFT, TEMP_LEFT}, NODEID3, 3);
 	//if(sentimer == 4) data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){RPM_BACK_RIGHT, FLOW_RIGHT, TEMP_RIGHT}, NODEID4, 3);
+	if(sentimer == 5) data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){0, 1, 2}, ACCTMPNODE1, 3);
 	sentimer++;
 	if(sentimer > 200) sentimer = 0;
 
@@ -435,7 +436,7 @@ ISR(TIMER0_COMP_vect)
 				
 			if(_errorcode == ERROR_NONE)
 			{
-				//struct torques tq = getDifferential(gas1perc, steerpos, vsettings[4]);
+				//struct torques tq = getDifferential(gas1perc, steerpos, vsettings[SETTING_DIFF_FAC]);
 					
 				//struct slips sp = detectSlip(rpm_bl, rpm_br, tq);	
 				//tq = solveSlip(sp, tq);
@@ -479,11 +480,11 @@ ISR(TIMER0_COMP_vect)
 			if(btngreen == 1)
 			{
 				//Write values back to EEPROM
-				eeprom_write_word(&ee_MC_N_LIMIT, vsettings[0]);
-				eeprom_write_word(&ee_MC_CURRENT_MAXPK, vsettings[1]);
-				eeprom_write_word(&ee_MC_CURRENT_CONEFF, vsettings[2]);
-				eeprom_write_word(&ee_MC_MAX_VAL, vsettings[3]);
-				eeprom_write_word(&ee_MC_DIFF_FAC, vsettings[4]);
+				eeprom_write_word(&ee_MC_N_LIMIT, vsettings[SETTING_N_LIMIT]);
+				eeprom_write_word(&ee_MC_CURRENT_MAXPK, vsettings[SETTING_CUR_MAXPK]);
+				eeprom_write_word(&ee_MC_CURRENT_CONEFF, vsettings[SETTING_CUR_CONEFF]);
+				eeprom_write_word(&ee_MC_MAX_VAL, vsettings[SETTING_MAX_VAL]);
+				eeprom_write_word(&ee_MC_DIFF_FAC, vsettings[SETTING_DIFF_FAC]);
 					
 				//Send values to the motor controller
 				stimer = 0;
@@ -500,15 +501,15 @@ ISR(TIMER0_COMP_vect)
 			}
 			else
 			{
-				engine_max_perc = vsettings[3];
-				differential_perc = vsettings[4];
+				engine_max_perc = vsettings[SETTING_MAX_VAL];
+				differential_perc = vsettings[SETTING_DIFF_FAC];
 #ifndef _NOCAN
-				if(stimer == 1)      data_send_motor(MC_N_LIMIT, vsettings[0], 0x7FFF, MCDL);
-				else if(stimer == 2) data_send_motor(MC_N_LIMIT, vsettings[0], 0x7FFF, MCDR);
-				else if(stimer == 3) data_send_motor(MC_I_MAXPK_PERCENT, vsettings[1], 0x3FFF, MCDL);
-				else if(stimer == 4) data_send_motor(MC_I_MAXPK_PERCENT, vsettings[1], 0x3FFF, MCDR);
-				else if(stimer == 5) data_send_motor(MC_I_CONEFF_PERCENT, vsettings[2], 0x3FFF, MCDL);
-				else if(stimer == 6) data_send_motor(MC_I_CONEFF_PERCENT, vsettings[2], 0x3FFF, MCDR);
+				if(stimer == 1)      data_send_motor(MC_N_LIMIT, vsettings[SETTING_N_LIMIT], 0x7FFF, MCDL);
+				else if(stimer == 2) data_send_motor(MC_N_LIMIT, vsettings[SETTING_N_LIMIT], 0x7FFF, MCDR);
+				else if(stimer == 3) data_send_motor(MC_I_MAXPK_PERCENT, vsettings[SETTING_CUR_MAXPK], 0x3FFF, MCDL);
+				else if(stimer == 4) data_send_motor(MC_I_MAXPK_PERCENT, vsettings[SETTING_CUR_MAXPK], 0x3FFF, MCDR);
+				else if(stimer == 5) data_send_motor(MC_I_CONEFF_PERCENT, vsettings[SETTING_CUR_CONEFF], 0x3FFF, MCDL);
+				else if(stimer == 6) data_send_motor(MC_I_CONEFF_PERCENT, vsettings[SETTING_CUR_CONEFF], 0x3FFF, MCDR);
 #endif
 				stimer++;
 			}
@@ -564,7 +565,7 @@ ISR(TIMER0_COMP_vect)
 				if(btn2 == 1 || btn2 == 0xFF) dt_engv = ((dt_engv == 100) ? 100 : dt_engv + 1);
 				if(btn1 == 1 || btn1 == 0xFF) dt_engv = ((dt_engv == 0) ? 0 : dt_engv - 1);
 				
-				//struct torques tq = getDifferential(dt_engv, steerpos);
+				//struct torques tq = getDifferential(dt_engv, steerpos, vsettings[SETTING_DIFF_FAC]);
 				struct torques tq;
 				tq.right_perc = dt_engv;
 				tq.left_perc = dt_engv;
@@ -662,8 +663,12 @@ void debounce(uint8_t* btn, uint8_t val)
 	
 	if(*btn > 0)
 	{
-		if(*btn < 0xFF) (*btn)++;
-		else            (*btn) = 0xE0; //Reset to E0 so that hold-to-change-faster doesn't go way too fast.
+		//increase if button is registered
+		if(val)
+		{
+			if(*btn < 0xFF) (*btn)++;
+			else            (*btn) = 0xE0; //Reset to E0 so that hold-to-change-faster doesn't go way too fast.
+		}
 	}
 	else
 	{
@@ -673,18 +678,24 @@ void debounce(uint8_t* btn, uint8_t val)
 
 int main(void)
 {
-	vsettings[0] = eeprom_read_word(&ee_MC_N_LIMIT);
-	vsettings[1] = eeprom_read_word(&ee_MC_CURRENT_MAXPK);
-	vsettings[2] = eeprom_read_word(&ee_MC_CURRENT_CONEFF);
-	vsettings[3] = eeprom_read_word(&ee_MC_MAX_VAL);
-	vsettings[4] = eeprom_read_word(&ee_MC_DIFF_FAC);
+	//Disable JTAG debugging to use the JTAG pins as analog inputs
+	//To disable, you have to write 1 to bit 7 of register MCUSR within 4 cycles. Because = is faster than |=, we use the former to be certain it will work.
+	MCUSR = (1<<JTD);
+	MCUSR = (1<<JTD);
+	
+	
+	vsettings[SETTING_N_LIMIT] = eeprom_read_word(&ee_MC_N_LIMIT);
+	vsettings[SETTING_CUR_MAXPK] = eeprom_read_word(&ee_MC_CURRENT_MAXPK);
+	vsettings[SETTING_CUR_CONEFF] = eeprom_read_word(&ee_MC_CURRENT_CONEFF);
+	vsettings[SETTING_MAX_VAL] = eeprom_read_word(&ee_MC_MAX_VAL);
+	vsettings[SETTING_DIFF_FAC] = eeprom_read_word(&ee_MC_DIFF_FAC);
 	
 	//In case there is a weird value, reset to defaults.
-	if(vsettings[0] > 100) vsettings[0] = 100;
-	if(vsettings[1] > 100) vsettings[1] = 100;
-	if(vsettings[2] > 100) vsettings[2] = 100;
-	if(vsettings[3] > 100) vsettings[3] = 100;
-	if(vsettings[4] > 100) vsettings[4] = 100;
+	if(vsettings[SETTING_N_LIMIT] > 100) vsettings[SETTING_N_LIMIT] = 100;
+	if(vsettings[SETTING_CUR_MAXPK] > 100) vsettings[SETTING_CUR_MAXPK] = 100;
+	if(vsettings[SETTING_CUR_CONEFF] > 100) vsettings[SETTING_CUR_CONEFF] = 100;
+	if(vsettings[SETTING_MAX_VAL] > 100) vsettings[SETTING_MAX_VAL] = 100;
+	if(vsettings[SETTING_DIFF_FAC] > 100) vsettings[SETTING_DIFF_FAC] = 100;
 	
 	boot_count = eeprom_read_word(&ee_boot_count);
 	eeprom_write_word(&ee_boot_count, boot_count+1);
