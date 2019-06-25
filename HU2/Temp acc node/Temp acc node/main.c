@@ -61,21 +61,12 @@ int main(void)
 	OCR2A = 200;														//30-40Hz
 	TIMSK2 = (1 << OCIE2A);												//Enable compare match interrupt
 	
-	DDRB=0xff;
-	PORTB=0x00;
-	
-	//sei();
-	
-
+	DDRE=0xff;
+	PORTE=0x00;
     while (1)
 	{
-		_delay_ms(100);
-		transmit_data[2]=0x42;
-		can_tx(FUNCTION, 8);
-		
-		
-		//_delay_ms(1000);
-		//PORTB^=0xff;
+		_delay_ms(1000);
+		PORTE^=0xff;
 	}
     /*{
 		_delay_ms(100);              // 50ms delay

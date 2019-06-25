@@ -128,10 +128,10 @@ void get_screen(char buffer[4][21], enum uiscreen s)
 			break;
 
 		case SCREEN_DRIVING:
-			snprintf(buffer[0], sizeof buffer[0], "Speed: %4u  km/h     ", velocity);
-			snprintf(buffer[1], sizeof buffer[1], "Gas1:%3d%% Brake:%3d%% ", gas1perc, brakeperc);
-			snprintf(buffer[2], sizeof buffer[2], "Flow: L%5d  R%5d", flowleft, flowright);
-			snprintf(buffer[3], sizeof buffer[3], "Temp: L%5u  R%5u", templeft, tempright);
+			snprintf(buffer[0], sizeof buffer[0], "      %4u  km/h      ", (uint16_t)velocity);
+			snprintf(buffer[1], sizeof buffer[1], "   %.1f g               ", (float)accel_gforce);
+			snprintf(buffer[2], sizeof buffer[2], "Battery: %.1f V         ", (float)battery_voltage);
+			snprintf(buffer[3], sizeof buffer[3], "Max temp: %3uC          ", temphighest);
 			break;
 			//"Battery: NAN%%       ");
 		

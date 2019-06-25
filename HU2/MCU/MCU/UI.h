@@ -40,10 +40,10 @@ volatile enum uiscreen ui_current_screen;
 volatile enum _error _errorcode;
 
 extern volatile uint16_t gas1perc, gas2perc, brakeperc, velocity, predistimer, flowleft, flowright, templeft, tempright, rpm_fl, rpm_fr, rpm_bl, rpm_br;
-extern volatile uint8_t acctmp1, acctmp2;
+extern volatile uint8_t acctmp1, acctmp2, temphighest;
 extern volatile uint8_t shutdownon, ams_shutdown, imd_shutdown;
 extern volatile uint8_t selsetting, ischanging, vsettings[SETTINGS_COUNT];
-extern volatile double steerpos;
+extern volatile double steerpos, velocity, accel_gforce, battery_voltage;
 extern volatile uint8_t dt_engv, pump_pwm;
 extern uint16_t boot_count;
 extern bool brakelighton;

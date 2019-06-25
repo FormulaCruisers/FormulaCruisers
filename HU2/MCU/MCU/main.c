@@ -36,7 +36,9 @@ volatile uint16_t brake = 0;
 volatile uint16_t gas1perc = 0;
 volatile uint16_t gas2perc = 0;
 volatile uint16_t brakeperc = 0;
-volatile uint16_t velocity = 0;
+volatile double velocity = 0;
+volatile double accel_gforce = 0;
+volatile double battery_voltage = 0;
 volatile double gas1eng = 0;
 
 volatile uint8_t shutdownon = 0;
@@ -54,6 +56,7 @@ volatile uint16_t tempright = 0;
 
 volatile uint8_t acctmp1 = 0;
 volatile uint8_t acctmp2 = 0;
+volatile uint8_t temphighest = 0;
 
 uint16_t readybeep = 0;
 
@@ -151,24 +154,28 @@ ISR(TIMER0_COMP_vect)
 	TCNT0 = 0;
 
 	//Read all MOb messages
-//#ifndef _NOCAN	
+#ifndef _NOCAN	
 
 	if(sentimer == 1) data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){STEERING_POS, RPM_FRONT_LEFT, RPM_FRONT_RIGHT}, NODEID1, 3);
 	if(sentimer == 2) data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){GAS_1, GAS_2, BRAKE}, NODEID2, 3);
 	//if(sentimer == 3) data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){RPM_BACK_LEFT, FLOW_LEFT, TEMP_LEFT}, NODEID3, 3);
 	//if(sentimer == 4) data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){RPM_BACK_RIGHT, FLOW_RIGHT, TEMP_RIGHT}, NODEID4, 3);
 	if(sentimer == 5) data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){0, 1, 2}, ACCTMPNODE1, 3);
+	if(sentimer == 6) data_send0(AMS_MSG_VOLTAGE);
 	sentimer++;
 	if(sentimer > 200) sentimer = 0;
 
-	steerpos = (int16_t)(g(NODEID1, MOB_STEERING_POS) - STEER_MIDDLE) * 0.6d; //Multiplied by 0.6 to get the central turning angle
+	steerpos = (int16_t)(g(NODEID1, MOB_STEERING_POS) - STEER_MIDDLE); // NOT in degrees
 	rpm_fl = 500000.d / (double)g(NODEID1, MOB_RPM_FRONT_LEFT);
-	//rpm_fl = rpm_fl*2*pi*0.27/60*3.6; //Velocity in km/h
 	rpm_fr = 500000.d / (double)g(NODEID1, MOB_RPM_FRONT_RIGHT);
-	//rpm_fr = rpm_fl*2*pi*0.27/60; //Velocity in m/s
 	
 	//speed in km/h
-	velocity = ((rpm_fr + rpm_fl) / 2.0) * 0.2538;
+	double pv = velocity;
+	velocity = ((rpm_fr + rpm_fl) / 2.0) * 0.1014;
+	accel_gforce = (velocity - pv) * 14.158; /* (500 / 3.6) / 9.81 = 14.15788878 */
+	
+	//AMS values
+	battery_voltage = (amsd_voltage.Total_Voltage_LSW_H * 256 + amsd_voltage.Total_Voltage_LSW_L) * 0.01;
 	
 	gas1 = g(NODEID2, MOB_GAS1);
 	gas2 = g(NODEID2, MOB_GAS2);
@@ -226,7 +233,7 @@ ISR(TIMER0_COMP_vect)
 	if(flowright == 0xFFFF)	flowright = 0;
 	else					flowright = (uint16_t)(500000.d / (double)flowright);
 	
-//#endif
+#endif
 	
 #ifdef USE_SD_CARD
 #ifdef REGULAR_LOG
