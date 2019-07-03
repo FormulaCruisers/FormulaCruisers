@@ -215,6 +215,12 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ADC.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="ADC.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="AMS.h">
       <SubType>compile</SubType>
     </Compile>

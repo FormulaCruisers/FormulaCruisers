@@ -29,6 +29,7 @@ The base state machine(by way of screens) is controlled in this file.
 #include "MotorController.h"
 #include "AMS.h"
 #include "Differential.h"
+#include "ADC.h"
 
 volatile uint16_t gas1 = 0;
 volatile uint16_t gas2 = 0;
@@ -57,6 +58,9 @@ volatile uint16_t tempright = 0;
 volatile uint8_t acctmp1 = 0;
 volatile uint8_t acctmp2 = 0;
 volatile uint8_t temphighest = 0;
+
+volatile uint16_t mcurrent = 0; //Directly measured value on the ADC
+volatile int16_t ccurrent = 0;  //Calculated to the amount of amps
 
 uint16_t readybeep = 0;
 
@@ -160,23 +164,25 @@ ISR(TIMER0_COMP_vect)
 	if(sentimer == 2) data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){GAS_1, GAS_2, BRAKE}, NODEID2, 3);
 	//if(sentimer == 3) data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){RPM_BACK_LEFT, FLOW_LEFT, TEMP_LEFT}, NODEID3, 3);
 	//if(sentimer == 4) data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){RPM_BACK_RIGHT, FLOW_RIGHT, TEMP_RIGHT}, NODEID4, 3);
-	if(sentimer == 5) data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){0, 1, 2}, ACCTMPNODE1, 3);
-	if(sentimer == 6) data_send0(AMS_MSG_VOLTAGE);
+	if(sentimer == 5) data_send0(AMS_MSG_VOLTAGE);
+	if(sentimer == 6) req_ADC(A_MCURRENT, &mcurrent);
 	sentimer++;
 	if(sentimer > 200) sentimer = 0;
 
+	//Steering box
 	steerpos = (int16_t)(g(NODEID1, MOB_STEERING_POS) - STEER_MIDDLE); // NOT in degrees
 	rpm_fl = 500000.d / (double)g(NODEID1, MOB_RPM_FRONT_LEFT);
 	rpm_fr = 500000.d / (double)g(NODEID1, MOB_RPM_FRONT_RIGHT);
 	
-	//speed in km/h
+	//velocity and acceleration
 	double pv = velocity;
-	velocity = ((rpm_fr + rpm_fl) / 2.0) * 0.1014;
-	accel_gforce = (velocity - pv) * 14.158; /* (500 / 3.6) / 9.81 = 14.15788878 */
+	velocity = (rpm_fr > rpm_fl ? rpm_fr : rpm_fl) * 0.1014; // (1.69m * 3.6) / 60 =  0.1014 
+	accel_gforce = (velocity - pv) * 14.158; // (500 / 3.6) / 9.81 = 14.15788878
 	
 	//AMS values
 	battery_voltage = (amsd_voltage.Total_Voltage_LSW_H * 256 + amsd_voltage.Total_Voltage_LSW_L) * 0.01;
 	
+	//Pedalbox
 	gas1 = g(NODEID2, MOB_GAS1);
 	gas2 = g(NODEID2, MOB_GAS2);
 	brake = g(NODEID2, MOB_BRAKE);
@@ -233,6 +239,7 @@ ISR(TIMER0_COMP_vect)
 	if(flowright == 0xFFFF)	flowright = 0;
 	else					flowright = (uint16_t)(500000.d / (double)flowright);
 	
+	ccurrent = (int16_t)((mcurrent - 512) * 0.5132);
 #endif
 	
 #ifdef USE_SD_CARD
