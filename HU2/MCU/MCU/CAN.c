@@ -99,7 +99,7 @@ void can_init()
 	
 	
 	//Give each node its own MOb
-	uint16_t NODES[MOBCOUNT] = {NODEID1, NODEID2, NODEID3, NODEID4, ECU2ID, ACCTMPNODE1, ACCTMPNODE2}; ////////////////////////////////////////////////////////////////////
+	uint16_t NODES[MOBCOUNT] = {NODEID1, NODEID2, NODEID3, NODEID4, ECU2ID}; ////////////////////////////////////////////////////////////////////
 	
 		
 		

@@ -55,10 +55,6 @@ volatile uint16_t flowright = 0;
 volatile uint16_t templeft = 0;
 volatile uint16_t tempright = 0;
 
-volatile uint8_t acctmp1 = 0;
-volatile uint8_t acctmp2 = 0;
-volatile uint8_t temphighest = 0;
-
 volatile uint16_t mcurrent = 0; //Directly measured value on the ADC
 volatile int16_t ccurrent = 0;  //Calculated to the amount of amps
 
@@ -204,14 +200,9 @@ ISR(TIMER0_COMP_vect)
 	flowright = g(NODEID4, MOB_FLOW_RIGHT);
 	tempright= g(NODEID4, MOB_TEMP_RIGHT);
 	
-	tempright = (tempright - 65570);//*0.26;		//temp right in voltage 0-255 (0-5 volt) 
-	tempright = tempright*0.26;
-	tempright = 1.96*tempright;						// 0-255 to 0 to 5 volt *100
-	tempright = (tempright*-.2344)+ 91.622;			//linealisering for temp calculations
+	tempright = (tempright - 65570);				//temp right in voltage 0-255 (0-5 volt) 
+	tempright = (tempright*-0.11945024) + 91.622;	//linealisering for temp calculations
 	//tempright = tempright
-
-	acctmp1 = g(ACCTMPNODE1, MOB_ACCTEMP_MAX);
-	acctmp2 = g(ACCTMPNODE2, MOB_ACCTEMP_MAX);
 
 	//tempright = -4.7037*((tempright*(5/255))*(tempright*(5/255))*(tempright*(5/255))) + 38.992*((tempright*(5/255))*(tempright*(5/255))) - 117.24*(tempright*(5/255)) + 148.4;		// temp in graden
 
@@ -722,7 +713,7 @@ int main(void)
 	BRAKEMAX = eeprom_read_word(&ee_Brake_max);
 	
 	
-	
+	int_ADC();
 	lcd_init(LCD_DISP_ON);
 	change_screen(SCREEN_WELCOME);
 	
