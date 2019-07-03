@@ -43,6 +43,7 @@ volatile double battery_voltage = 0;
 volatile double gas1eng = 0;
 
 volatile uint8_t shutdownon = 0;
+volatile uint8_t shutdowntimer = 0;
 
 volatile uint16_t rpm_fl = 0;
 volatile uint16_t rpm_fr = 0;
@@ -207,7 +208,8 @@ ISR(TIMER0_COMP_vect)
 	//tempright = -4.7037*((tempright*(5/255))*(tempright*(5/255))*(tempright*(5/255))) + 38.992*((tempright*(5/255))*(tempright*(5/255))) - 117.24*(tempright*(5/255)) + 148.4;		// temp in graden
 
 	
-	shutdownon = g(ECU2ID, MOB_SHUTDOWN) ? 1 : 0;
+	shutdownon = g(ECU2ID, MOB_SHUTDOWN) ? 0 : 1;
+	if(shutdowntimer < SHUTDOWN_TIME || !shutdownon) shutdowntimer = (shutdowntimer + shutdownon) * shutdownon;
 
 	//Processing of all variables
 	//Gas and brake percentages
@@ -251,7 +253,7 @@ ISR(TIMER0_COMP_vect)
 	debounce(&btn1, PIND & (1<<BUTTON1)); //The button that is above the green button (i.e. left)
 	debounce(&btn2, PIND & (1<<BUTTON2)); //The button that is above the blue button (i.e. right)
 	
-	if(!shutdownon || ams_shutdown || imd_shutdown)
+	if(shutdownon >= SHUTDOWN_TIME || ams_shutdown || imd_shutdown)
 	{
 		if(ui_current_screen == SCREEN_PREDISCHARGING || ui_current_screen == SCREEN_DRIVING || ui_current_screen == SCREEN_STATUS || ui_current_screen == SCREEN_DRIVETEST)
 		{
