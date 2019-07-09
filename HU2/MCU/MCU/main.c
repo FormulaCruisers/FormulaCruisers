@@ -501,7 +501,7 @@ ISR(TIMER0_COMP_vect)
 			}
 			
 			//Turn off vehicle by pressing top buttons together for more than 1 second
-			if((btn1 == 1 && btn2 > 0) || (btn1 > 0 && btn2 == 1))
+			if(btn1 && btn2)
 			{
 				disable_drive_timer++;
 				if(disable_drive_timer > 500)
