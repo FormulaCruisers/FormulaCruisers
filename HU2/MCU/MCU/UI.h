@@ -43,7 +43,7 @@ extern volatile uint8_t acctmp1, acctmp2;
 extern volatile uint8_t shutdownon, ams_shutdown, imd_shutdown;
 extern volatile uint8_t selsetting, ischanging, vsettings[SETTINGS_COUNT];
 extern volatile double steerpos, velocity, accel_gforce, battery_voltage;
-extern volatile uint16_t ccurrent;
+extern volatile int16_t ccurrent;
 extern volatile uint8_t dt_engv, pump_pwm;
 extern uint16_t boot_count;
 extern bool brakelighton;

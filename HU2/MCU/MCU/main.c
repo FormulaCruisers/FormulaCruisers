@@ -168,7 +168,7 @@ ISR(TIMER0_COMP_vect)
 	//if(sentimer == 4) data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){RPM_BACK_RIGHT, FLOW_RIGHT, TEMP_RIGHT}, NODEID4, 3);
 	if(sentimer == 5) data_send0(AMS_MSG_VOLTAGE);
 	
-	if(sentimer % 20 == 0) req_ADC(A_MCURRENT, &mcurrent);
+	if(sentimer % 20 == 0) req_ADC(A_MCURRENT);
 	
 	sentimer++;
 	if(sentimer > 200) sentimer = 0;
@@ -202,7 +202,7 @@ ISR(TIMER0_COMP_vect)
 	flowleft = g(NODEID3, MOB_FLOW_LEFT);
 	templeft = g(NODEID3, MOB_TEMP_LEFT);
 	
-	templeft = (templeft - 65570);//*0.26;		//temp right in voltage 0-255 (0-5 volt) 
+	templeft = (templeft - 65570);// * 0.26;		//temp right in voltage 0-255 (0-5 volt) 
 	templeft = templeft*0.26;
 	templeft = 1.96*templeft;						// 0-255 to 0 to 5 volt *100
 	templeft = (templeft*-.2344)+ 91.622;			//linealisering for temp calculations
@@ -682,7 +682,7 @@ ISR(TIMER0_COMP_vect)
 		disable_motor_braking = 0;
 	}
 	//As per regulations, only allow turning on the car if the brake is pressed
-	allow_turning_on = brakeperc > START_BRAKE_MINPERCENT;
+	allow_turning_on = (brakeperc > START_BRAKE_MINPERCENT);
 	
 	
 	
