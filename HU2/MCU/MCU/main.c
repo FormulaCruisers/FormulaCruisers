@@ -154,6 +154,8 @@ uint16_t disable_drive_timer = 0;
 uint8_t disable_motor_braking = 0;
 uint8_t allow_turning_on = 0;
 
+uint8_t MCU_shutdown = 0;
+
 ISR(TIMER0_COMP_vect)
 {	
 	//tx_count = TCNT0;
@@ -586,12 +588,12 @@ ISR(TIMER0_COMP_vect)
 				if(GAS1MAX < GAS1MIN)
 				{
 					GAS1MIN -= CALIB_SLACK * 2;
-					GAS1MAX += CALIB_SLACK * 2
+					GAS1MAX += CALIB_SLACK * 2;
 				}
 				if(GAS2MAX < GAS2MIN)
 				{
 					GAS2MIN -= CALIB_SLACK * 2;
-					GAS2MAX += CALIB_SLACK * 2
+					GAS2MAX += CALIB_SLACK * 2;
 				}
 				BRAKEMAX = brake;
 					
@@ -713,7 +715,14 @@ ISR(TIMER0_COMP_vect)
 	allow_turning_on = (brakeperc > START_BRAKE_MINPERCENT);
 	
 	
-	
+	if(ams_shutdown)
+	{
+		//TODO: turn on AMS LED
+	}
+	if(imd_shutdown)
+	{
+		//TODO: turn on IMD LED
+	}
 	
 	//mod-2 timer increase
 	ttt = 1 - ttt;

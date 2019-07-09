@@ -5,6 +5,8 @@ This file contains basic error handling functions and error checking functions.
 #include "Defines.h"
 #include "Error.h"
 
+uint8_t disctimer = 0;
+
 char* get_error(enum _error e)
 {
 	switch(e)
@@ -67,7 +69,16 @@ void e_checkranges()
 void e_checkdiscrepancy()
 {
 	int8_t dif = gas1perc - gas2perc;
-	if(dif < -10 || dif > 10) _errorcode = ERROR_GAS_DISCREPANCY;
+	if(dif < -10 || dif > 10)
+	{
+		//as per regulations, error should be raised when there is a discrepancy of more than 10% for more than 100ms continuously
+		if(disctimer <= DISCREPANCY_TICKS) disctimer++;
+	}
+	else
+	{
+		disctimer = 0;
+	}
+	if(disctimer >= DISCREPANCY_TICKS) _errorcode = ERROR_GAS_DISCREPANCY;
 }
 
 void e_checksensors()
