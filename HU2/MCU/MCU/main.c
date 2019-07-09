@@ -150,6 +150,9 @@ uint16_t EEMEM ee_MC_DIFF_FAC = 0;						//Differential percentage
 volatile uint32_t engine_max_perc = 100;
 volatile uint8_t differential_perc = 100;
 
+uint16_t disable_drive_timer = 0;
+uint8_t disable_motor_braking = 0;
+
 ISR(TIMER0_COMP_vect)
 {	
 	//tx_count = TCNT0;
@@ -415,27 +418,31 @@ ISR(TIMER0_COMP_vect)
 		//The screen that appears after predischarging; Only one press of the green LAUNCH button to start driving. (run_enable)
 		case SCREEN_STATUS:
 		
-			if(btngreen == 1)
+			//As per regulations, you can only start the car if the brake pedal is pushed
+			if(brakeperc > START_BRAKE_MINPERCENT)
 			{
+				if(btngreen == 1)
+				{
 #ifndef _NOCAN
-				data_send_ecu(RUN_ENABLE, _HIGH);
+					data_send_ecu(RUN_ENABLE, _HIGH);
 #endif
-				//ready to drive sound
-				readybeep = RTDS_TIME;
-				PORTC |= 1 << RTDS;
+					//ready to drive sound
+					readybeep = RTDS_TIME;
+					PORTC |= 1 << RTDS;
 				
-				change_screen(SCREEN_DRIVING);
-			}
-			if(btn1 && btn2)
-			{
+					change_screen(SCREEN_DRIVING);
+				}
+				if(btn1 && btn2)
+				{
 #ifndef _NOCAN
-				data_send_ecu(RUN_ENABLE, _HIGH);
+					data_send_ecu(RUN_ENABLE, _HIGH);
 #endif
-				//ready to drive sound
-				readybeep = RTDS_TIME;
-				PORTC |= 1 << RTDS;
+					//ready to drive sound
+					readybeep = RTDS_TIME;
+					PORTC |= 1 << RTDS;
 				
-				change_screen(SCREEN_DRIVETEST);
+					change_screen(SCREEN_DRIVETEST);
+				}
 			}
 			//data_send_ecu(PUMP_ENABLE, _HIGH); //put on the pumps after predischarge (against voltage drop)
 			break;
@@ -451,14 +458,23 @@ ISR(TIMER0_COMP_vect)
 			}
 				
 			if(_errorcode == ERROR_NONE)
-			{
-				//struct torques tq = getDifferential(gas1perc, steerpos, vsettings[SETTING_DIFF_FAC]);
-					
-				//struct slips sp = detectSlip(rpm_bl, rpm_br, tq);	
-				//tq = solveSlip(sp, tq);
+			{	
 				struct torques tq;
-				tq.right_perc = gas1perc;
-				tq.left_perc = gas1perc;
+				if(disable_motor_braking)
+				{
+					tq.right_perc = 0;
+					tq.left_perc = 0;
+				}
+				else
+				{
+					//tq = getDifferential(gas1perc, steerpos, vsettings[SETTING_DIFF_FAC]);
+					
+					//struct slips sp = detectSlip(rpm_bl, rpm_br, tq);	
+					//tq = solveSlip(sp, tq);
+					tq.right_perc = gas1perc;
+					tq.left_perc = gas1perc;
+				}
+				
 
 #ifndef _NOCAN					
 				data_send_motor_d(MC_SET_TORQUE, -tq.right_perc, ENGINE_MAX, MCDR); //Right driver should get a negative value to drive forward
@@ -467,14 +483,17 @@ ISR(TIMER0_COMP_vect)
 #endif
 			}
 			
-			//Turn off vehicle by pressing top buttons together
-			if(btn1 && btn2)
+			//Turn off vehicle by pressing top buttons together for more than 1 second
+			if((btn1 == 1 && btn2 > 0) || (btn1 > 0 && btn2 == 1))
 			{
+				disable_drive_timer++;
+				if(disable_drive_timer > 500)
+				{
 #ifndef _NOCAN
-				data_send_ecu(RUN_ENABLE, _LOW);
+					data_send_ecu(RUN_ENABLE, _LOW);
 #endif
-				
-				change_screen(SCREEN_STATUS);
+					change_screen(SCREEN_STATUS);
+				}
 			}
 			break;
 	
@@ -574,8 +593,6 @@ ISR(TIMER0_COMP_vect)
 		case SCREEN_TEST:
 			if(btn2 == 1 || btn2 == 0xFF) test_mob = (test_mob == MOBCOUNT - 1) ? 0 : test_mob + 1;
 			else if(btn1 == 1 || btn1 == 0xFF) test_mob = (test_mob == 0) ? MOBCOUNT - 1 : test_mob - 1;
-			
-			if((btn1 == 1 && btn2 > 0) || (btn1 > 0 && btn2 == 1)) change_screen(SCREEN_PUMPTEST);
 		
 			//Return button
 			if(btngreen == 1) change_screen(SCREEN_WELCOME);
@@ -591,10 +608,18 @@ ISR(TIMER0_COMP_vect)
 				if(btn2 == 1 || btn2 == 0xFF) dt_engv = ((dt_engv == 100) ? 100 : dt_engv + 1);
 				if(btn1 == 1 || btn1 == 0xFF) dt_engv = ((dt_engv == 0) ? 0 : dt_engv - 1);
 				
-				//struct torques tq = getDifferential(dt_engv, steerpos, vsettings[SETTING_DIFF_FAC]);
 				struct torques tq;
-				tq.right_perc = dt_engv;
-				tq.left_perc = dt_engv;
+				if(disable_motor_braking)
+				{
+					tq.right_perc = 0;
+					tq.left_perc = 0;
+				}
+				else
+				{
+					//tq = getDifferential(dt_engv, steerpos, vsettings[SETTING_DIFF_FAC]);
+					tq.right_perc = dt_engv;
+					tq.left_perc = dt_engv;
+				}
 				
 #ifndef _NOCAN
 				if(btnblue == 1) data_send_motor_d(MC_SET_TORQUE, 0, ENGINE_MAX, MCDR);
@@ -605,18 +630,6 @@ ISR(TIMER0_COMP_vect)
 #endif
 			}
 			break;
-			
-		//Pump test screen
-		case SCREEN_PUMPTEST:
-			if(btn2 == 1 || btn2 == 0xFF) pump_pwm = ((pump_pwm == 0xFF) ? 0xFF : pump_pwm + 1);
-			if(btn1 == 1 || btn1 == 0xFF) pump_pwm = ((pump_pwm == 0) ? 0 : pump_pwm - 1);
-			if(btnblue == 1 || btngreen == 1) pump_pwm = 0;
-
-#ifndef _NOCAN
-			data_send_ecu(PUMP_ENABLE, pump_pwm);
-#endif
-			
-			if(btngreen == 1) change_screen(SCREEN_WELCOME);
 			
 			
 			
@@ -659,7 +672,19 @@ ISR(TIMER0_COMP_vect)
 		data_send_ecu(BRAKELIGHT, _LOW);
 #endif
 	}
-
+	
+	//As per regulations, cut motors (i.e. only and immediately send the value 0) when braking is over 25% and re-enable when it's under 5%
+	if(brakeperc > CUTPOWER_BRAKE_H)
+	{
+		disable_motor_braking = 1;
+	}
+	if(brakeperc < CUTPOWER_BRAKE_L)
+	{
+		disable_motor_braking = 0;
+	}
+	
+	
+	
 	//mod-2 timer increase
 	ttt = 1 - ttt;
 	

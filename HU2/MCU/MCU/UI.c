@@ -41,12 +41,12 @@ void lcd_refresh()
 {
 	TCNT2 = _TM2;
 	get_screen(Linebuffer, ui_current_screen);
-
-	/*	
+	
 	if(shutdownon)
 	{
-		Linebuffer[2][0] = 'S';
+		Linebuffer[0][0] = '#';
 	}
+	/*
 	if(ams_shutdown)
 	{
 		Linebuffer[2][1] = 'A';
@@ -180,13 +180,6 @@ void get_screen(char buffer[4][21], enum uiscreen s)
 			snprintf(buffer[1], sizeof buffer[1], "Temp: L%5u  R%5u", templeft, tempright);
 			snprintf(buffer[2], sizeof buffer[2], "Blue=stop, green=go ");
 			snprintf(buffer[3], sizeof buffer[3], "Current: %4d A     ", ccurrent);
-			break;
-			
-		case SCREEN_PUMPTEST:
-			snprintf(buffer[0], sizeof buffer[0], "Pump: %3d           ", pump_pwm);
-			snprintf(buffer[1], sizeof buffer[1], "                    ");
-			snprintf(buffer[2], sizeof buffer[2], "Blue to set to 0    ");
-			snprintf(buffer[3], sizeof buffer[3], "Green to close      ");
 			break;
 			
 			

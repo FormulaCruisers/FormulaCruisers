@@ -30,7 +30,6 @@ enum uiscreen
 	//Testing screens
 	SCREEN_TEST,
 	SCREEN_DRIVETEST,
-	SCREEN_PUMPTEST,
 	
 	//Error screens
 	SCREEN_ERROR,
