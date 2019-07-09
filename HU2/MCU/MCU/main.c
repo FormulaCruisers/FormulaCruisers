@@ -226,10 +226,28 @@ ISR(TIMER0_COMP_vect)
 
 	//Processing of all variables
 	//Gas and brake percentages
-	gas1perc = (gas1 < GAS1MIN) ? 0 : ((gas1 > GAS1MAX) ? (GAS1MAX - GAS1MIN) : (gas1 - GAS1MIN));
-	gas1perc = (gas1perc * 100) / (GAS1MAX - GAS1MIN);
-	gas2perc = (gas2 < GAS2MIN) ? 0 : ((gas2 > GAS2MAX) ? (GAS2MAX - GAS2MIN) : (gas2 - GAS2MIN));
-	gas2perc = (gas2perc * 100) / (GAS2MAX - GAS2MIN);
+	if(GAS1MIN < GAS1MAX)
+	{
+		gas1perc = (gas1 < GAS1MIN) ? 0 : ((gas1 > GAS1MAX) ? (GAS1MAX - GAS1MIN) : (gas1 - GAS1MIN));
+		gas1perc = (gas1perc * 100) / (GAS1MAX - GAS1MIN);
+	}
+	else
+	{
+		gas1perc = (gas1 < GAS1MAX) ? 0 : ((gas1 > GAS1MIN) ? (GAS1MIN - GAS1MAX) : (gas1 - GAS1MAX));
+		gas1perc = 100 - (gas1perc * 100) / (GAS1MIN - GAS1MAX);
+	}
+	
+	if(GAS2MIN < GAS2MAX)
+	{
+		gas2perc = (gas2 < GAS2MIN) ? 0 : ((gas2 > GAS2MAX) ? (GAS2MAX - GAS2MIN) : (gas2 - GAS2MIN));
+		gas2perc = (gas2perc * 100) / (GAS2MAX - GAS2MIN);
+	}
+	else
+	{
+		gas2perc = (gas2 < GAS2MAX) ? 0 : ((gas2 > GAS2MIN) ? (GAS2MIN - GAS2MAX) : (gas2 - GAS2MAX));
+		gas2perc = 100 - (gas2perc * 100) / (GAS2MIN - GAS2MAX);
+	}
+	
 	brakeperc = (brake < BRAKEMIN) ? 0 : ((brake > BRAKEMAX) ? (BRAKEMAX - BRAKEMIN) : (brake - BRAKEMIN));
 	brakeperc = (brakeperc * 100) / (BRAKEMAX - BRAKEMIN);
 	
@@ -390,7 +408,7 @@ ISR(TIMER0_COMP_vect)
 			}
 			
 			//Calibration
-			if(btngreen == 1)
+			if(btngreen > 10)
 			{
 				GAS1MIN = gas1 + CALIB_SLACK;
 				GAS2MIN = gas2 + CALIB_SLACK;
@@ -565,6 +583,16 @@ ISR(TIMER0_COMP_vect)
 			{
 				GAS1MAX = gas1 - CALIB_SLACK;
 				GAS2MAX = gas2 - CALIB_SLACK;
+				if(GAS1MAX < GAS1MIN)
+				{
+					GAS1MIN -= CALIB_SLACK * 2;
+					GAS1MAX += CALIB_SLACK * 2
+				}
+				if(GAS2MAX < GAS2MIN)
+				{
+					GAS2MIN -= CALIB_SLACK * 2;
+					GAS2MAX += CALIB_SLACK * 2
+				}
 				BRAKEMAX = brake;
 					
 				//Write to EEPROM
