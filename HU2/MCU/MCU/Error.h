@@ -16,10 +16,12 @@ enum _error
 	ERROR_GAS1RANGE,		//When gas sensor 1 is far out of range
 	ERROR_GAS2RANGE,		//When gas sensor 2 is far out of range
 	ERROR_BRAKERANGE,		//When the brake sensor is far out of range
+	ERROR_STEERRANGE,		//When the steering sensor is far out of range
 	
 	ERROR_GAS1SENSOR,		//When gas sensor 1 is not giving a (correct) readout
 	ERROR_GAS2SENSOR,		//When gas sensor 2 is not giving a (correct) readout
 	ERROR_BRAKESENSOR,		//When the brake sensor is not giving a (correct) readout
+	ERROR_STEERSENSOR,		//When the steering sensor is not giving a (correct) readout
 	
 	ERROR_PUMPFLOW,			//When the pump is on but there is no flow
 	ERROR_PUMPTEMP,			//When the pump gets too hot
@@ -51,7 +53,7 @@ enum _error
 	ERROR_UNKNOWN,			//For unknown errors
 };
 
-extern volatile uint16_t gas1, gas2, brake, gas1perc, gas2perc, brakeperc, flowleft, flowright;
+extern volatile uint16_t gas1, gas2, brake, gas1perc, gas2perc, brakeperc, flowleft, flowright, steerposm;
 extern volatile enum _error _errorcode;
 
 extern uint16_t GAS1MIN, GAS1MAX, GAS2MIN, GAS2MAX, BRAKEMIN, BRAKEMAX;

@@ -17,10 +17,12 @@ char* get_error(enum _error e)
 		case ERROR_GAS1RANGE:		return "Gas 1 out of range";
 		case ERROR_GAS2RANGE:		return "Gas 2 out of range";
 		case ERROR_BRAKERANGE:		return "Brake out of range";
+		case ERROR_STEERRANGE:		return "Steer out of range";
 
 		case ERROR_GAS1SENSOR:		return "Gas 1 sensor faulty";
 		case ERROR_GAS2SENSOR:		return "Gas 2 sensor faulty";
 		case ERROR_BRAKESENSOR:		return "Brake sensor faulty";
+		case ERROR_STEERSENSOR:		return "Steer sensor faulty";
 		
 		case ERROR_PUMPFLOW:		return "No pump water flow";
 		case ERROR_PUMPTEMP:		return "Pump temp too high";
@@ -58,7 +60,8 @@ void e_checkranges()
 {
 	if(gas1 < GAS1MIN - RANGESLACK || gas1 > GAS1MAX + RANGESLACK) _errorcode = ERROR_GAS1RANGE;
 	if(gas2 < GAS2MIN - RANGESLACK || gas2 > GAS2MAX + RANGESLACK) _errorcode = ERROR_GAS2RANGE;
-	//if(brake < BRAKEMAX - RANGESLACK || brake > BRAKEMAX + RANGESLACK) _errorcode = ERROR_BRAKERANGE;
+	if(brake < BRAKEMAX - RANGESLACK || brake > BRAKEMAX + RANGESLACK) _errorcode = ERROR_BRAKERANGE;
+	if(steerposm < STEER_MIN - RANGESLACK || steerposm > STEER_MAX + RANGESLACK) _errorcode = ERROR_BRAKERANGE;
 }
 
 void e_checkdiscrepancy()
@@ -72,6 +75,7 @@ void e_checksensors()
 	if(gas1 == 0x0000 || gas1 == 0xFFFF) _errorcode = ERROR_GAS1SENSOR;
 	if(gas2 == 0x0000 || gas2 == 0xFFFF) _errorcode = ERROR_GAS2SENSOR;
 	if(brake == 0x0000 || brake == 0xFFFF) _errorcode = ERROR_BRAKESENSOR;
+	if(steerposm == 0x0000 || steerposm == 0xFFFF) _errorcode = ERROR_STEERSENSOR;
 }
 
 void e_checkflow()

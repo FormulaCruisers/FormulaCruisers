@@ -128,10 +128,10 @@ void get_screen(char buffer[4][21], enum uiscreen s)
 			break;
 
 		case SCREEN_DRIVING:
-			snprintf(buffer[0], sizeof buffer[0], "      %4u  km/h      ", (uint16_t)velocity);
-			snprintf(buffer[1], sizeof buffer[1], "   %.1f g               ", (float)accel_gforce);
-			snprintf(buffer[2], sizeof buffer[2], "Battery: %.1f V         ", (float)battery_voltage);
-			snprintf(buffer[3], sizeof buffer[3], "                      ");
+			snprintf(buffer[0], sizeof buffer[0], "     %4u  km/h      ", (uint16_t)velocity);
+			snprintf(buffer[1], sizeof buffer[1], "   %.1f g            ", (float)accel_gforce);
+			snprintf(buffer[2], sizeof buffer[2], "Battery: %.1f V      ", (float)battery_voltage);
+			snprintf(buffer[3], sizeof buffer[3], "Current: %4d A      ", ccurrent);
 			break;
 			//"Battery: NAN%%       ");
 		
@@ -178,8 +178,8 @@ void get_screen(char buffer[4][21], enum uiscreen s)
 		case SCREEN_DRIVETEST:
 			snprintf(buffer[0], sizeof buffer[0], "Engine: %3d%%        ", dt_engv);
 			snprintf(buffer[1], sizeof buffer[1], "Temp: L%5u  R%5u", templeft, tempright);
-			snprintf(buffer[2], sizeof buffer[2], "Blue to stop motor  ");
-			snprintf(buffer[3], sizeof buffer[3], "Green to apply      ");
+			snprintf(buffer[2], sizeof buffer[2], "Blue=stop, green=go ");
+			snprintf(buffer[3], sizeof buffer[3], "Current: %4d A     ", ccurrent);
 			break;
 			
 		case SCREEN_PUMPTEST:

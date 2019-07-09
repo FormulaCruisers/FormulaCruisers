@@ -50,6 +50,7 @@ volatile uint16_t rpm_fr = 0;
 volatile uint16_t rpm_bl = 0;
 volatile uint16_t rpm_br = 0;
 volatile double steerpos = 0;
+volatile uint16_t steerposm = 0;
 
 volatile uint16_t flowleft = 0;
 volatile uint16_t flowright = 0;
@@ -162,12 +163,19 @@ ISR(TIMER0_COMP_vect)
 	//if(sentimer == 3) data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){RPM_BACK_LEFT, FLOW_LEFT, TEMP_LEFT}, NODEID3, 3);
 	//if(sentimer == 4) data_send_arr(CAN_REQUEST_DATA, (uint8_t[]){RPM_BACK_RIGHT, FLOW_RIGHT, TEMP_RIGHT}, NODEID4, 3);
 	if(sentimer == 5) data_send0(AMS_MSG_VOLTAGE);
-	if(sentimer == 6) req_ADC(A_MCURRENT, &mcurrent);
+	
+	if(sentimer % 20 == 0) req_ADC(A_MCURRENT, &mcurrent);
+	
 	sentimer++;
 	if(sentimer > 200) sentimer = 0;
 
+
+
+
+
 	//Steering box
-	steerpos = (int16_t)(g(NODEID1, MOB_STEERING_POS) - STEER_MIDDLE); // NOT in degrees
+	steerposm = g(NODEID1, MOB_STEERING_POS);
+	steerpos = (int16_t)(steerposm - STEER_MIDDLE); // NOT in degrees
 	rpm_fl = 500000.d / (double)g(NODEID1, MOB_RPM_FRONT_LEFT);
 	rpm_fr = 500000.d / (double)g(NODEID1, MOB_RPM_FRONT_RIGHT);
 	
@@ -184,6 +192,7 @@ ISR(TIMER0_COMP_vect)
 	gas2 = g(NODEID2, MOB_GAS2);
 	brake = g(NODEID2, MOB_BRAKE);
 	
+	/*
 	//Node 3
 	rpm_bl = 500000.d / (double)g(NODEID3, MOB_RPM_BACK_LEFT); //straal * 2pi * (rpn_br) / 60 * 3.6
 	flowleft = g(NODEID3, MOB_FLOW_LEFT);
@@ -203,7 +212,7 @@ ISR(TIMER0_COMP_vect)
 	
 	tempright = (tempright - 65570);				//temp right in voltage 0-255 (0-5 volt) 
 	tempright = (tempright*-0.11945024) + 91.622;	//linealisering for temp calculations
-	//tempright = tempright
+	//tempright = tempright*/
 
 	//tempright = -4.7037*((tempright*(5/255))*(tempright*(5/255))*(tempright*(5/255))) + 38.992*((tempright*(5/255))*(tempright*(5/255))) - 117.24*(tempright*(5/255)) + 148.4;		// temp in graden
 
@@ -456,6 +465,16 @@ ISR(TIMER0_COMP_vect)
 				_delay_us(2);	//Experimental: 2 µs delay between drivers instead of using timer
 				data_send_motor_d(MC_SET_TORQUE, tq.left_perc, ENGINE_MAX, MCDL);
 #endif
+			}
+			
+			//Turn off vehicle by pressing top buttons together
+			if(btn1 && btn2)
+			{
+#ifndef _NOCAN
+				data_send_ecu(RUN_ENABLE, _LOW);
+#endif
+				
+				change_screen(SCREEN_STATUS);
 			}
 			break;
 	
