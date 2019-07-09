@@ -20,6 +20,14 @@ struct torques getDifferential(double Tmid, double steerpos, uint8_t percentage)
 		return ret;
 	}
 	
+	//Bypass calculation completely when the factor is 0 (just in case)
+	if(percentage == 0)
+	{
+		ret.left_perc = Tmid;
+		ret.right_perc = Tmid;
+		return ret;
+	}
+	
 	double steerangle = steerpos * 0.0090623; //TODO: Check this calibration value
 	
 	//To not get stupid values

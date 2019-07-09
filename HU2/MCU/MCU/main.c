@@ -486,12 +486,10 @@ ISR(TIMER0_COMP_vect)
 				}
 				else
 				{
-					//tq = getDifferential(gas1perc, steerpos, vsettings[SETTING_DIFF_FAC]);
+					tq = getDifferential(gas1perc, steerpos, vsettings[SETTING_DIFF_FAC]);
 					
 					//struct slips sp = detectSlip(rpm_bl, rpm_br, tq);	
 					//tq = solveSlip(sp, tq);
-					tq.right_perc = gas1perc;
-					tq.left_perc = gas1perc;
 				}
 				
 
@@ -645,9 +643,7 @@ ISR(TIMER0_COMP_vect)
 				}
 				else
 				{
-					//tq = getDifferential(dt_engv, steerpos, vsettings[SETTING_DIFF_FAC]);
-					tq.right_perc = dt_engv;
-					tq.left_perc = dt_engv;
+					tq = getDifferential(dt_engv, steerpos, vsettings[SETTING_DIFF_FAC]);
 				}
 				
 #ifndef _NOCAN
