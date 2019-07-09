@@ -152,6 +152,7 @@ volatile uint8_t differential_perc = 100;
 
 uint16_t disable_drive_timer = 0;
 uint8_t disable_motor_braking = 0;
+uint8_t allow_turning_on = 0;
 
 ISR(TIMER0_COMP_vect)
 {	
@@ -417,9 +418,7 @@ ISR(TIMER0_COMP_vect)
 		
 		//The screen that appears after predischarging; Only one press of the green LAUNCH button to start driving. (run_enable)
 		case SCREEN_STATUS:
-		
-			//As per regulations, you can only start the car if the brake pedal is pushed
-			if(brakeperc > START_BRAKE_MINPERCENT)
+			if(allow_turning_on)
 			{
 				if(btngreen == 1)
 				{
@@ -682,6 +681,9 @@ ISR(TIMER0_COMP_vect)
 	{
 		disable_motor_braking = 0;
 	}
+	//As per regulations, only allow turning on the car if the brake is pressed
+	allow_turning_on = brakeperc > START_BRAKE_MINPERCENT;
+	
 	
 	
 	

@@ -47,6 +47,7 @@ extern volatile uint16_t ccurrent;
 extern volatile uint8_t dt_engv, pump_pwm;
 extern uint16_t boot_count;
 extern bool brakelighton;
+extern uint8_t disable_motor_braking, allow_turning_on;
 
 extern volatile uint8_t test_mob;
 extern volatile uint64_t test_value;

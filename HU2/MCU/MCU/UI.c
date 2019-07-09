@@ -121,16 +121,30 @@ void get_screen(char buffer[4][21], enum uiscreen s)
 			break;
 
 		case SCREEN_STATUS:
-			snprintf(buffer[0], sizeof buffer[0], "Temp: L%5u  R%5u", templeft, tempright);
-			snprintf(buffer[1], sizeof buffer[1], "Rpm: FL%5u FR%5u", rpm_fl, rpm_fr);
-			snprintf(buffer[2], sizeof buffer[2], "Gas1:%3u%% Gas2:%3u%% ", gas1perc, gas2perc);
-			snprintf(buffer[3], sizeof buffer[3], "Steerpos: %3d       ", (int16_t)steerpos);
+			snprintf(buffer[0], sizeof buffer[0], "Gas1:%3u%% Gas2:%3u%% ", gas1perc, gas2perc);
+			snprintf(buffer[1], sizeof buffer[1], "Steerpos: %3d       ", (int16_t)steerpos);
+			snprintf(buffer[2], sizeof buffer[2], "Battery: %.1f V       ", (float)battery_voltage);
+			if(allow_turning_on)
+			{
+				snprintf(buffer[3], sizeof buffer[3], "Press green to start");
+			}
+			else
+			{
+				snprintf(buffer[3], sizeof buffer[3], "No brake=can't start");
+			}
 			break;
 
 		case SCREEN_DRIVING:
-			snprintf(buffer[0], sizeof buffer[0], "     %4u  km/h      ", (uint16_t)velocity);
-			snprintf(buffer[1], sizeof buffer[1], "   %.1f g            ", (float)accel_gforce);
-			snprintf(buffer[2], sizeof buffer[2], "Battery: %.1f V      ", (float)battery_voltage);
+			if(disable_motor_braking)
+			{
+				snprintf(buffer[0], sizeof buffer[0], "##### %4u km/h #####", (uint16_t)velocity);
+			}
+			else
+			{
+				snprintf(buffer[0], sizeof buffer[0], "      %4u km/h      ", (uint16_t)velocity);
+			}
+			snprintf(buffer[1], sizeof buffer[1], "   %.1f g             ", (float)accel_gforce);
+			snprintf(buffer[2], sizeof buffer[2], "Battery: %.1f V       ", (float)battery_voltage);
 			snprintf(buffer[3], sizeof buffer[3], "Current: %4d A      ", ccurrent);
 			break;
 			//"Battery: NAN%%       ");
