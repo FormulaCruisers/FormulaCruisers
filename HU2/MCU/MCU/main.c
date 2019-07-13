@@ -410,7 +410,7 @@ ISR(TIMER0_COMP_vect)
 			}
 			
 			//Calibration
-			if(btngreen > 10)
+			if(btngreen == 1)
 			{
 				GAS1MIN = gas1 + CALIB_SLACK;
 				GAS2MIN = gas2 + CALIB_SLACK;
@@ -579,7 +579,7 @@ ISR(TIMER0_COMP_vect)
 				
 		//Calibration screen
 		case SCREEN_CALIBRATE:
-			if(btngreen == 1)
+			if(btn1 == 1)
 			{
 				GAS1MAX = gas1 - CALIB_SLACK;
 				GAS2MAX = gas2 - CALIB_SLACK;

@@ -172,7 +172,7 @@ void get_screen(char buffer[4][21], enum uiscreen s)
 			snprintf(buffer[0], sizeof buffer[0], "Press both pedals to");
 			snprintf(buffer[1], sizeof buffer[1], "their maximum       ");
 			snprintf(buffer[2], sizeof buffer[2], "                    ");
-			snprintf(buffer[3], sizeof buffer[3], "Then press green    ");
+			snprintf(buffer[3], sizeof buffer[3], "Then press left btn ");
 			break;
 		
 		
