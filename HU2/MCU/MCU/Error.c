@@ -6,6 +6,7 @@ This file contains basic error handling functions and error checking functions.
 #include "Error.h"
 
 uint8_t disctimer = 0;
+uint8_t cantimer = 0
 
 char* get_error(enum _error e)
 {
@@ -96,9 +97,17 @@ void e_checkflow()
 
 void e_checkCAN()
 {
-	if(CANSTMOB & (1<<BERR)) _errorcode = ERROR_CAN_BIT;
-	if(CANSTMOB & (1<<SERR)) _errorcode = ERROR_CAN_STUFF;
-	if(CANSTMOB & (1<<CERR)) _errorcode = ERROR_CAN_CRC;
-	if(CANSTMOB & (1<<FERR)) _errorcode = ERROR_CAN_FORM;
-	if(CANSTMOB & (1<<AERR)) _errorcode = ERROR_CAN_ACK;
+	_error t_errorcode = ERROR_NONE;
+	if(CANSTMOB & (1<<BERR)) t_errorcode = ERROR_CAN_BIT;
+	if(CANSTMOB & (1<<SERR)) t_errorcode = ERROR_CAN_STUFF;
+	if(CANSTMOB & (1<<CERR)) t_errorcode = ERROR_CAN_CRC;
+	if(CANSTMOB & (1<<FERR)) t_errorcode = ERROR_CAN_FORM;
+	if(CANSTMOB & (1<<AERR)) t_errorcode = ERROR_CAN_ACK;
+	
+	//avoid one-off CAN errors shutting down the whole car
+	if(t_errorcode != ERROR_NONE)
+	{
+		cantimer++;
+		if(cantimer>15) _errorcode = t_errorcode;
+	}
 }
