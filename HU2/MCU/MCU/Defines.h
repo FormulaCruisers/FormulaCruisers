@@ -10,7 +10,7 @@ This is a central header file containing a lot of defined constants that are use
 #define F_CPU 16000000UL	// Define processor clock speed for compiler
 #endif
 
-#define SOFTWARE_VERSION			"Software: V2.170(pFC)"  //Version should be 2.xxx where xxx is amount of commits(do "git rev-list HEAD --count" to check)
+#define SOFTWARE_VERSION			"Software: V2.171 <FS "  //Version should be 2.xxx where xxx is amount of commits(do "git rev-list HEAD --count" to check)
 
 #define RTDS						PC7 //Loud ready beep
 #define RTDS_TIME					1100 //1100 / 500 = 2.2 seconds    //Has to be between 1 and 3 seconds!
@@ -25,8 +25,6 @@ This is a central header file containing a lot of defined constants that are use
 #define BUTTON2						PD1
 #define BUTTONBLUE					PD2
 #define BUTTONGREEN					PD3
-#define IMDLED						PE7
-#define AMSLED						PE5
 
 #define DEBOUNCE_TIME				16 // 16*(1000/500) = 24 ms == Time to debounce a button
 #define SHUTDOWN_TIME				64
@@ -38,8 +36,6 @@ This is a central header file containing a lot of defined constants that are use
 
 #define CANTIMEOUT					100	//100 ms
 #define RX_WAIT_LIMIT				200 //200 cycles
-
-#define LED_TEST_TIME				1100 //1100 / 500 = 2.2 seconds, has to be between 1 and 3 seconds
 
 #define SETTINGS_COUNT				5
 #define SETTING_N_LIMIT		0
