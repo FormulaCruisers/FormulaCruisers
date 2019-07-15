@@ -155,6 +155,7 @@ uint8_t disable_motor_braking = 0;
 uint8_t allow_turning_on = 0;
 
 uint8_t MCU_shutdown = 0;
+uint16_t led_test_timer = LED_TEST_TIME;
 
 ISR(TIMER0_COMP_vect)
 {	
@@ -680,7 +681,23 @@ ISR(TIMER0_COMP_vect)
 	
 	
 	
-	
+	//LED test
+	if(led_test_timer > 0)
+	{
+		led_test_timer--;
+		if(led_test_timer == 1)
+		{
+			//turn off LEDs
+			PORTE &= ~(1<<AMSLED);
+			PORTE &= ~(1<<IMDLED);
+		}
+		else if(led_test_timer > 1)
+		{
+			//turn on LEDs
+			PORTE |= (1<<AMSLED);
+			PORTE |= (1<<IMDLED);
+		}
+	}
 	
 	//Brakelight logic
 	if(brakeperc >= BL_SWITCHON && !brakelighton)
@@ -714,10 +731,12 @@ ISR(TIMER0_COMP_vect)
 	if(ams_shutdown)
 	{
 		//TODO: turn on AMS LED
+		PORTE |= (1<<AMSLED)
 	}
 	if(imd_shutdown)
 	{
 		//TODO: turn on IMD LED
+		PORTE |= (1<<IMDLED)
 	}
 	
 	//mod-2 timer increase
@@ -810,6 +829,8 @@ int main(void)
 	TCCR2A |= (1 << CS01)|(1 << CS00);		//Prescaler
 	TIFR2   = (1 << TOV2);					//Clear interrupt flags
 	TIMSK2  = (1 << TOIE2);					//Overflow interrupt enable
+	
+	DDRE |= (1<<AMSLED) | (1<<IMDLED);
 	
 	can_init();
 	can_rx(MASTERID);

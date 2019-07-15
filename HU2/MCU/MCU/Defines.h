@@ -10,10 +10,10 @@ This is a central header file containing a lot of defined constants that are use
 #define F_CPU 16000000UL	// Define processor clock speed for compiler
 #endif
 
-#define SOFTWARE_VERSION			"Software: V2.166    "  //Version should be 2.xxx where xxx is amount of commits(do "git rev-list HEAD --count" to check)
+#define SOFTWARE_VERSION			"Software: V2.170(pFC)"  //Version should be 2.xxx where xxx is amount of commits(do "git rev-list HEAD --count" to check)
 
 #define RTDS						PC7 //Loud ready beep
-#define RTDS_TIME					1100 //1000 / 500 = 2 seconds    //Has to be between 1 and 3 seconds!
+#define RTDS_TIME					1100 //1100 / 500 = 2.2 seconds    //Has to be between 1 and 3 seconds!
 
 #define START_BRAKE_MINPERCENT		5	//Brake pedal has to be pushed at least 5% according to the calibration values to start the car
 #define CUTPOWER_BRAKE_H			25	//Brake pedal above 25% means that no more power should be sent to the motors
@@ -38,6 +38,8 @@ This is a central header file containing a lot of defined constants that are use
 
 #define CANTIMEOUT					100	//100 ms
 #define RX_WAIT_LIMIT				200 //200 cycles
+
+#define LED_TEST_TIME				1100 //1100 / 500 = 2.2 seconds, has to be between 1 and 3 seconds
 
 #define SETTINGS_COUNT				5
 #define SETTING_N_LIMIT		0
