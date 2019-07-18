@@ -6,7 +6,7 @@ This file contains basic error handling functions and error checking functions.
 #include "Error.h"
 
 uint8_t disctimer = 0;
-uint8_t cantimer = 0
+uint8_t cantimer = 0;
 
 char* get_error(enum _error e)
 {
@@ -31,6 +31,8 @@ char* get_error(enum _error e)
 		case ERROR_PUMPTEMP:		return "Pump temp too high";
 		
 		case ERROR_SHUTDOWN:		return "Shutdown!";
+		
+		case ERROR_NODATA:			return "Lost CAN connection";
 		
 		case ERROR_CAN_BIT:			return "CAN bit tx error";
 		case ERROR_CAN_STUFF:		return "CAN stuffing error";
@@ -97,7 +99,7 @@ void e_checkflow()
 
 void e_checkCAN()
 {
-	_error t_errorcode = ERROR_NONE;
+	enum _error t_errorcode = ERROR_NONE;
 	if(CANSTMOB & (1<<BERR)) t_errorcode = ERROR_CAN_BIT;
 	if(CANSTMOB & (1<<SERR)) t_errorcode = ERROR_CAN_STUFF;
 	if(CANSTMOB & (1<<CERR)) t_errorcode = ERROR_CAN_CRC;

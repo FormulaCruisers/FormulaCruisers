@@ -95,7 +95,6 @@ uint16_t sd_current_pos = 0;
 
 //test screen variables
 volatile uint8_t dt_engv = 0;
-volatile uint8_t pump_pwm = 0;
 volatile uint8_t test_mob = 0;
 volatile uint64_t test_value = 0;
 
@@ -156,6 +155,8 @@ uint8_t allow_turning_on = 0;
 
 uint8_t MCU_shutdown = 0;
 
+volatile int16_t[] data_received_timer = [-1,-1,-1,-1,-1];
+
 ISR(TIMER0_COMP_vect)
 {	
 	//tx_count = TCNT0;
@@ -175,7 +176,18 @@ ISR(TIMER0_COMP_vect)
 	sentimer++;
 	if(sentimer > 200) sentimer = 0;
 
-
+	//Data receive timer, starts counting after it gets a message from a node at least once
+	for(int i = 0; i < MOBCOUNT; i++)
+	{
+		if(data_received_timer[i] >= 0)
+		{
+			data_received_timer[i]++;
+			if(data_received_timer[i] > NODATA_TIMER)
+			{
+				_errorcode = NODATA_TIMER;
+			}
+		}
+	}
 
 
 
@@ -224,7 +236,7 @@ ISR(TIMER0_COMP_vect)
 
 	
 	shutdownon = g(ECU2ID, MOB_SHUTDOWN) ? 0 : 1;
-	if(shutdowntimer < SHUTDOWN_TIME || !shutdownon) shutdowntimer = (shutdowntimer + shutdownon) * shutdownon;
+	if(shutdowntimer < SHUTDOWN_TIME || shutdownon) shutdowntimer = (shutdowntimer + shutdownon) * shutdownon;
 
 	//Processing of all variables
 	//Gas and brake percentages
@@ -286,7 +298,7 @@ ISR(TIMER0_COMP_vect)
 	debounce(&btn1, PIND & (1<<BUTTON1)); //The button that is above the green button (i.e. left)
 	debounce(&btn2, PIND & (1<<BUTTON2)); //The button that is above the blue button (i.e. right)
 	
-	if(shutdownon >= SHUTDOWN_TIME || ams_shutdown || imd_shutdown)
+	if(shutdowntimer >= SHUTDOWN_TIME || ams_shutdown || imd_shutdown)
 	{
 		if(ui_current_screen == SCREEN_PREDISCHARGING || ui_current_screen == SCREEN_DRIVING || ui_current_screen == SCREEN_STATUS || ui_current_screen == SCREEN_DRIVETEST)
 		{
@@ -359,7 +371,6 @@ ISR(TIMER0_COMP_vect)
 					change_screen(SCREEN_ANIMATION);
 				}
 			}
-			
 			if(btnblue == 1)
 			{
 #ifndef _NOCAN

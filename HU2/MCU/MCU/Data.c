@@ -146,7 +146,8 @@ skip:
 		CANPAGE = (i + 4) << 4;
 		if (CANSTMOB & (1 << RXOK))
 		{
-			
+			//reset receive timer
+			data_received_timer[i] = 0;
 			//Clear RXOK flag and re-enable reception
 			CANSTMOB = 0x00;
 			CANCDMOB = (( 1 << CONMOB1 ) | ( 0 << IDE ) | ( 8 << DLC0));

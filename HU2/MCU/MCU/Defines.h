@@ -10,7 +10,7 @@ This is a central header file containing a lot of defined constants that are use
 #define F_CPU 16000000UL	// Define processor clock speed for compiler
 #endif
 
-#define SOFTWARE_VERSION			"Software: V2.171 <FS "  //Version should be 2.xxx where xxx is amount of commits(do "git rev-list HEAD --count" to check)
+#define SOFTWARE_VERSION			"Software: V2.172 @FS "  //Version should be 2.xxx where xxx is amount of commits(do "git rev-list HEAD --count" to check)
 
 #define RTDS						PC7 //Loud ready beep
 #define RTDS_TIME					1100 //1100 / 500 = 2.2 seconds    //Has to be between 1 and 3 seconds!
@@ -19,6 +19,8 @@ This is a central header file containing a lot of defined constants that are use
 #define CUTPOWER_BRAKE_H			25	//Brake pedal above 25% means that no more power should be sent to the motors
 #define CUTPOWER_BRAKE_L			5	//After the above is triggered, only undo it once brake pedal goes below 5%
 #define DISCREPANCY_TICKS			50	//50 ticks at 500 hz is 100 ms
+
+#define NODATA_TIMER				500 //1000ms without data from a CAN node means error
 
 //Dashboard buttons and LEDs
 #define BUTTON1						PD0
@@ -50,7 +52,7 @@ This is a central header file containing a lot of defined constants that are use
 #define BL_SWITCHON					15
 #define BL_SWITCHOFF				10
 
-#define CALIB_SLACK					6
+#define CALIB_SLACK					8
 #define RANGESLACK					20
 
 #define PUMP_TEMP_MAX				100
@@ -71,7 +73,7 @@ This is a central header file containing a lot of defined constants that are use
 #define A_MCURRENT				0
 
 //MOB defines
-#define MOBCOUNT				7
+#define MOBCOUNT				5
 
 #define MOB_STEERING_POS		0
 #define MOB_RPM_FRONT_LEFT		1
@@ -101,7 +103,7 @@ This is a central header file containing a lot of defined constants that are use
 /*************** Node 2 ***************/
 #define GAS_1						0x2B //ADC2
 #define GAS_2						0x2A //ADC1
-#define BRAKE						0x29 //ADC0 //Not connected anymore
+#define BRAKE						0x29 //ADC0?
 
 /*************** Node 3 ***************/
 #define RPM_BACK_LEFT				0x30 //PPS0

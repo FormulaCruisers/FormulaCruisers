@@ -28,6 +28,8 @@ enum _error
 	
 	ERROR_SHUTDOWN,			//When a shutdown is called while predischarging or driving
 	
+	ERROR_NODATA,			//When a CAN node has not sent data after NODATA_TIMER ticks
+	
 	ERROR_CAN_BIT,
 	ERROR_CAN_STUFF,		//See AT90CAN128 datasheet page 261/262 for quick descriptions of these CAN errors
 	ERROR_CAN_CRC,
