@@ -140,8 +140,8 @@ void get_screen(char buffer[4][21], enum uiscreen s)
 			{
 				snprintf(buffer[0], sizeof buffer[0], "      %4u km/h      ", (uint16_t)velocity);
 			}
-			snprintf(buffer[1], sizeof buffer[1], "   %.1f g             ", (float)accel_gforce);
-			snprintf(buffer[2], sizeof buffer[2], "Battery: %.1f V       ", (float)battery_voltage);
+			snprintf(buffer[1], sizeof buffer[1], "Gas1:%3u%% Gas2:%3u%% ", gas1, gas2);
+			snprintf(buffer[2], sizeof buffer[2], "   %.1f g             ", (float)accel_gforce);
 			snprintf(buffer[3], sizeof buffer[3], "Current: %4d A      ", ccurrent);
 			break;
 			//"Battery: NAN%%       ");

@@ -10,15 +10,16 @@ This is a central header file containing a lot of defined constants that are use
 #define F_CPU 16000000UL	// Define processor clock speed for compiler
 #endif
 
-#define SOFTWARE_VERSION			"Software: V2.172 @FS "  //Version should be 2.xxx where xxx is amount of commits(do "git rev-list HEAD --count" to check)
+#define SOFTWARE_VERSION			"Software: V2.200 @FS "  //Version should be 2.xxx where xxx is amount of commits(do "git rev-list HEAD --count" to check)
 
 #define RTDS						PC7 //Loud ready beep
 #define RTDS_TIME					1100 //1100 / 500 = 2.2 seconds    //Has to be between 1 and 3 seconds!
 
 #define START_BRAKE_MINPERCENT		5	//Brake pedal has to be pushed at least 5% according to the calibration values to start the car
-#define CUTPOWER_BRAKE_H			25	//Brake pedal above 25% means that no more power should be sent to the motors
-#define CUTPOWER_BRAKE_L			5	//After the above is triggered, only undo it once brake pedal goes below 5%
-#define DISCREPANCY_TICKS			50	//50 ticks at 500 hz is 100 ms
+#define CUTPOWER_BRAKE_H			25	//Hard braking with APPS above 25% means that no more power should be sent to the motors
+#define CUTPOWER_BRAKE_L			1	//After the above is triggered, only undo it once APPS goes below 5% and 0Nm desired torque, which actually means 0%
+#define HARDBRAKING					50
+#define DISCREPANCY_TICKS			17	//50 ticks at 500*3 hz is 105 ms
 
 #define NODATA_TIMER				500 //1000ms without data from a CAN node means error
 
@@ -52,8 +53,8 @@ This is a central header file containing a lot of defined constants that are use
 #define BL_SWITCHON					15
 #define BL_SWITCHOFF				10
 
-#define CALIB_SLACK					8
-#define RANGESLACK					20
+#define CALIB_SLACK					10
+#define RANGESLACK					50
 
 #define PUMP_TEMP_MAX				100
 #define FLOWMIN						10

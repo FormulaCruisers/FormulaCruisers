@@ -155,7 +155,7 @@ uint8_t allow_turning_on = 0;
 
 uint8_t MCU_shutdown = 0;
 
-volatile int16_t[] data_received_timer = [-1,-1,-1,-1,-1];
+volatile int16_t data_received_timer[MOBCOUNT] = {-1,-1,-1,-1,-1};
 
 ISR(TIMER0_COMP_vect)
 {	
@@ -236,7 +236,6 @@ ISR(TIMER0_COMP_vect)
 
 	
 	shutdownon = g(ECU2ID, MOB_SHUTDOWN) ? 0 : 1;
-	if(shutdowntimer < SHUTDOWN_TIME || shutdownon) shutdowntimer = (shutdowntimer + shutdownon) * shutdownon;
 
 	//Processing of all variables
 	//Gas and brake percentages
@@ -298,7 +297,7 @@ ISR(TIMER0_COMP_vect)
 	debounce(&btn1, PIND & (1<<BUTTON1)); //The button that is above the green button (i.e. left)
 	debounce(&btn2, PIND & (1<<BUTTON2)); //The button that is above the blue button (i.e. right)
 	
-	if(shutdowntimer >= SHUTDOWN_TIME || ams_shutdown || imd_shutdown)
+	if(shutdownon || ams_shutdown || imd_shutdown)
 	{
 		if(ui_current_screen == SCREEN_PREDISCHARGING || ui_current_screen == SCREEN_DRIVING || ui_current_screen == SCREEN_STATUS || ui_current_screen == SCREEN_DRIVETEST)
 		{
@@ -479,7 +478,7 @@ ISR(TIMER0_COMP_vect)
 		
 		//The screen that appears when actually driving.
 		case SCREEN_DRIVING:
-			if(ttt == 3)
+			if(ttt == 1)
 			{
 				//e_checkflow();
 				e_checksensors();
@@ -490,14 +489,15 @@ ISR(TIMER0_COMP_vect)
 			if(_errorcode == ERROR_NONE)
 			{	
 				struct torques tq;
-				if(disable_motor_braking)
+				uint8_t dif = gas1perc - gas2perc;
+				if(disable_motor_braking || (dif > 10 || dif < -10))
 				{
 					tq.right_perc = 0;
 					tq.left_perc = 0;
 				}
 				else
 				{
-					tq = getDifferential(gas1perc, steerpos, vsettings[SETTING_DIFF_FAC]);
+					tq = getDifferential((gas1perc > gas2perc) ? gas2perc : gas1perc, steerpos, vsettings[SETTING_DIFF_FAC]);
 					
 					//struct slips sp = detectSlip(rpm_bl, rpm_br, tq);	
 					//tq = solveSlip(sp, tq);
@@ -604,7 +604,7 @@ ISR(TIMER0_COMP_vect)
 					GAS2MIN -= CALIB_SLACK * 2;
 					GAS2MAX += CALIB_SLACK * 2;
 				}
-				BRAKEMAX = brake;
+				BRAKEMAX = brake + CALIB_SLACK;
 					
 				//Write to EEPROM
 				eeprom_write_word(&ee_Gas1_min, GAS1MIN);
@@ -706,11 +706,11 @@ ISR(TIMER0_COMP_vect)
 	}
 	
 	//As per regulations, cut motors (i.e. only and immediately send the value 0) when braking is over 25% and re-enable when it's under 5%
-	if(brakeperc > CUTPOWER_BRAKE_H)
+	if(brakeperc > HARDBRAKING && gas1perc > CUTPOWER_BRAKE_H)
 	{
 		disable_motor_braking = 1;
 	}
-	if(brakeperc < CUTPOWER_BRAKE_L)
+	if(gas1perc < CUTPOWER_BRAKE_L)
 	{
 		disable_motor_braking = 0;
 	}

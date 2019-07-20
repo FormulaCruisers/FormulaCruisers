@@ -28,7 +28,7 @@ extern volatile uint32_t engine_max_perc;
 extern volatile double steerpos;
 extern volatile uint8_t test_mob;
 extern volatile uint64_t test_value;
-extern volatile int16_t data_received_timer;
+extern volatile int16_t data_received_timer[MOBCOUNT];
 
 extern uint16_t GAS1MIN, GAS1MAX, GAS2MIN, GAS2MAX, BRAKEMIN, BRAKEMAX;
 

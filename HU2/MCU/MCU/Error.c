@@ -5,8 +5,8 @@ This file contains basic error handling functions and error checking functions.
 #include "Defines.h"
 #include "Error.h"
 
-uint8_t disctimer = 0;
-uint8_t cantimer = 0;
+volatile uint8_t disctimer = 0;
+volatile uint8_t cantimer = 0;
 
 char* get_error(enum _error e)
 {
@@ -65,8 +65,7 @@ void e_checkranges()
 {
 	if(gas1 < GAS1MIN - RANGESLACK || gas1 > GAS1MAX + RANGESLACK) _errorcode = ERROR_GAS1RANGE;
 	if(gas2 < GAS2MIN - RANGESLACK || gas2 > GAS2MAX + RANGESLACK) _errorcode = ERROR_GAS2RANGE;
-	if(brake < BRAKEMAX - RANGESLACK || brake > BRAKEMAX + RANGESLACK) _errorcode = ERROR_BRAKERANGE;
-	if(steerposm < STEER_MIN - RANGESLACK || steerposm > STEER_MAX + RANGESLACK) _errorcode = ERROR_BRAKERANGE;
+	if(brake < BRAKEMIN	- RANGESLACK || brake > BRAKEMAX + RANGESLACK) _errorcode = ERROR_BRAKERANGE;
 }
 
 void e_checkdiscrepancy()
